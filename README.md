@@ -5,11 +5,14 @@
 ### Uma aplicação desenvolvida para fazer o registro de horas trabalhadas por colaboradores. Projeto desenvolvido por estudantes da disciplina Tópicos em Sistemas de Informação e Web I ( IC0045 ) da UFBA - Universidade Federal da Bahia. O repositório se encontra em desenvolvimento contendo o frontend e o backend da aplicação juntos. Para testar a aplicação inicialize o comando ``` npm run dev ``` dentro das pastas que se encontram o arquivo *package.json*. O frontend está rodando na port:3000 e o backend na port:8800
 
 ## Directory Tree :
+
+```
   work_time_record_ic0045/
   ├── wtr_backend_project/
   │   └── package.json
   └── wtr_frontend_project/
       └── package.json
+```
 
 ## Artefatos :
 
