@@ -44,12 +44,12 @@
 ### A aplicação vai seguir os padrões de versionamento Conventional Commit Patterns, toda e qualquer alteração, implementação e correção devera ser feita de acordo com as tarefas e roadmap do projeto previsto. Seguem abaixo exemplos de como deixar as branches e commits.
 
 ### BRANCH :
-  WTR-[numero-da-tarefa]/[objetivo-da-tarefa]
-  WTR-0099/api-register-implementation
+  * WTR-[numero-da-tarefa]/[objetivo-da-tarefa]
+  * WTR-0099/api-register-implementation
   
 ### COMMIT :
-  feature:[nome-da-alteracao]
-  feature:added-component-button
+  * feature:[nome-da-alteracao]
+  * feature:added-component-button
 
 
 
