@@ -41,7 +41,7 @@
 
 ## Contribuições para o projeto :
 
-### A aplicação vai seguir os padrões de versionamento Conventional Commit Patterns, toda e qualquer alteração, implementação e correção devera ser feita de acordo com as tarefas e roadmap do projeto previsto. Seguem abaixo exemplos de como deixar as branches e commits.
+### A aplicação vai seguir os padrões de versionamento Conventional Commit Patterns, toda e qualquer alteração, implementação e correção devera ser feita de acordo com as tarefas e roadmap do projeto previsto. Existem duas branches padrões da qual são feitos os versionamentos e de ondem devem surgir as modificações, são elas para o backend *development-backend* e para o frontend *development-frontend*. Seguem abaixo exemplos de como deixar as branches e commits.
 
 ### BRANCH :
   * WTR-[numero-da-tarefa]/[objetivo-da-tarefa]
@@ -51,6 +51,11 @@
   * feature:[nome-da-alteracao]
   * feature:added-component-button
 
+### Toda PR ( Pull Request ), modificação no código da aplciação, precisa seguir um padrão de criação para validar o que foi feito e aonde todos os desenvolvedores envolvidos no projeto tenham compreensão e capacidade de analsiari a mudança. Assim é imprescindivel que a PR possua alguns elementos para melhor entendimento e agilidade no processo de analise, correções e melhorias, são eles :
+
+  * PR precisa ter uma descrição do que foi feito no código
+  * PR precisa ter uma descrição de como testar o código
+  * PR precisa ter aprovação de dois ou mais membros do projeto
 
 
 
