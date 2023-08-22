@@ -4,9 +4,9 @@
 
 ## Artefatos :
 
-    * Analise de Requisitos  --> https://docs.google.com/document/d/1mXYC3zBO63o6MekNcnyizNgUP-bpV0ZYQeMNVkhROD0/edit
-    * Modelagem Banco de Dados --> https://dbdiagram.io/d/64dc27ec02bd1c4a5ed570ac
-    * Design / Prototipo --> https://www.figma.com/file/aXFWoeRPZ78SR0bgWpYo1E/work-tracker?type=design&node-id=0-1&mode=design&t=sL47pic2KwJpMmyp-0
+    * Analise de Requisitos  --> [LINK](https://docs.google.com/document/d/1mXYC3zBO63o6MekNcnyizNgUP-bpV0ZYQeMNVkhROD0/edit)
+    * Modelagem Banco de Dados --> [LINK](https://dbdiagram.io/d/64dc27ec02bd1c4a5ed570ac)
+    * Design / Prototipo --> [LINK](https://www.figma.com/file/aXFWoeRPZ78SR0bgWpYo1E/work-tracker?type=design&node-id=0-1&mode=design&t=sL47pic2KwJpMmyp-0)
 
 ## Tecnologias e Ferramentas de Desenvolvimento :
 
