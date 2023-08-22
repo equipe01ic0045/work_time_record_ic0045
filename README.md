@@ -28,6 +28,28 @@
     * Github
     * Figma
 
+## Requisitos Funcionais do Projeto :
+
+  * Sistema deve permitir controle de ponto de usuários de um projeto.
+  * Sistema deve cadastrar projetos, e para cada projeto, um controle de ponto. Usuários podem estar em mais de um projeto, sem problemas.
+  * Cadastro de usuários com perfis distintos. Adm, gerente, usuário
+  * Usuário deve “bater” o ponto de maneira intuitiva. Pode ser alertado.
+  * O gerente deve visualizar as presenças de um usuário ou de todos, e relatórios de presenças devem poder ser gerados.
+  * O ponto pode ter restrição de horários, área física.
+  * Faltas podem ser justificadas com texto e documentos anexados
+
+
+## Contribuições para o projeto :
+
+### A aplicação vai seguir os padrões de versionamento Conventional Commit Patterns, toda e qualquer alteração, implementação e correção devera ser feita de acordo com as tarefas e roadmap do projeto previsto. Seguem abaixo exemplos de como deixar as branches e commits.
+
+### BRANCH :
+  WTR-[numero-da-tarefa]/[objetivo-da-tarefa]
+  WTR-0099/api-register-implementation
+  
+### COMMIT :
+  feature:[nome-da-alteracao]
+  feature:added-component-button
 
 
 
