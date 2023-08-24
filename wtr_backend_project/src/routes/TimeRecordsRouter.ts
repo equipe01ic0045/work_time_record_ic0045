@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 export class TimeRecordsWrapper { 
     constructor(
-        private readonly timeRecordsController: TimeRecordsController
+        private readonly timeRecordsController: TimeRecordsController,
     ) {}
     
     public init = () => {
