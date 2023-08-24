@@ -16,7 +16,7 @@ services:
   backend:
     image: node:lts
     volumes:
-      - ./backend:/app
+      - ./wtr_backend_project:/app
     working_dir: /app
     command: npm start
     ports:
