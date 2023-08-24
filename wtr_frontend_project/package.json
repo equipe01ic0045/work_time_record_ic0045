@@ -1,5 +1,5 @@
 {
-  "name": "frontend_project",
+  "name": "wtr_frontend_project",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,12 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@types/node": "20.5.1",
-    "@types/react": "18.2.20",
+    "@chakra-ui/react": "^2.8.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@types/node": "20.5.4",
+    "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.19",
+    "framer-motion": "^10.16.1",
     "next": "13.4.19",
     "postcss": "8.4.28",
     "react": "18.2.0",
