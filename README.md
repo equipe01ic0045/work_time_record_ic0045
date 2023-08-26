@@ -7,11 +7,23 @@
 ## Directory Tree :
 
 ```
-  work_time_record_ic0045/
-  ├── wtr_backend_project/
-  │   └── package.json
-  └── wtr_frontend_project/
-      └── package.json
+ work_time_record_ic0045/
+  wtr_backend_project/
+    docs/
+    src/
+      adapters/
+      controllers/
+      database/
+        migrations/
+        entities/
+        repositories/
+      services/
+      helpers/
+      routes/
+      interfaces/
+    package.json
+  wtr_frontend_project/
+    package.json
 ```
 
 ## Artefatos :
