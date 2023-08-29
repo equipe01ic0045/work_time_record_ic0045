@@ -1,4 +1,4 @@
-# WORK TIME RECORD APP
+# PONTO CERTO APP
 
 ### Para iniciar a aplicação é preciso estar dentro dos diretórios
 
