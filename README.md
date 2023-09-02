@@ -31,6 +31,7 @@
    *  [Analise de Requisitos](https://docs.google.com/document/d/1JJkzh4c4Oqv1635J20rD4OgUo484GBmA/edit?usp=sharing&ouid=116266237238255223813&rtpof=true&sd=true)
    *  [Modelagem Banco de Dados](https://dbdiagram.io/d/64dc27ec02bd1c4a5ed570ac)
    *  [Design / Prototipo](https://www.figma.com/file/aXFWoeRPZ78SR0bgWpYo1E/work-tracker?type=design&node-id=0-1&mode=design&t=sL47pic2KwJpMmyp-0)
+   *  [Arquitetura](https://excalidraw.com/#room=9b10a0f58671a9442ae3,AU1ISgoBRiTHiPKXDcfmKg)
 
 ## Tecnologias e Ferramentas de Desenvolvimento :
 
