@@ -19,7 +19,7 @@ export default class AuthController {
       );
 
       await authService.createUser(full_name, passwordHash, email);
-      res.status(201).json("Usuário criado com sucesso.");
+      res.status(201).json({ message: "Usuário criado com sucesso." });
     } else {
       res
         .status(409)

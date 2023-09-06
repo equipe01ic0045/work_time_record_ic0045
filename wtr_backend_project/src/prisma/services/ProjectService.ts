@@ -1,15 +1,11 @@
-import { PrismaClient, UserRole } from "@prisma/client";
+import { PrismaClient, UserRole, project, user } from "@prisma/client";
 
 class ProjectService {
   private prisma: PrismaClient;
   constructor(prismaClient: PrismaClient) {
     this.prisma = prismaClient;
   }
-  async createProject(
-    projectName: string,
-    userId: number,
-    hoursPerWeek: number = 40
-  ) {
+  async createProject(projectName: string, userId: number) {
     const newProject = await this.prisma.project.create({
       data: {
         project_name: projectName,
@@ -29,7 +25,7 @@ class ProjectService {
           },
         },
         role: "ADMIN",
-        hours_per_week: hoursPerWeek,
+        hours_per_week: 40,
       },
     });
 
@@ -39,7 +35,7 @@ class ProjectService {
   async addUserToProject(
     projectId: number,
     adminUserId: number,
-    contributorUserId: number,
+    contributorEmail: string,
     contributorRole: UserRole,
     contributorHoursPerWeek: number
   ) {
@@ -61,10 +57,18 @@ class ProjectService {
       );
     }
 
+    const newContributorUser: user | null = await this.prisma.user.findUnique({
+      where: { email: contributorEmail },
+    });
+
+    if (!newContributorUser) {
+      throw new Error("Usuário não encontrado.");
+    }
+
     // Create a new user_project_role record for the contributor
     const newContributorUserRole = await this.prisma.user_project_role.create({
       data: {
-        user_id: contributorUserId,
+        user_id: newContributorUser.user_id,
         project_id: projectId,
         role: contributorRole,
         hours_per_week: contributorHoursPerWeek,
@@ -136,7 +140,28 @@ class ProjectService {
     return projects;
   }
 
-  // Other project-related methods
+  async getProjectUsers(userId: number, projectId: number) {
+    const userRole = await this.prisma.user_project_role.findUnique({
+      where: {
+        user_id_project_id: {
+          user_id: userId,
+          project_id: projectId,
+        },
+      },
+    });
+
+    if (!userRole) {
+      throw new Error("Usuário não têm permissão nesse projeto.");
+    }
+
+    const projectUsers = await this.prisma.user_project_role.findMany({
+      where: {
+        project_id: projectId,
+      },
+    });
+
+    return projectUsers;
+  }
 }
 
 export default ProjectService;

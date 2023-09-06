@@ -20,7 +20,7 @@ export default function authorize(
   try {
     // Verify the token and decode its payload
     const decoded = jwt.verify(token.replace("Bearer ", ""), JWT_SECRET) as {
-      userId: string;
+      userId: number;
     };
 
     req.user = decoded;
