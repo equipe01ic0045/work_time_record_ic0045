@@ -21,18 +21,33 @@ router.get(
   authorize,
   projectController.getUserProjects.bind(projectController)
 );
+
 router.post(
-  "/projects/addUser",
+  "/projects/:project_id/addUser",
   authorize,
   projectController.addUserToProject.bind(projectController)
 );
 
-// Protected endpoint example
-router.get("/protected", authorize, (req: AuthorizedRequest, res: Response) => {
-  // The user is authorized, and their information is available as req.user
-  res.json({
-    message: "Protected endpoint accessed by user " + req.user?.userId,
-  });
-});
+router.get(
+  "/projects/:project_id/users",
+  authorize,
+  projectController.getProjectUsers.bind(projectController)
+);
+
+router.put(
+  "/projects/:project_id/users",
+  authorize,
+  projectController.updateUserRole.bind(projectController)
+);
+
+
+
+// // Protected endpoint example
+// router.get("/protected", authorize, (req: AuthorizedRequest, res: Response) => {
+//   // The user is authorized, and their information is available as req.user
+//   res.json({
+//     message: "Protected endpoint accessed by user " + req.user?.userId,
+//   });
+// });
 
 export default router;

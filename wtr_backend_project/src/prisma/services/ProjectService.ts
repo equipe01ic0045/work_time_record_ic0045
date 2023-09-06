@@ -78,11 +78,12 @@ class ProjectService {
     return newContributorUserRole;
   }
 
-  async changeUserRole(
+  async updateProjectUserRole(
     projectId: number,
     adminUserId: number,
     contributorUserId: number,
-    newContributorRole: UserRole
+    newContributorRole: UserRole,
+    newHoursPerWeek: number
   ) {
     // Check if the admin user is an admin or manager
     const adminUserRole = await this.prisma.user_project_role.findFirst({
@@ -98,7 +99,7 @@ class ProjectService {
     // throw error if user does not have to rights to add a new user to the project
     if (!adminUserRole) {
       throw new Error(
-        "Usuário não têm permissão para alterar os privilegios de outro contribuidor neste projeto."
+        "Usuário não têm permissão para alterar as configuracoes de outro contribuidor neste projeto."
       );
     }
 
@@ -111,6 +112,7 @@ class ProjectService {
       },
       data: {
         role: newContributorRole,
+        hours_per_week: newHoursPerWeek
       },
     });
 
@@ -154,9 +156,21 @@ class ProjectService {
       throw new Error("Usuário não têm permissão nesse projeto.");
     }
 
-    const projectUsers = await this.prisma.user_project_role.findMany({
+    const projectUsersRoles = await this.prisma.user_project_role.findMany({
       where: {
         project_id: projectId,
+      },
+      select: {
+        user_id: true,
+      },
+    });
+
+    const userIds = projectUsersRoles.map((role) => role.user_id);
+    const projectUsers = await this.prisma.user.findMany({
+      where: {
+        user_id: {
+          in: userIds,
+        },
       },
     });
 
