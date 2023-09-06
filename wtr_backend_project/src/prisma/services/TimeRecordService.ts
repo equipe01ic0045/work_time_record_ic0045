@@ -16,7 +16,6 @@ class TimeRecordService {
       where: {
         user_id: userId,
         project_id: projectId,
-        role: { in: ["MANAGER", "USER"] }, // Admin does not check in or out records
       },
     });
 

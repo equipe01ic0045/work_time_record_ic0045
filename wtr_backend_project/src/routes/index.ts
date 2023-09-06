@@ -1,8 +1,8 @@
-import { Router, Response } from "express";
+import { Router } from "express";
 import authorize from "../middlewares/authorize";
 import AuthController from "../controllers/AuthController";
-import AuthorizedRequest from "../interfaces/AuthorizedRequest";
 import ProjectController from "../controllers/ProjectController";
+import TimeRecordController from "../controllers/TimeRecordController";
 
 const router = Router();
 
@@ -21,25 +21,33 @@ router.get(
   authorize,
   projectController.getUserProjects.bind(projectController)
 );
-
 router.post(
   "/projects/:project_id/addUser",
   authorize,
   projectController.addUserToProject.bind(projectController)
 );
-
 router.get(
   "/projects/:project_id/users",
   authorize,
   projectController.getProjectUsers.bind(projectController)
 );
-
 router.put(
   "/projects/:project_id/users",
   authorize,
   projectController.updateUserRole.bind(projectController)
 );
 
+const timeRecordController = new TimeRecordController()
+router.post(
+  "/projects/:project_id/checkIn",
+  authorize,
+  timeRecordController.checkInTimeRecord.bind(timeRecordController)
+);
+router.put(
+  "/projects/:project_id/checkOut",
+  authorize,
+  timeRecordController.checkOutTimeRecord.bind(timeRecordController)
+);
 
 
 // // Protected endpoint example
