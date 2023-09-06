@@ -1,18 +1,10 @@
 import { PrismaClient, UserRole } from "@prisma/client";
 
-export default class PrismaService {
-  prisma: PrismaClient = new PrismaClient();
-
-  async createUser(username: string, password: string, email: string) {
-    return this.prisma.user.create({
-      data: {
-        username,
-        password,
-        email,
-      },
-    });
+class ProjectService {
+  private prisma: PrismaClient;
+  constructor(prismaClient: PrismaClient) {
+    this.prisma = prismaClient;
   }
-
   async createProject(
     projectName: string,
     userId: number,
@@ -65,7 +57,7 @@ export default class PrismaService {
     // throw error if user does not have to rights to add a new user to the project
     if (!adminUserRole) {
       throw new Error(
-        "Usuário não têm permissão para adicionar outro contribuidor para este projeto."
+        "Usuário não têm permissão para adicionar outro contribuidor neste projeto."
       );
     }
 
@@ -82,44 +74,69 @@ export default class PrismaService {
     return newContributorUserRole;
   }
 
-  async checkInTimeRecord(
-    userId: number,
+  async changeUserRole(
     projectId: number,
-    userMessage: string | null,
-    location: string | null
+    adminUserId: number,
+    contributorUserId: number,
+    newContributorRole: UserRole
   ) {
-    // Check if the user is in the project
-    const userProjectRole = await this.prisma.user_project_role.findFirst({
+    // Check if the admin user is an admin or manager
+    const adminUserRole = await this.prisma.user_project_role.findFirst({
       where: {
-        user_id: userId,
+        user_id: adminUserId,
         project_id: projectId,
-        role: { in: ["MANAGER", "USER"] }, // Admin does not check in or out records
+        role: {
+          in: ["ADMIN", "MANAGER"],
+        },
       },
     });
 
-    if (!userProjectRole) {
-      throw new Error("User is not authorized for this project.");
+    // throw error if user does not have to rights to add a new user to the project
+    if (!adminUserRole) {
+      throw new Error(
+        "Usuário não têm permissão para alterar os privilegios de outro contribuidor neste projeto."
+      );
     }
 
-    // create checkin record
-    return this.prisma.time_record.create({
+    const newContributorUserRole = await this.prisma.user_project_role.update({
+      where: {
+        user_id_project_id: {
+          user_id: contributorUserId,
+          project_id: projectId,
+        },
+      },
       data: {
-        user_id: userId,
-        project_id: projectId,
-        user_message: userMessage,
-        location: location,
+        role: newContributorRole,
       },
     });
+
+    return newContributorUserRole;
   }
 
-  async checkOutTimeRecord(timeRecordId: number) {
-    return this.prisma.time_record.update({
+  async getUserProjects(userId: number) {
+    // Find all user_project_role records for the user
+    const userRoles = await this.prisma.user_project_role.findMany({
       where: {
-        time_record_id: timeRecordId,
-      },
-      data: {
-        check_out_timestamp: new Date(),
+        user_id: userId,
       },
     });
+
+    // Extract project_ids from the user_project_role records
+    const projectIds = userRoles.map((role) => role.project_id);
+
+    // Find projects using the extracted project_ids
+    const projects = await this.prisma.project.findMany({
+      where: {
+        project_id: {
+          in: projectIds,
+        },
+      },
+    });
+
+    return projects;
   }
+
+  // Other project-related methods
 }
+
+export default ProjectService;
