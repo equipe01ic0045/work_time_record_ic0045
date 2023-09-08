@@ -1,16 +1,12 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
 import { Flex, Text } from "@chakra-ui/react";
 import Header from "@/components/Layouts/Header";
 import HeaderMenu from "@/components/Layouts/HeaderNav";
+import SideMenuComponent from "@/components/side-menu-component";
+
+// application main template
 
 export default function Home() {
   return (
-    <Flex flexDir={"column"}>
-      <Header>
-        <HeaderMenu />
-      </Header>
-      <Text>Olá mundo!</Text>
-    </Flex>
+    <>ok</>
   );
 }
