@@ -31,13 +31,19 @@ export default function SideMenuComponent() {
             width={"20%"}
         >
             {pages.map((item) => {
-                return <Button
-                    bg={"white"}
-                    borderRadius={"5px"}
-                    padding={"1em"}
-                    width={"100px"}
+                return <Link
                     key={item.id}
-                ><Link href={`/${item.link}`}>{item.name}</Link></Button>
+                    href={`/${item.link}`}
+                >
+                    <Button
+                        bg={"white"}
+                        borderRadius={"5px"}
+                        padding={"1em"}
+                        width={"100px"}
+                    >
+                        {item.name}
+                    </Button>
+                </Link>
             })}
         </Box>
     );

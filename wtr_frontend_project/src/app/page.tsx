@@ -1,5 +1,17 @@
+'use client'
+import { Text } from "@chakra-ui/react"
 // page ui generated from the url
 
 export default function Page() {
-    return <h1>Hello, Home page!</h1>
+    return (
+    <Text 
+    fontSize={"6xl"}
+    textAlign={"center"}
+    justifyContent={"center"}
+    width={"100%"}
+    height={"auto"}
+    >
+      Bem-Vindo ao Ponto Certo!
+      </Text>
+    )
   }
