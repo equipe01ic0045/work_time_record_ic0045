@@ -7,6 +7,6 @@ const router = Router();
 
 router.use('/auth', authRoutes);
 router.use('/projects', projectRoutes);
-router.use('/projects/:project_id/time-record', timeRecordRoutes);
+router.use('/projects/time-records', timeRecordRoutes);
 
 export default router;

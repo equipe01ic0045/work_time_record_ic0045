@@ -13,12 +13,12 @@ export default class ProjectController {
 
   async addUserToProject(req: AuthorizedRequest, res: Response) {
     const { project_id } = req.params;
-    const { user_email, user_role, user_hours_per_week } = req.body;
+    const { user_id, user_role, user_hours_per_week } = req.body;
 
     await projectService.addUserToProject(
       parseInt(project_id),
       req.user!.userId,
-      user_email,
+      user_id,
       user_role,
       user_hours_per_week
     );
@@ -29,13 +29,13 @@ export default class ProjectController {
 
   async updateUserRole(req: AuthorizedRequest, res: Response) {
     const { project_id } = req.params;
-    const { user_id, new_user_role, new_user_hours_per_week } = req.body;
+    const { user_id, new_role, new_hours_per_week } = req.body;
     await projectService.updateProjectUserRole(
       parseInt(project_id),
       req.user!.userId,
       user_id,
-      new_user_role,
-      new_user_hours_per_week
+      new_role,
+      new_hours_per_week
     );
     res.status(200).json({
       message: "Configuração do usuário no projeto atualizada com sucesso.",

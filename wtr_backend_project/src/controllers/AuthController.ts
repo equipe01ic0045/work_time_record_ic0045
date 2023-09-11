@@ -31,10 +31,13 @@ export default class AuthController {
       const token = jwt.sign({ userId: user.user_id }, JWT_SECRET, {
         expiresIn: "1d",
       });
-      res.setHeader(
-        "Set-Cookie",
-        `token=${token}; HttpOnly; Path=/; SameSite=Strict; Max-Age=3600`
-      );
+
+      res.cookie('token', token, {
+        httpOnly: false,
+        // httpOnly: true,
+        maxAge: 3600000, // 1 hour in milliseconds
+        sameSite: 'strict',
+      });
 
       res.status(200).json({ message: "Autenticação bem sucedida." });
     } else {

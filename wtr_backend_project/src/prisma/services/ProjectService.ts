@@ -35,7 +35,7 @@ class ProjectService {
   async addUserToProject(
     projectId: number,
     adminUserId: number,
-    contributorEmail: string,
+    contributorId: number,
     contributorRole: UserRole,
     contributorHoursPerWeek: number
   ) {
@@ -57,18 +57,10 @@ class ProjectService {
       );
     }
 
-    const newContributorUser: user | null = await this.prisma.user.findUnique({
-      where: { email: contributorEmail },
-    });
-
-    if (!newContributorUser) {
-      throw new Error("Usuário não encontrado.");
-    }
-
     // Create a new user_project_role record for the contributor
     const newContributorUserRole = await this.prisma.user_project_role.create({
       data: {
-        user_id: newContributorUser.user_id,
+        user_id: contributorId,
         project_id: projectId,
         role: contributorRole,
         hours_per_week: contributorHoursPerWeek,
@@ -112,7 +104,7 @@ class ProjectService {
       },
       data: {
         role: newContributorRole,
-        hours_per_week: newHoursPerWeek
+        hours_per_week: newHoursPerWeek,
       },
     });
 
@@ -156,26 +148,21 @@ class ProjectService {
       throw new Error("Usuário não têm permissão nesse projeto.");
     }
 
-    const projectUsersRoles = await this.prisma.user_project_role.findMany({
+    const projectUsers = await this.prisma.user_project_role.findMany({
       where: {
         project_id: projectId,
       },
       select: {
-        user_id: true,
-      },
-    });
-
-    const userIds = projectUsersRoles.map((role) => role.user_id);
-    const projectUsers = await this.prisma.user.findMany({
-      where: {
-        user_id: {
-          in: userIds,
+        user: {
+          select: {
+            user_id: true,
+            full_name: true,
+            email: true,
+          },
         },
+        role: true,
+        hours_per_week: true,
       },
-      select: {
-        full_name: true,
-        email: true
-      }
     });
 
     return projectUsers;
