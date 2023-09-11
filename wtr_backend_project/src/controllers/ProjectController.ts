@@ -51,7 +51,7 @@ export default class ProjectController {
 
   async getProjectUsers(req: AuthorizedRequest, res: Response) {
     const { project_id } = req.params;
-    const projectUsers: user[] = await projectService.getProjectUsers(
+    const projectUsers = await projectService.getProjectUsers(
       req.user!.userId,
       parseInt(project_id)
     );

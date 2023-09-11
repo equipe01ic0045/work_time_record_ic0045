@@ -172,6 +172,10 @@ class ProjectService {
           in: userIds,
         },
       },
+      select: {
+        full_name: true,
+        email: true
+      }
     });
 
     return projectUsers;
