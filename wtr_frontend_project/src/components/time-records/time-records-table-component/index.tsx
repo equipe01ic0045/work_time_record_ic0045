@@ -15,8 +15,8 @@ export default function TimeRecordsTableComponent({projectList}:any){
                 <Thead bg={"blueviolet"}>
                     <Tr>
                         <Th textColor={"white"}>PROJECT NAME</Th>
-                        <Th textColor={"white"}>COMPANY</Th>
                         <Th textColor={"white"}>MANAGER</Th>
+                        <Th textColor={"white"}>COMPANY</Th>
                         <Th textColor={"white"}>INFO</Th>
                         <Th textColor={"white"}>RECORD TIME</Th>
                     </Tr>

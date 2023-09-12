@@ -24,8 +24,8 @@ export default function ProjectsTableComponent({ projectList }: any) {
                 <Thead bg={"blueviolet"}>
                     <Tr>
                         <Th textColor={"white"}>PROJECT NAME</Th>
-                        <Th textColor={"white"}>COMPANY</Th>
                         <Th textColor={"white"}>MANAGER</Th>
+                        <Th textColor={"white"}>COMPANY</Th>
                         <Th textColor={"white"}>USERS</Th>
                     </Tr>
                 </Thead>
