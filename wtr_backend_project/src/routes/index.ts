@@ -1,11 +1,12 @@
-import {Router} from 'express';
+import { Router } from 'express';
+import authRoutes from './authRoutes';
+import projectRoutes from './projectRoutes';
+import timeRecordRoutes from './timeRecordRoutes';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-    res.send('Hello world!');
-});
+router.use('/auth', authRoutes);
+router.use('/projects', projectRoutes);
+router.use('/projects/time-records', timeRecordRoutes);
 
-export {
-    router
-};
+export default router;

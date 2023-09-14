@@ -1,7 +1,7 @@
 import { app } from "./app";
-
-app.listen(8800, ()=>{
-    console.log("server is running on port 8800")
-})
+const port = 3000;
+app.listen(port, () => {
+  console.log(`server is running on port ${port}`);
+});
 
 module.exports = app;
