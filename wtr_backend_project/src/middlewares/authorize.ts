@@ -9,8 +9,8 @@ export default function authorize(
   res: Response,
   next: NextFunction
 ) {
-  // Extract the JWT token from the Authorization header
-  const token = req.header("Authorization");
+  // Retrieve the JWT token from the 'token' cookie
+  const token = req.cookies.token;
 
   // Check if a token is provided
   if (!token) {
@@ -19,7 +19,7 @@ export default function authorize(
 
   try {
     // Verify the token and decode its payload
-    const decoded = jwt.verify(token.replace("Bearer ", ""), JWT_SECRET) as {
+    const decoded = jwt.verify(token, JWT_SECRET) as {
       userId: number;
     };
 

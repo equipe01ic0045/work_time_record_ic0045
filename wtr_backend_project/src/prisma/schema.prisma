@@ -20,7 +20,7 @@ model user {
 
 model project {
   project_id         Int                 @id @default(autoincrement())
-  project_name       String
+  project_name       String              @unique
   created_at         DateTime            @default(now())
   updated_at         DateTime            @default(now())
   user_project_roles user_project_role[]
@@ -39,6 +39,8 @@ model user_project_role {
   project_id           Int
   role                 UserRole
   hours_per_week       Int
+  created_at           DateTime @default(now())
+  updated_at           DateTime @default(now())
   user                 user     @relation(fields: [user_id], references: [user_id])
   project              project  @relation(fields: [project_id], references: [project_id])
 
