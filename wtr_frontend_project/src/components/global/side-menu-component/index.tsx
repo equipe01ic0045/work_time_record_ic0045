@@ -26,7 +26,7 @@ export default function SideMenuComponent() {
             alignItems={"center"}
             justifyContent={"start"}
             gap={"0.5em"}
-            bg={"blueviolet"}
+            bg={"#A7A3FF"}
             padding={"0.5em"}
             width={"20%"}
         >

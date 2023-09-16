@@ -1,7 +1,5 @@
-'use client'; // chakra-ui components need this declaration to work
 import '../styles/global.css'; // css import from styles to work with normal element tags
-import SideMenuComponent from '@/components/global/side-menu-component';
-import { Box, ChakraProvider } from '@chakra-ui/react';
+import LayoutChakraProvider from '@/components/layout-chakra-provider';
 
 // title and description tags shall not be used but export as a constant
 // nextjs handles it 
@@ -23,10 +21,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div className='root'>
-        <ChakraProvider>
-            <SideMenuComponent></SideMenuComponent>
+          <LayoutChakraProvider>
             {children}
-        </ChakraProvider>
+          </LayoutChakraProvider>
         </div>
       </body>
     </html>
