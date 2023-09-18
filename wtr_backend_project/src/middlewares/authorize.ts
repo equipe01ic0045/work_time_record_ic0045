@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
-import { JWT_SECRET } from "../config";
 import jwt from "jsonwebtoken";
-import AuthorizedRequest from "../interfaces/AuthorizedRequest";
+import AuthorizedRequest from "../types/interfaces/AuthorizedRequest";
+import { JWT_SECRET } from "../config";
 
 // Middleware for JWT authorization
 export default function authorize(
