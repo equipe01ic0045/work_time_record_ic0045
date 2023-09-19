@@ -66,13 +66,5 @@
  *         description: Conflict. User with the same email already exists.
  */
 
-import { Router } from "express";
 import AuthController from "../controllers/AuthController";
-
-const router = Router();
-const authController = new AuthController();
-
-router.post("/login", authController.loginUser);
-router.post("/register", authController.registerUser);
-
-export default router;
+export default new AuthController().router;
