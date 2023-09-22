@@ -1,8 +1,10 @@
 import { time_record } from "@prisma/client";
-import AuthorizationError from "../../types/errors/AuthorizationError";
-import ConflictError from "../../types/errors/ConflictError";
-import NotFoundError from "../../types/errors/NotFoundError";
-import AuthorizedService from "./AbsAuthorizedService";
+import AuthorizedService from "./abstract/AuthorizedService";
+import {
+  AuthorizationError,
+  ConflictError,
+  NotFoundError,
+} from "../../types/errors";
 
 export default class TimeRecordService extends AuthorizedService {
   async checkInTimeRecord(

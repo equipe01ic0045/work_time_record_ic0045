@@ -2,10 +2,12 @@ import AuthorizedRequest from "../types/interfaces/AuthorizedRequest";
 import { NextFunction, Response } from "express";
 import { projectService } from "../prisma/services";
 import { project } from "@prisma/client";
-import ResourceCreatedResponse from "../types/responses/ResourceCreatedResponse";
-import ResourceUpdatedResponse from "../types/responses/ResourceUpdatedResponse";
-import DataRetrievedResponse from "../types/responses/DataRetrievedResponse";
 import BaseController from "./abstract/BaseController";
+import {
+  ResourceCreatedResponse,
+  ResourceUpdatedResponse,
+  DataRetrievedResponse,
+} from "../types/responses";
 
 export default class ProjectController extends BaseController {
   async createNewProject(

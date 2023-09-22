@@ -1,8 +1,10 @@
 import { UserRole, project, user_project_role } from "@prisma/client";
-import ConflictError from "../../types/errors/ConflictError";
-import AuthorizationError from "../../types/errors/AuthorizationError";
-import AuthorizedService from "./AbsAuthorizedService";
-import NotFoundError from "../../types/errors/NotFoundError";
+import AuthorizedService from "./abstract/AuthorizedService";
+import {
+  AuthorizationError,
+  ConflictError,
+  NotFoundError,
+} from "../../types/errors";
 
 export default class ProjectService extends AuthorizedService {
   async createProject(projectName: string, userId: number): Promise<project> {

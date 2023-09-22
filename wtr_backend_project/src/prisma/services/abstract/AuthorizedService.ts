@@ -1,5 +1,5 @@
 import { UserRole } from "@prisma/client";
-import BaseService from "./AbsBaseService";
+import BaseService from "./BaseService";
 
 export default abstract class AuthorizedService extends BaseService {
   // checks if user exists and has one of the specified roles in a given project

@@ -1,4 +1,4 @@
-import BaseError from "./BaseError";
+import BaseError from "./abstract/BaseError";
 
 export default class NotFoundError extends BaseError {
   constructor(resource: string) {

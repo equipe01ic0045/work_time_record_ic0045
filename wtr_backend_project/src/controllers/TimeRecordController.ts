@@ -1,9 +1,11 @@
 import AuthorizedRequest from "../types/interfaces/AuthorizedRequest";
 import { NextFunction, Response } from "express";
 import { timeRecordService } from "../prisma/services";
-import ResourceCreatedResponse from "../types/responses/ResourceCreatedResponse";
-import ResourceUpdatedResponse from "../types/responses/ResourceUpdatedResponse";
 import BaseController from "./abstract/BaseController";
+import {
+  ResourceCreatedResponse,
+  ResourceUpdatedResponse,
+} from "../types/responses";
 
 export default class TimeRecordController extends BaseController {
   async checkInTimeRecord(

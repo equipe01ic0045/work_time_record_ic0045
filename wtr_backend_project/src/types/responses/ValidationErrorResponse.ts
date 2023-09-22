@@ -1,4 +1,4 @@
-import BaseApiResponse from "./BaseApiResponse";
+import BaseApiResponse from "./abstract/BaseApiResponse";
 
 export default class ValidationErrorResponse extends BaseApiResponse {
   constructor() {

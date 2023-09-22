@@ -1,4 +1,4 @@
-import BaseApiResponse from "./BaseApiResponse";
+import BaseApiResponse from "./abstract/BaseApiResponse";
 
 export default class DataRetrievedResponse extends BaseApiResponse {
   constructor() {

@@ -1,10 +1,9 @@
 import { user } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import ConflictError from "../../types/errors/ConflictError";
-import ValidationError from "../../types/errors/ValidationError";
-import BaseService from "./AbsBaseService";
+import BaseService from "./abstract/BaseService";
 import { JWT_SECRET, JWT_DEFAULT_SALT_ROUNDS } from "../../config";
+import { ConflictError, ValidationError } from "../../types/errors";
 
 export default class AuthService extends BaseService {
   async createUser(
@@ -18,7 +17,6 @@ export default class AuthService extends BaseService {
         where: { email },
       }))
     ) {
-
       const passwordHash: string = await bcrypt.hash(
         password,
         JWT_DEFAULT_SALT_ROUNDS
