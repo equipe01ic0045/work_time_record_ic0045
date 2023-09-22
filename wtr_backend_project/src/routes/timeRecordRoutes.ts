@@ -77,12 +77,5 @@
  *                check_out_timestamp: "2023-08-22 13:57:40"
  */
 
-import { Router } from "express";
 import TimeRecordController from "../controllers/TimeRecordController";
-
-const router = Router();
-const timeRecordController = new TimeRecordController();
-router.post("/:project_id/check-in", timeRecordController.checkInTimeRecord);
-router.put("/:project_id/check-out", timeRecordController.checkOutTimeRecord);
-
-export default router;
+export default new TimeRecordController().router;
