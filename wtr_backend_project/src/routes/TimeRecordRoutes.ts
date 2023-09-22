@@ -77,5 +77,53 @@
  *                check_out_timestamp: "2023-08-22 13:57:40"
  */
 
+import { Router } from "express";
 import TimeRecordController from "../controllers/TimeRecordController";
-export default new TimeRecordController().router;
+import ProjectRelatedRoutes from "./abstract/ProjectRelatedRoutes";
+import { body } from "express-validator";
+
+export default class TimeRecordRoutes extends ProjectRelatedRoutes {
+  constructor(
+    protected controller: TimeRecordController = new TimeRecordController()
+  ) {
+    super(controller);
+  }
+
+  get router(): Router {
+    this._router.post(
+      "/:project_id/check-in",
+      [
+        ...this.projectIdValidation,
+        body("user_message")
+          .isString()
+          .withMessage("mensagem invalida")
+          .isLength({ max: 500 })
+          .withMessage(
+            "mensagem de check-in ultrapassou o limite de 500 caracteres"
+          ),
+        body("location").isString().withMessage("localizacao invalida"), // change that later, validate geophaphic location
+        body("check_in_timestamp")
+          .isISO8601()
+          .toDate()
+          .withMessage("datetime invalido"),
+      ],
+      this.validate,
+      this.controller.checkInTimeRecord
+    );
+
+    this._router.put(
+      "/:project_id/check-out",
+      [
+        ...this.projectIdValidation,
+        body("check_out_timestamp")
+          .isISO8601()
+          .toDate()
+          .withMessage("datetime invalido"),
+      ],
+      this.validate,
+      this.controller.checkOutTimeRecord
+    );
+
+    return this._router
+  }
+}

@@ -67,4 +67,43 @@
  */
 
 import AuthController from "../controllers/AuthController";
-export default new AuthController().router;
+import BaseRoutes from "./abstract/BaseRoutes";
+import { body } from "express-validator";
+import { Router } from "express";
+
+export default class AuthRoutes extends BaseRoutes {
+  constructor(protected controller: AuthController = new AuthController()) {
+    super(controller);
+  }
+
+  get router(): Router {
+    this._router.post(
+      "/register",
+      [
+        body("full_name")
+          .isString()
+          .withMessage("Nome completo inválido")
+          .isLength({ min: 1 })
+          .withMessage("Insira o nome completo"),
+        body("email").isEmail().withMessage("Email inválido"),
+        body("password")
+          .isLength({ min: 8 })
+          .withMessage("Senha deve ter pelo menos 8 caracteres."),
+      ],
+      this.validate,
+      this.controller.registerUser
+    );
+
+    this._router.post(
+      "/login",
+      [
+        body("email").isEmail().withMessage("Email inválido"),
+        body("password").isString().withMessage("Senha deve ser uma string"),
+      ],
+      this.validate,
+      this.controller.loginUser
+    );
+
+    return this._router
+  }
+}

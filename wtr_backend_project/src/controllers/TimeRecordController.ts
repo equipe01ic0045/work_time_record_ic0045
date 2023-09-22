@@ -1,53 +1,15 @@
 import AuthorizedRequest from "../types/interfaces/AuthorizedRequest";
 import { NextFunction, Response } from "express";
 import { timeRecordService } from "../prisma/services";
-import { ProjectRelatedController } from "./ProjectRelatedController"
 import ResourceCreatedResponse from "../types/responses/ResourceCreatedResponse";
 import ResourceUpdatedResponse from "../types/responses/ResourceUpdatedResponse";
-import { body, param } from "express-validator";
+import BaseController from "./abstract/BaseController";
 
-export default class TimeRecordController extends ProjectRelatedController {
-  protected initRoutes(): void {
-
-    this.router.post(
-      "/:project_id/check-in",
-      [
-        ...this.projectIdValidation,
-        body("user_message")
-          .isString()
-          .withMessage("mensagem invalida")
-          .isLength({ max: 500 })
-          .withMessage(
-            "mensagem de check-in ultrapassou o limite de 500 caracteres",
-          ),
-        body("location").isString().withMessage("localizacao invalida"), // change that later, validate geophaphic location
-        body("check_in_timestamp")
-          .isISO8601()
-          .toDate()
-          .withMessage("datetime invalido"),
-      ],
-      this.validate,
-      this.checkInTimeRecord,
-    );
-
-    this.router.put(
-      "/:project_id/check-out",
-      [
-        ...this.projectIdValidation,
-        body("check_out_timestamp")
-          .isISO8601()
-          .toDate()
-          .withMessage("datetime invalido"),
-      ],
-      this.validate,
-      this.checkOutTimeRecord,
-    );
-  }
-
+export default class TimeRecordController extends BaseController {
   async checkInTimeRecord(
     req: AuthorizedRequest,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) {
     const { project_id } = req.params;
     const { user_message, location, check_in_timestamp } = req.body;
@@ -62,7 +24,7 @@ export default class TimeRecordController extends ProjectRelatedController {
         parseInt(project_id),
         checkInTimestamp,
         user_message,
-        location,
+        location
       );
       new ResourceCreatedResponse().send(res);
     } catch (error) {
@@ -73,7 +35,7 @@ export default class TimeRecordController extends ProjectRelatedController {
   async checkOutTimeRecord(
     req: AuthorizedRequest,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) {
     const { project_id } = req.params;
     const { check_out_timestamp } = req.body;
@@ -86,7 +48,7 @@ export default class TimeRecordController extends ProjectRelatedController {
       await timeRecordService.checkOutTimeRecord(
         req.user!.userId,
         parseInt(project_id),
-        checkOutTimestamp,
+        checkOutTimestamp
       );
       new ResourceUpdatedResponse().send(res);
     } catch (error) {
