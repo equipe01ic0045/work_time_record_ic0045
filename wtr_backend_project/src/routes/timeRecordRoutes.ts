@@ -78,21 +78,11 @@
  */
 
 import { Router } from "express";
-import authorize from "../middlewares/authorize";
 import TimeRecordController from "../controllers/TimeRecordController";
 
 const router = Router();
-
 const timeRecordController = new TimeRecordController();
-router.post(
-  "/:project_id/check-in",
-  authorize,
-  timeRecordController.checkInTimeRecord
-);
-router.put(
-  "/:project_id/check-out",
-  authorize,
-  timeRecordController.checkOutTimeRecord
-);
+router.post("/:project_id/check-in", timeRecordController.checkInTimeRecord);
+router.put("/:project_id/check-out", timeRecordController.checkOutTimeRecord);
 
 export default router;
