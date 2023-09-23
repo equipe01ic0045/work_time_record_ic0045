@@ -69,7 +69,7 @@ model absense_document {
   time_record         time_record @relation(fields: [absense_document_id], references: [time_record_id])
 }
 
-model project_configurations {
+model project_configuration {
   project_id            Int      @id @default(autoincrement())
   project_documents     Boolean
   project_time_interval DateTime
