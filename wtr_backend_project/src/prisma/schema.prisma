@@ -19,12 +19,13 @@ model user {
 }
 
 model project {
-  project_id         Int                 @id @default(autoincrement())
-  project_name       String              @unique
-  created_at         DateTime            @default(now())
-  updated_at         DateTime            @default(now())
-  user_project_roles user_project_role[]
-  time_records       time_record[]
+  project_id             Int                      @id @default(autoincrement())
+  project_name           String                   @unique
+  created_at             DateTime                 @default(now())
+  updated_at             DateTime                 @default(now())
+  user_project_roles     user_project_role[]
+  time_records           time_record[]
+  project_configurations project_configurations[]
 }
 
 enum UserRole {
@@ -66,4 +67,13 @@ model absense_document {
   time_record_id      Int
   document_file       Bytes
   time_record         time_record @relation(fields: [absense_document_id], references: [time_record_id])
+}
+
+model project_configurations {
+  project_id            Int      @id @default(autoincrement())
+  project_documents     Boolean
+  project_time_interval DateTime
+  project_time_start    DateTime
+  project_time_end      DateTime
+  project               project  @relation(fields: [project_id], references: [project_id])
 }
