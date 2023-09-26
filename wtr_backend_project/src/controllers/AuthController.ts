@@ -1,49 +1,34 @@
-import { Request, Response } from "express";
-import { user } from "@prisma/client";
+import { NextFunction, Request, Response } from "express";
 import { authService } from "../prisma/services";
-import { JWT_SECRET } from "../config";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import BaseController from "./abstract/BaseController";
+import {
+  AuthSuccessResponse,
+  ResourceCreatedResponse,
+} from "../types/responses";
 
-export default class AuthController {
-  private DEFAULT_SALT_ROUNDS: number = 10;
-
-  async registerUser(req: Request, res: Response) {
+export default class AuthController extends BaseController {
+  async registerUser(req: Request, res: Response, next: NextFunction) {
     const { full_name, password, email } = req.body;
-
-    // if email is available
-    if (!(await authService.getUserByEmail(email))) {
-      const passwordHash = await bcrypt.hash(
-        password,
-        this.DEFAULT_SALT_ROUNDS
-      );
-
-      await authService.createUser(full_name, passwordHash, email);
-      res.status(201).json({ message: "Usuário criado com sucesso." });
-    } else {
-      res
-        .status(409)
-        .json({ message: "Este email já está associado a outra conta." });
+    try {
+      await authService.createUser(full_name, password, email);
+      new ResourceCreatedResponse().send(res);
+    } catch (error) {
+      next(error);
     }
   }
 
-  async loginUser(req: Request, res: Response) {
+  async loginUser(req: Request, res: Response, next: NextFunction) {
     const { email, password } = req.body;
-
-    const user: user | null = await authService.getUserByEmail(email);
-
-    if (!!user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ userId: user.user_id }, JWT_SECRET, {
-        expiresIn: "1d",
+    try {
+      const token = await authService.authenticateUser(email, password);
+      res.cookie("token", token, {
+        httpOnly: false,
+        maxAge: 3600000,
+        sameSite: "strict",
       });
-      res.setHeader(
-        "Set-Cookie",
-        `token=${token}; HttpOnly; Path=/; SameSite=Strict; Max-Age=3600`
-      );
-
-      res.status(200).json({ message: "Autenticação bem sucedida." });
-    } else {
-      res.status(401).json({ message: "Email ou senha inválidos." });
+      new AuthSuccessResponse().send(res);
+    } catch (error) {
+      next(error);
     }
   }
 }

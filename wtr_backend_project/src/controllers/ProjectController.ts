@@ -1,61 +1,100 @@
-import AuthorizedRequest from "../interfaces/AuthorizedRequest";
-import { Response } from "express";
+import AuthorizedRequest from "../types/interfaces/AuthorizedRequest";
+import { NextFunction, Response } from "express";
 import { projectService } from "../prisma/services";
-import { project, user } from "@prisma/client";
+import { project } from "@prisma/client";
+import BaseController from "./abstract/BaseController";
+import {
+  ResourceCreatedResponse,
+  ResourceUpdatedResponse,
+  DataRetrievedResponse,
+} from "../types/responses";
 
-export default class ProjectController {
-  async createNewProject(req: AuthorizedRequest, res: Response) {
+export default class ProjectController extends BaseController {
+  async createNewProject(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     const { project_name } = req.body;
-
-    await projectService.createProject(project_name, req.user!.userId);
-    res.status(201).json({ message: "Projeto criado com sucesso." });
+    try {
+      await projectService.createProject(project_name, req.user!.userId);
+      new ResourceCreatedResponse().send(res);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async addUserToProject(req: AuthorizedRequest, res: Response) {
+  async addUserToProject(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     const { project_id } = req.params;
-    const { user_email, user_role, user_hours_per_week } = req.body;
-
-    await projectService.addUserToProject(
-      parseInt(project_id),
-      req.user!.userId,
-      user_email,
-      user_role,
-      user_hours_per_week
-    );
-    res
-      .status(201)
-      .json({ message: `Usuario adicionado ao projeto com sucesso.` });
+    const { user_id, user_role, user_hours_per_week } = req.body;
+    try {
+      await projectService.addUserToProject(
+        parseInt(project_id),
+        req.user!.userId,
+        user_id,
+        user_role,
+        user_hours_per_week
+      );
+      new ResourceCreatedResponse().send(res);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async updateUserRole(req: AuthorizedRequest, res: Response) {
+  async updateUserRole(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     const { project_id } = req.params;
-    const { user_id, new_user_role, new_user_hours_per_week } = req.body;
-    await projectService.updateProjectUserRole(
-      parseInt(project_id),
-      req.user!.userId,
-      user_id,
-      new_user_role,
-      new_user_hours_per_week
-    );
-    res.status(200).json({
-      message: "Configuração do usuário no projeto atualizada com sucesso.",
-    });
+    const { user_id, user_role, user_hours_per_week } = req.body;
+    try {
+      await projectService.updateProjectUserRole(
+        parseInt(project_id),
+        req.user!.userId,
+        user_id,
+        user_role,
+        user_hours_per_week
+      );
+      new ResourceUpdatedResponse().send(res);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async getUserProjects(req: AuthorizedRequest, res: Response) {
-    const projects: project[] = await projectService.getUserProjects(
-      req.user!.userId
-    );
-    res.status(200).json({ projects });
+  async getUserProjects(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const projects: project[] = await projectService.getUserProjects(
+        req.user!.userId
+      );
+      new DataRetrievedResponse().send(res, projects);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async getProjectUsers(req: AuthorizedRequest, res: Response) {
+  async getProjectUsers(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     const { project_id } = req.params;
-    const projectUsers: user[] = await projectService.getProjectUsers(
-      req.user!.userId,
-      parseInt(project_id)
-    );
-
-    res.status(200).json({ users: projectUsers });
+    try {
+      const projectUsers = await projectService.getProjectUsers(
+        req.user!.userId,
+        parseInt(project_id)
+      );
+      new DataRetrievedResponse().send(res, projectUsers);
+    } catch (error) {
+      next(error);
+    }
   }
 }
