@@ -1,35 +1,44 @@
-import { PrismaClient, UserRole, project, user } from "@prisma/client";
+import { UserRole, project, user_project_role } from "@prisma/client";
+import ConflictError from "../../types/errors/ConflictError";
+import AuthorizationError from "../../types/errors/AuthorizationError";
+import AuthorizedService from "./AbsAuthorizedService";
+import NotFoundError from "../../types/errors/NotFoundError";
 
-class ProjectService {
-  private prisma: PrismaClient;
-  constructor(prismaClient: PrismaClient) {
-    this.prisma = prismaClient;
-  }
-  async createProject(projectName: string, userId: number) {
-    const newProject = await this.prisma.project.create({
-      data: {
-        project_name: projectName,
-      },
-    });
-
-    await this.prisma.user_project_role.create({
-      data: {
-        user: {
-          connect: {
-            user_id: userId,
-          },
+export default class ProjectService extends AuthorizedService {
+  async createProject(projectName: string, userId: number): Promise<project> {
+    // if project name is available
+    if (
+      !(await this.prisma.project.findUnique({
+        where: { project_name: projectName },
+      }))
+    ) {
+      const newProject = await this.prisma.project.create({
+        data: {
+          project_name: projectName,
         },
-        project: {
-          connect: {
-            project_id: newProject.project_id,
-          },
-        },
-        role: "ADMIN",
-        hours_per_week: 40,
-      },
-    });
+      });
 
-    return newProject;
+      await this.prisma.user_project_role.create({
+        data: {
+          user: {
+            connect: {
+              user_id: userId,
+            },
+          },
+          project: {
+            connect: {
+              project_id: newProject.project_id,
+            },
+          },
+          role: "ADMIN",
+          hours_per_week: 40,
+        },
+      });
+
+      return newProject;
+    } else {
+      throw new ConflictError("project");
+    }
   }
 
   async addUserToProject(
@@ -38,135 +47,111 @@ class ProjectService {
     contributorId: number,
     contributorRole: UserRole,
     contributorHoursPerWeek: number
-  ) {
-    // Check if the admin user is an admin or manager
-    const adminUserRole = await this.prisma.user_project_role.findFirst({
-      where: {
-        user_id: adminUserId,
-        project_id: projectId,
-        role: {
-          in: ["ADMIN", "MANAGER"],
-        },
-      },
-    });
-
-    // throw error if user does not have to rights to add a new user to the project
-    if (!adminUserRole) {
-      throw new Error(
-        "Usuário não têm permissão para adicionar outro contribuidor neste projeto."
-      );
+  ): Promise<user_project_role> {
+    // if user has rights to add a new user to the project
+    // improve that later
+    if (await this.validateUser(adminUserId, projectId, ["ADMIN", "MANAGER"])) {
+      if (
+        !!(await this.prisma.user.findUnique({
+          where: { user_id: contributorId },
+        }))
+      ) {
+        try {
+          return await this.prisma.user_project_role.create({
+            data: {
+              user_id: contributorId,
+              project_id: projectId,
+              role: contributorRole,
+              hours_per_week: contributorHoursPerWeek,
+            },
+          });
+        } catch {
+          throw new ConflictError("user role in project");
+        }
+      } else {
+        throw new NotFoundError("user");
+      }
+    } else {
+      throw new AuthorizationError();
     }
-
-    // Create a new user_project_role record for the contributor
-    const newContributorUserRole = await this.prisma.user_project_role.create({
-      data: {
-        user_id: contributorId,
-        project_id: projectId,
-        role: contributorRole,
-        hours_per_week: contributorHoursPerWeek,
-      },
-    });
-
-    return newContributorUserRole;
   }
 
   async updateProjectUserRole(
     projectId: number,
     adminUserId: number,
-    contributorUserId: number,
+    contributorId: number,
     newContributorRole: UserRole,
     newHoursPerWeek: number
-  ) {
-    // Check if the admin user is an admin or manager
-    const adminUserRole = await this.prisma.user_project_role.findFirst({
-      where: {
-        user_id: adminUserId,
-        project_id: projectId,
-        role: {
-          in: ["ADMIN", "MANAGER"],
-        },
-      },
-    });
-
-    // throw error if user does not have to rights to add a new user to the project
-    if (!adminUserRole) {
-      throw new Error(
-        "Usuário não têm permissão para alterar as configuracoes de outro contribuidor neste projeto."
-      );
-    }
-
-    const newContributorUserRole = await this.prisma.user_project_role.update({
-      where: {
-        user_id_project_id: {
-          user_id: contributorUserId,
-          project_id: projectId,
-        },
-      },
-      data: {
-        role: newContributorRole,
-        hours_per_week: newHoursPerWeek,
-      },
-    });
-
-    return newContributorUserRole;
-  }
-
-  async getUserProjects(userId: number) {
-    // Find all user_project_role records for the user
-    const userRoles = await this.prisma.user_project_role.findMany({
-      where: {
-        user_id: userId,
-      },
-    });
-
-    // Extract project_ids from the user_project_role records
-    const projectIds = userRoles.map((role) => role.project_id);
-
-    // Find projects using the extracted project_ids
-    const projects = await this.prisma.project.findMany({
-      where: {
-        project_id: {
-          in: projectIds,
-        },
-      },
-    });
-
-    return projects;
-  }
-
-  async getProjectUsers(userId: number, projectId: number) {
-    const userRole = await this.prisma.user_project_role.findUnique({
-      where: {
-        user_id_project_id: {
-          user_id: userId,
-          project_id: projectId,
-        },
-      },
-    });
-
-    if (!userRole) {
-      throw new Error("Usuário não têm permissão nesse projeto.");
-    }
-
-    const projectUsers = await this.prisma.user_project_role.findMany({
-      where: {
-        project_id: projectId,
-      },
-      select: {
-        user: {
-          select: {
-            user_id: true,
-            full_name: true,
-            email: true,
+  ): Promise<user_project_role> {
+    // if user has manager privileges
+    // improve that later
+    if (await this.validateUser(adminUserId, projectId, ["ADMIN", "MANAGER"])) {
+      if (
+        !!(await this.prisma.user.findUnique({
+          where: { user_id: contributorId },
+        }))
+      ) {
+        return await this.prisma.user_project_role.update({
+          where: {
+            user_id_project_id: {
+              user_id: contributorId,
+              project_id: projectId,
+            },
           },
-        },
-        role: true,
-        hours_per_week: true,
-      },
-    });
+          data: {
+            role: newContributorRole,
+            hours_per_week: newHoursPerWeek,
+          },
+        });
+      } else {
+        throw new NotFoundError("user");
+      }
+    } else {
+      throw new AuthorizationError();
+    }
+  }
 
-    return projectUsers;
+  async getUserProjects(userId: number): Promise<project[]> {
+    if (await this.prisma.user.findUnique({ where: { user_id: userId } })) {
+      // get user user_project_roles records
+      const userProjects = await this.prisma.user_project_role.findMany({
+        where: {
+          user_id: userId,
+        },
+        select: {
+          project: true,
+        },
+      });
+
+      // Extract projects from the user_project_role records
+      return userProjects.map((userRole) => userRole.project);
+    } else {
+      throw new AuthorizationError();
+    }
+  }
+
+  async getProjectUsers(userId: number, projectId: number): Promise<any> {
+    if (await this.validateUser(userId, projectId)) {
+      const projectUsers = await this.prisma.user_project_role.findMany({
+        where: {
+          project_id: projectId,
+        },
+        select: {
+          user: {
+            select: {
+              user_id: true,
+              full_name: true,
+              email: true,
+            },
+          },
+          role: true,
+          hours_per_week: true,
+        },
+      });
+
+      return projectUsers;
+    } else {
+      throw new AuthorizationError();
+    }
   }
 }
-
-export default ProjectService;

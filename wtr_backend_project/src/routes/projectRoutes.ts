@@ -12,7 +12,7 @@
  *     summary: Get the projects of the authenticated user
  *     tags: [Projects]
  *     security:
- *       - CookieAuth: [] 
+ *       - CookieAuth: []
  *     responses:
  *       '200':
  *         description: Successfully retrieved the user's projects.
@@ -27,7 +27,7 @@
  *     summary: Create a new project
  *     tags: [Projects]
  *     security:
- *       - CookieAuth: [] 
+ *       - CookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -55,7 +55,7 @@
  *     summary: Add a user to a project
  *     tags: [Projects]
  *     security:
- *       - CookieAuth: [] 
+ *       - CookieAuth: []
  *     parameters:
  *       - in: path
  *         name: project_id
@@ -96,7 +96,7 @@
  *     summary: Get the users of a project
  *     tags: [Projects]
  *     security:
- *       - CookieAuth: [] 
+ *       - CookieAuth: []
  *     parameters:
  *       - in: path
  *         name: project_id
@@ -118,7 +118,7 @@
  *     summary: Update a user's role in a project
  *     tags: [Projects]
  *     security:
- *       - CookieAuth: [] 
+ *       - CookieAuth: []
  *     parameters:
  *       - in: path
  *         name: project_id
@@ -153,20 +153,15 @@
  */
 
 import { Router } from "express";
-import authorize from "../middlewares/authorize";
 import ProjectController from "../controllers/ProjectController";
 
 const router = Router();
 const projectController = new ProjectController();
 
-router.get("/", authorize, projectController.getUserProjects);
-router.post("/", authorize, projectController.createNewProject);
-router.post(
-  "/:project_id/users",
-  authorize,
-  projectController.addUserToProject
-);
-router.get("/:project_id/users", authorize, projectController.getProjectUsers);
-router.put("/:project_id/users", authorize, projectController.updateUserRole);
+router.get("/", projectController.getUserProjects);
+router.post("/", projectController.createNewProject);
+router.post("/:project_id/users", projectController.addUserToProject);
+router.get("/:project_id/users", projectController.getProjectUsers);
+router.put("/:project_id/users", projectController.updateUserRole);
 
 export default router;
