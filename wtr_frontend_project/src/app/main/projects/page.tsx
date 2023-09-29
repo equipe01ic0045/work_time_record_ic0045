@@ -1,6 +1,7 @@
 "use client";
 
 import ProjectsTable from "@/components/projects/ProjectsTable";
+import HeaderBox from "@/components/global/HeaderBox";
 import { Box, Button } from "@chakra-ui/react";
 
 export default function Projects() {
@@ -32,17 +33,18 @@ export default function Projects() {
   ];
 
   return (
-    <Box
-      display={"flex"}
-      flexDirection={"column"}
-      alignItems={"start"}
-      justifyContent={"center"}
-      width={"100%"}
-      padding={"2em"}
-      gap={"10em"}
-    >
-      <Button size={"lg"}>+ Novo Projeto</Button>
-      <ProjectsTable projectList={mockDataList} />
+    <Box display={"flex"} flexDirection={"column"} width={"100%"}>
+      <HeaderBox title={`Projetos`} />
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        padding={"2em"}
+        gap={"2em"}
+        alignItems={"start"}
+      >
+        <Button size={"lg"}>+ Novo Projeto</Button>
+        <ProjectsTable projectList={mockDataList} />
+      </Box>
     </Box>
   );
 }

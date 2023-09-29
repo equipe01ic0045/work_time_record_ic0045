@@ -1,4 +1,5 @@
 "use client";
+import HeaderBox from "@/components/global/HeaderBox";
 import TimeRecordsTable from "@/components/time-records/TimeRecordsTable";
 import { Box } from "@chakra-ui/react";
 
@@ -30,16 +31,11 @@ export default function TimeRecords() {
     },
   ];
   return (
-    <Box
-      display={"flex"}
-      flexDirection={"column"}
-      alignItems={"start"}
-      justifyContent={"center"}
-      width={"100%"}
-      padding={"1em"}
-      gap={"10em"}
-    >
-      <TimeRecordsTable projectList={mockDataList} />
+    <Box display={"flex"} flexDirection={"column"} width={"100%"}>
+      <HeaderBox title={`Registros / {usuario}`} />
+      <Box padding={"2em"}>
+        <TimeRecordsTable projectList={mockDataList} />
+      </Box>
     </Box>
   );
 }
