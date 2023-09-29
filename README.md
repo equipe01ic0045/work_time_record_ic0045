@@ -1,4 +1,4 @@
-# WORK TIME RECORD APP
+# PONTO CERTO APP
 
 ### Para iniciar a aplicação é preciso estar dentro dos diretórios
 
@@ -7,18 +7,31 @@
 ## Directory Tree :
 
 ```
-  work_time_record_ic0045/
-  ├── wtr_backend_project/
-  │   └── package.json
-  └── wtr_frontend_project/
-      └── package.json
+ work_time_record_ic0045/
+  wtr_backend_project/
+    docs/
+    src/
+      adapters/
+      controllers/
+      database/
+        migrations/
+        entities/
+        repositories/
+      services/
+      helpers/
+      routes/
+      interfaces/
+    package.json
+  wtr_frontend_project/
+    package.json
 ```
 
 ## Artefatos :
 
-   *  [Analise de Requisitos](https://docs.google.com/document/d/1mXYC3zBO63o6MekNcnyizNgUP-bpV0ZYQeMNVkhROD0/edit)
+   *  [Analise de Requisitos](https://docs.google.com/document/d/1JJkzh4c4Oqv1635J20rD4OgUo484GBmA/edit?usp=sharing&ouid=116266237238255223813&rtpof=true&sd=true)
    *  [Modelagem Banco de Dados](https://dbdiagram.io/d/64dc27ec02bd1c4a5ed570ac)
    *  [Design / Prototipo](https://www.figma.com/file/aXFWoeRPZ78SR0bgWpYo1E/work-tracker?type=design&node-id=0-1&mode=design&t=sL47pic2KwJpMmyp-0)
+   *  [Arquitetura](https://excalidraw.com/#room=9b10a0f58671a9442ae3,AU1ISgoBRiTHiPKXDcfmKg)
 
 ## Tecnologias e Ferramentas de Desenvolvimento :
 

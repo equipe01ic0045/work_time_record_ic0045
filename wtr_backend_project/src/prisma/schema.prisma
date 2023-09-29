@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  user_id            Int                 @id @default(autoincrement())
+  full_name          String
+  password           String
+  email              String              @unique
+  created_at         DateTime            @default(now())
+  updated_at         DateTime            @default(now())
+  user_project_roles user_project_role[]
+  time_records       time_record[]
+}
+
+model project {
+  project_id         Int                 @id @default(autoincrement())
+  project_name       String              @unique
+  created_at         DateTime            @default(now())
+  updated_at         DateTime            @default(now())
+  user_project_roles user_project_role[]
+  time_records       time_record[]
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  USER
+}
+
+model user_project_role {
+  user_project_role_id Int      @id @default(autoincrement())
+  user_id              Int
+  project_id           Int
+  role                 UserRole
+  hours_per_week       Int
+  created_at           DateTime @default(now())
+  updated_at           DateTime @default(now())
+  user                 user     @relation(fields: [user_id], references: [user_id])
+  project              project  @relation(fields: [project_id], references: [project_id])
+
+  @@unique([user_id, project_id]) // a single user record per project
+}
+
+model time_record {
+  time_record_id      Int                @id @default(autoincrement())
+  user_id             Int
+  project_id          Int
+  check_in_timestamp  DateTime           @default(now())
+  check_out_timestamp DateTime?
+  user_message        String?
+  location            String?
+  created_at          DateTime           @default(now())
+  user                user               @relation(fields: [user_id], references: [user_id])
+  project             project            @relation(fields: [project_id], references: [project_id])
+  absense_documents   absense_document[]
+}
+
+model absense_document {
+  absense_document_id Int         @id @default(autoincrement())
+  time_record_id      Int
+  document_file       Bytes
+  time_record         time_record @relation(fields: [absense_document_id], references: [time_record_id])
+}

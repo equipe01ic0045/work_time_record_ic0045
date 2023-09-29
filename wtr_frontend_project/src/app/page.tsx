@@ -1,17 +1,9 @@
-'use client'
-import { Text } from "@chakra-ui/react"
+// 'use client'
+import LoginComponent from "@/components/login/loginComponent"
 // page ui generated from the url
 
-export default function Page() {
+export default function Login() {
     return (
-    <Text 
-    fontSize={"6xl"}
-    textAlign={"center"}
-    justifyContent={"center"}
-    width={"100%"}
-    height={"auto"}
-    >
-      Bem-Vindo ao Ponto Certo!
-      </Text>
+    <LoginComponent />
     )
   }
