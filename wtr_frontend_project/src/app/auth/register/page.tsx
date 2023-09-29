@@ -1,5 +1,5 @@
 'use client';
-import UserService from "@/services/userService";
+import UserService from "@/services/UserService";
 import { Box, Button, Text, Input, useToast } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

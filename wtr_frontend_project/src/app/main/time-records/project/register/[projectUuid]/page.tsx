@@ -1,5 +1,5 @@
 'use client';
-import RecordCard from "@/components/time-records/recordCardComponent";
+import RecordCard from "@/components/time-records/RecordCard";
 import { CalendarIcon, Icon } from "@chakra-ui/icons";
 import { Box, Heading, Text } from "@chakra-ui/react";
 

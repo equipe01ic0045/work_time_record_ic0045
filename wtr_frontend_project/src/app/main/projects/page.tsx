@@ -1,41 +1,35 @@
-'use client';
+"use client";
 
-import ProjectsTableComponent from "@/components/projects/projectsTableComponent";
+import ProjectsTable from "@/components/projects/ProjectsTable";
 import { Box, Button } from "@chakra-ui/react";
 
-// `app/page.tsx` is the UI for the `/` URL
 export default function Projects() {
-
   const mockDataList = [
     {
       id: 1,
-      projectName: "Projeto 01",
-      manager: "Luiz Silva",
-      company: "LATAM",
-      users: 58
+      projectName: "projeto-legal-01",
+      owner: "infra@latam.com.br",
+      users: 58,
     },
     {
       id: 2,
-      projectName: "Projeto 02",
-      manager: "Carla Silva",
-      company: "IFood",
-      users: 128
+      projectName: "projeto-legal-02",
+      owner: "projetos@ifood.com",
+      users: 128,
     },
     {
       id: 3,
-      projectName: "Projeto 03",
-      manager: "Fabio Silva",
-      company: "Casas Bahia",
-      users: 128
+      projectName: "projeto-legal-03",
+      owner: "infra@casasbahia.com.br",
+      users: 128,
     },
     {
       id: 4,
-      projectName: "Projeto 04",
-      manager: "Ana Silva",
-      company: "Redemix",
-      users: 128
-    }
-  ]
+      projectName: "projeto-legal-04",
+      owner: "admin@redemix.com.br",
+      users: 128,
+    },
+  ];
 
   return (
     <Box
@@ -47,11 +41,8 @@ export default function Projects() {
       padding={"2em"}
       gap={"10em"}
     >
-      <Button size={"lg"}
-      > 
-        + NEW PROJECT
-        </Button>
-      <ProjectsTableComponent projectList={mockDataList}></ProjectsTableComponent>
+      <Button size={"lg"}>+ Novo Projeto</Button>
+      <ProjectsTable projectList={mockDataList} />
     </Box>
-  )
+  );
 }

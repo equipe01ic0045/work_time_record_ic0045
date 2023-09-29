@@ -1,6 +1,6 @@
 'use client';
-import TimeRecordRow from "@/components/time-records/timeRecordRowComponent";
-import timeRecordsProvider, { TimeRecord } from "@/providers/timeRecordsProvider";
+import TimeRecordRow from "@/components/time-records/TimeRecordRow";
+import timeRecordsProvider, { TimeRecord } from "@/providers/TimeRecordsProvider";
 import { CalendarIcon, Search2Icon } from "@chakra-ui/icons";
 import { Box, Button, Flex, HStack, Heading, IconButton, Input, Spacer, Table, TableContainer, Tbody, Th, Thead, Tr } from "@chakra-ui/react";
 import dayjs from "dayjs";

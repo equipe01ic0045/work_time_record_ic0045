@@ -1,9 +1,4 @@
-// 'use client'
-import LoginComponent from "@/components/login/loginComponent"
-// page ui generated from the url
-
-export default function Login() {
-    return (
-    <LoginComponent />
-    )
-  }
+import { redirect } from 'next/navigation';
+export default function RootPage() {
+    redirect('/main/projects');
+}
