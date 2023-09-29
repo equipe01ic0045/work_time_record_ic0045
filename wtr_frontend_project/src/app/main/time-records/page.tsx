@@ -1,53 +1,41 @@
-'use client';
-
-import TimeRecordsTableComponent from "@/components/time-records/timeRecordsProjectsTableComponent";
+"use client";
+import HeaderBox from "@/components/global/HeaderBox";
+import TimeRecordsTable from "@/components/time-records/TimeRecordsTable";
 import { Box } from "@chakra-ui/react";
 
-// `app/page.tsx` is the UI for the `/` URL
-export default function Page() {
-
-const mockDataList = [
+export default function TimeRecords() {
+  const mockDataList = [
     {
-        id: 1,
-        projectName: "Projeto 01",
-        manager: "Luiz Silva",
-        company: "LATAM",
-        users: 58
+      id: 1,
+      projectName: "projeto-legal-01",
+      owner: "infra@latam.com.br",
+      users: 58,
     },
     {
-        id: 2,
-        projectName: "Projeto 02",
-        manager: "Carla Silva",
-        company: "IFood",
-        users: 128
+      id: 2,
+      projectName: "projeto-legal-02",
+      owner: "projetos@ifood.com",
+      users: 128,
     },
     {
-        id: 3,
-        projectName: "Projeto 03",
-        manager: "Fabio Silva",
-        company: "Casas Bahia",
-        users: 128
+      id: 3,
+      projectName: "projeto-legal-03",
+      owner: "infra@casasbahia.com.br",
+      users: 128,
     },
     {
-        id: 4,
-        projectName: "Projeto 04",
-        manager: "Ana Silva",
-        company: "Redemix",
-        users: 128
-    }
-]
-
-return (
-    <Box
-        display={"flex"}
-        flexDirection={"column"}
-        alignItems={"start"}
-        justifyContent={"center"}
-        width={"100%"}
-        padding={"1em"}
-        gap={"10em"}
-    >
-        <TimeRecordsTableComponent projectList={mockDataList}></TimeRecordsTableComponent>
+      id: 4,
+      projectName: "projeto-legal-04",
+      owner: "admin@redemix.com.br",
+      users: 128,
+    },
+  ];
+  return (
+    <Box display={"flex"} flexDirection={"column"} width={"100%"}>
+      <HeaderBox title={`Registros / {usuario}`} />
+      <Box padding={"2em"}>
+        <TimeRecordsTable projectList={mockDataList} />
+      </Box>
     </Box>
-)
+  );
 }
