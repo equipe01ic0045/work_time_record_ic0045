@@ -6,10 +6,19 @@ import swaggerApp from "./swagger";
 import handleError from "./middlewares/handleError";
 
 const app = express();
-app.use(cors());
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL ? process.env.CLIENT_URL : "http://localhost:4400",
+    methods: ["GET", "PUT", "POST", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    preflightContinue: false,
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(express.json());
-app.use(router,handleError);
+app.use(router, handleError);
 app.use("/swagger", swaggerApp);
 
 export { app };

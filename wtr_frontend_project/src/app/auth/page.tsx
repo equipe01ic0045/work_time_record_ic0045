@@ -27,7 +27,6 @@ export default function LoginComponent() {
         router.push("/main/projects");
       })
       .catch((error) => {
-        console.log(error);
         toast({
           title: "login invalido",
           description: "",
