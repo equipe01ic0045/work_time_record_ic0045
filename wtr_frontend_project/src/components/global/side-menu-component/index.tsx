@@ -9,27 +9,15 @@ export default function SideMenuComponent() {
             id: 1,
             name: "Projects",
             link: "projects"
-        }, 
-        {
+        }, {
             id: 2,
             name: "Time Records",
             link: "time-records"
-        }, 
-        {
+        }, {
             id: 3,
             name: "Justifications",
             link: "justifications"
-        }, 
-        {
-            id: 4,
-            name: "Adm Projects",
-            link: "adm-projects"
-        },
-        {
-            id: 5,
-            name: "Adm Project",
-            link: "adm-project"
-        },
+        }
     ]
     return (
         <Box
