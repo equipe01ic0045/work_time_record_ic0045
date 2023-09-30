@@ -1,6 +1,6 @@
 import AuthorizedRequest from "../types/interfaces/AuthorizedRequest";
 import { NextFunction, Response } from "express";
-import { timeRecordService } from "../prisma/services";
+import { timeRecordService } from "../services";
 import ResourceCreatedResponse from "../types/responses/ResourceCreatedResponse";
 import ResourceUpdatedResponse from "../types/responses/ResourceUpdatedResponse";
 
@@ -19,13 +19,13 @@ export default class TimeRecordController {
         ? checkInTimestamp
         : new Date(); // if checkin timestamp is invalid, new date
 
-      await timeRecordService.checkInTimeRecord(
-        req.user!.userId,
-        parseInt(project_id),
-        checkInTimestamp,
-        user_message,
-        location
-      );
+      await timeRecordService.checkInTimeRecord({
+        userId:req.user!.userId,
+        projectId: parseInt(project_id),
+        checkInTimestamp: checkInTimestamp,
+        userMessage: user_message,
+        location: location
+      });
       new ResourceCreatedResponse().send(res)
     } catch (error) {
       next(error);
@@ -46,11 +46,11 @@ export default class TimeRecordController {
         ? checkOutTimestamp
         : new Date(); // if checkout timestamp is invalid, new date
 
-      await timeRecordService.checkOutTimeRecord(
-        req.user!.userId,
-        parseInt(project_id),
+      await timeRecordService.checkOutTimeRecord({
+        userId: req.user!.userId,
+        projectId: parseInt(project_id),
         checkOutTimestamp
-      );
+      });
       new ResourceUpdatedResponse().send(res)
     } catch (error) {
       next(error);

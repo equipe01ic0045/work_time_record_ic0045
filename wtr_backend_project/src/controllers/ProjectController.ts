@@ -1,6 +1,6 @@
 import AuthorizedRequest from "../types/interfaces/AuthorizedRequest";
 import { NextFunction, Response } from "express";
-import { projectService } from "../prisma/services";
+import { projectService } from "../services";
 import { project } from "@prisma/client";
 import ResourceCreatedResponse from "../types/responses/ResourceCreatedResponse";
 import ResourceUpdatedResponse from "../types/responses/ResourceUpdatedResponse";
@@ -13,8 +13,8 @@ export default class ProjectController {
     next: NextFunction
   ) {
     try {
-      const { project_name } = req.body;
-      await projectService.createProject(project_name, req.user!.userId);
+      const { projectName, hoursPerWeek } = req.body;
+      await projectService.createProject({ projectName, contributorId: +req.user!.userId, hoursPerWeek });
       new ResourceCreatedResponse().send(res);
     } catch (error) {
       next(error);
@@ -29,13 +29,13 @@ export default class ProjectController {
     try {
       const { project_id } = req.params;
       const { user_id, user_role, user_hours_per_week } = req.body;
-      await projectService.addUserToProject(
-        parseInt(project_id),
-        req.user!.userId,
-        user_id,
-        user_role,
-        user_hours_per_week
-      );
+      await projectService.addUserToProject({
+        projectId: parseInt(project_id),
+        adminUserId: req.user!.userId,
+        contributorId: user_id,
+        contributorRole: user_role,
+        contributorHoursPerWeek: user_hours_per_week
+      });
       new ResourceCreatedResponse().send(res);
     } catch (error) {
       next(error);
@@ -50,13 +50,13 @@ export default class ProjectController {
     try {
       const { project_id } = req.params;
       const { user_id, new_role, new_hours_per_week } = req.body;
-      await projectService.updateProjectUserRole(
-        parseInt(project_id),
-        req.user!.userId,
-        user_id,
-        new_role,
-        new_hours_per_week
-      );
+      await projectService.updateProjectUserRole({
+        projectId: parseInt(project_id),
+        adminId: req.user!.userId,
+        contributorId: user_id,
+        newContributorRole: new_role,
+        newHoursPerWeek: new_hours_per_week
+      });
       new ResourceUpdatedResponse().send(res);
     } catch (error) {
       next(error);

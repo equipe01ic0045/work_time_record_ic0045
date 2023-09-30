@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import PrismaClientSingleton from "../client";
+import PrismaClientSingleton from "../prisma/client";
 
 export default abstract class BaseService {
   protected prisma: PrismaClient;
