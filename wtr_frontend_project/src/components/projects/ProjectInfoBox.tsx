@@ -136,14 +136,18 @@ export default function ProjectInfoBox({ project }: any) {
             alignItems={"center"}
             justifyContent={"space-between"}
           >
-            <Button
-              textColor={"white"}
-              gap={"0.5em"}
-              background={"blueviolet"}
-              width={"30%"}
-            >
-              {svgReports}Relatorio
-            </Button>
+            <Link 
+              width={"30%"} 
+              href={`/main/projects/info/${project.id}/reports`}>
+                <Button
+                  gap={"0.5em"} 
+                  paddingX={'30%'}
+                  textColor={"white"}
+                  background={"blueviolet"}
+                >
+                  {svgReports}Relatorios
+                </Button>
+            </Link>
             <Button
               textColor={"white"}
               gap={"0.5em"}
