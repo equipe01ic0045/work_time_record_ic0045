@@ -1,4 +1,4 @@
-import { Td, Tr } from "@chakra-ui/react";
+import { Button, Td, Tr } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -18,14 +18,16 @@ export default function ReportsTableRow({ record }: { record: TimeRecord }) {
 
   return (
     <Tr bgColor={"#F0EFFF"}>
-      <Td>{checkInDate.toLocaleString()}</Td>
-      <Td>{checkOutDate.toLocaleString()}</Td>
-      <Td>{record.description}</Td>
+      <Td>Maria</Td>
+      <Td>00:00 Horas</Td>
+      <Td>maria@gmail.com</Td>
       <Td 
         // display={"flex"}
         // flexDirection={"column"}
         // alignItems={"center"}
-      ><BsFileEarmarkArrowUpFill color="#4D47C3" size={25}/></Td>
+      >
+        <Button><BsFileEarmarkArrowUpFill color="#4D47C3" size={25}/></Button>
+      </Td>
     </Tr>
   );
 }
