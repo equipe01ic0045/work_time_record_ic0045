@@ -1,71 +1,77 @@
-"use client";
-import HeaderBox from "@/components/global/HeaderBox";
+'use client';
 import TimeRecordRow from "@/components/time-records/TimeRecordRow";
-import timeRecordsProvider, {
-  TimeRecord,
-} from "@/providers/TimeRecordsProvider";
+import TimeRecordService from "@/services/TimeRecordService";
+import TimeRecord from "@/types/TimeRecord";
 import { CalendarIcon, Search2Icon } from "@chakra-ui/icons";
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Heading,
-  IconButton,
-  Input,
-  Spacer,
-  Table,
-  TableContainer,
-  Tbody,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, HStack, Heading, IconButton, Input, Spacer, Table, TableContainer, Tbody, Th, Thead, Tr, useToast } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
 export default function Page({ params }: any) {
   const [timeRecords, setTimeRecords] = useState<TimeRecord[]>([]);
-  const [fromDate, setFromDate] = useState<string>(
-    dayjs().startOf("month").format("YYYY-MM-DD")
-  );
-  const [toDate, setToDate] = useState<string>(
-    dayjs().endOf("month").format("YYYY-MM-DD")
-  );
+  const [fromDate, setFromDate] = useState<string>(dayjs().startOf('month').format('YYYY-MM-DD'));
+  const [toDate, setToDate] = useState<string>(dayjs().endOf('month').format('YYYY-MM-DD'));
   const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
+  const toast = useToast();
+
+  const timeRecordService = new TimeRecordService();
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await timeRecordsProvider.getTimeRecords(params.projectUuid);
+      try {
+        const data = await timeRecordService.getTimeRecords(params.projectId);
+        setTimeRecords(data.results);
+      } catch (e) {
+        toast({
+          title: "Erro ao carregar registros",
+          description: "Não foi possível carregar os registros do projeto.",
+          duration: 3000,
+          status: "error",
+          isClosable: true,
+          position: "top-right",
+        });
 
-      setTimeRecords(data.results);
+        setTimeRecords([
+          {
+            "time_record_id": 1,
+            "check_in_timestamp": "2021-08-01T02:00:00.000Z",
+            "check_out_timestamp": "2021-08-01T04:00:00.000Z",
+            "documents": [],
+            "description": "Dados para testes (caso dê erro)",
+            "user_message": "2",
+            "location": "string"
+          }
+        ]);
+      }
+
     };
 
     fetchData();
-  }, [params.projectUuid]);
+  }, [params.projectId]);
 
   const filterByDate = async () => {
     setIsLoadingSearch(true);
 
-    const data = await timeRecordsProvider.getTimeRecords(
-      params.projectUuid,
-      fromDate,
-      toDate
-    );
+    const data = await timeRecordService.getTimeRecords(params.projectId, fromDate, toDate);
 
     setTimeRecords(data.results);
     setIsLoadingSearch(false);
-  };
+  }
 
   return (
     <Box
       display={"flex"}
       flexDirection={"column"}
       alignItems={"center"}
+      // justifyContent={"center"}
       width={"100%"}
+      // padding={"2em"}
       gap={"5em"}
     >
-      <HeaderBox title="Registros / {usuario} / {projeto}" />
+
+      <Box backgroundColor="#F0EFFF" w="100%" noOfLines={1} padding="4em" fontWeight="light">
+        <Heading textColor="#4D47C3" as="h1" size="2xl" >{params.projectId}</Heading>
+      </Box>
 
       <TableContainer>
         <Flex marginY="30px" minWidth="fit-content" alignItems="center" gap="2">
@@ -88,7 +94,7 @@ export default function Page({ params }: any) {
                 type="date"
                 width="min-content"
                 value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
+                onChange={e => setToDate(e.target.value)}
               />
               <IconButton
                 bg="#4D47C3"
@@ -100,15 +106,7 @@ export default function Page({ params }: any) {
                 onClick={filterByDate}
               />
             </HStack>
-            <Button
-              size="md"
-              fontSize="xs"
-              bg="#4D47C3"
-              colorScheme="#4D47C3"
-              textTransform={"uppercase"}
-            >
-              Gerar Relatório
-            </Button>
+            <Button size="md" fontSize="xs" bg="#4D47C3" colorScheme="#4D47C3" textTransform={"uppercase"}>Gerar Relatório</Button>
           </HStack>
         </Flex>
 
@@ -123,13 +121,10 @@ export default function Page({ params }: any) {
             </Tr>
           </Thead>
           <Tbody>
-            {Array.isArray(timeRecords) &&
-              timeRecords.map((record) => (
-                <TimeRecordRow key={record.time_record_id} record={record} />
-              ))}
+            {Array.isArray(timeRecords) && timeRecords.map((record) => <TimeRecordRow key={record.time_record_id} record={record} />)}
           </Tbody>
         </Table>
       </TableContainer>
     </Box>
-  );
+  )
 }
