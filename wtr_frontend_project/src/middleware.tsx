@@ -9,7 +9,6 @@ export default function middleware(
   if (cookies) {
     return NextResponse.next();
   } else {
-    return NextResponse.next();
     return NextResponse.redirect("http://localhost:4400/auth");
   }
 }
