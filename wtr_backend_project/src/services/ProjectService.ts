@@ -6,11 +6,13 @@ import NotFoundError from "../types/errors/NotFoundError";
 import { ProjectRespository } from "../repositories/ProjectRepository";
 import { AddUserToProjectRequestDTO, CreateProjectRequestDTO, UpdateUserProjectRoleRequestDTO } from "../types/dtos/ProjectsDTO";
 import { UserRepository } from "../repositories/UserRepository";
+import ValidationError from "../types/errors/ValidationError";
 
 export default class ProjectService extends AuthorizedService {
   private projectRepository: ProjectRespository;
   private userRepository: UserRepository; 
   private readonly DEFAULT_HOURS_PER_WEEK = 40;
+  private readonly VALID_PROJECT_NAME_FORMAT = /^[a-z][a-z0-9_]*$/i
   
   constructor(){
     super();
@@ -18,9 +20,14 @@ export default class ProjectService extends AuthorizedService {
     this.userRepository =  new UserRepository();
   }
 
+  isValidProjectName(projectName: string) {
+    return this.VALID_PROJECT_NAME_FORMAT.test(projectName);
+  }
+
   async createProject(data: CreateProjectRequestDTO): Promise<project> {
 
     const foundProject = await this.projectRepository.findProjectByProjectName(data.projectName);
+    if (!this.isValidProjectName(data.projectName)) { throw new ValidationError("project name not valid"); }
     
     if (!foundProject) {
       const newProject = await this.projectRepository.createProject(
