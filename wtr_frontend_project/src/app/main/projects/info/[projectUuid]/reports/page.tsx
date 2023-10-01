@@ -1,6 +1,6 @@
 "use client";
 import HeaderBox from "@/components/global/HeaderBox";
-import TimeRecordRow from "@/components/time-records/TimeRecordRow";
+import ReportsTableRow from "@/components/projects/ReportsTableRow";
 import timeRecordsProvider, {
   TimeRecord,
 } from "@/providers/TimeRecordsProvider";
@@ -67,13 +67,13 @@ export default function Page({ params }: any) {
       width={"100%"}
       gap={"5em"}
     >
-      <HeaderBox title="Registros / {usuario} / {projeto}" />
+      <HeaderBox title="Projetos / {projeto} / Relatórios" />
 
       <TableContainer>
         <Flex marginY="30px" minWidth="fit-content" alignItems="center" gap="2">
           <HStack>
             <CalendarIcon boxSize={8} />
-            <Heading as="h2">Lista de Registros</Heading>
+            <Heading as="h2">Lista de Relatórios</Heading>
           </HStack>
           <Spacer />
           <HStack spacing={4}>
@@ -110,7 +110,7 @@ export default function Page({ params }: any) {
               textTransform={"uppercase"}
               gap={"1em"}
             >
-              Gerar Relatório  <BsFileEarmarkArrowUpFill size={20}/>
+              Gerar Relatório do Projeto<BsFileEarmarkArrowUpFill size={20}/>
             </Button>
           </HStack>
         </Flex>
@@ -118,17 +118,16 @@ export default function Page({ params }: any) {
         <Table>
           <Thead bg={"#4D47C3"}>
             <Tr>
-              <Th textColor={"white"}>Check-in</Th>
-              <Th textColor={"white"}>Check-out</Th>
-              <Th textColor={"white"}>Documentos</Th>
-              <Th textColor={"white"}>Descrição</Th>
-              <Th textColor={"white"}>Tempo registrado</Th>
+              <Th textColor={"white"}>Colaborador</Th>
+              <Th textColor={"white"}>Diferencial de tempo</Th>
+              <Th textColor={"white"}>Email</Th>
+              <Th textColor={"white"}>Gerar relatório de usuário</Th>
             </Tr>
           </Thead>
           <Tbody>
             {Array.isArray(timeRecords) &&
               timeRecords.map((record) => (
-                <TimeRecordRow key={record.time_record_id} record={record} />
+                <ReportsTableRow key={record.time_record_id} record={record} />
               ))}
           </Tbody>
         </Table>
