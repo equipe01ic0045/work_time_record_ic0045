@@ -14,6 +14,6 @@ export default function Test() {
     }
 
  return (
- <><GerenciarColaborador /></>
+ <><GerenciarColaborador project={mockDataList}/></>
  )
 }

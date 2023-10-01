@@ -12,11 +12,12 @@ import {
   Tr,
   VStack,
   Text,
+  Link,
 } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faClock, faProjectDiagram, faBriefcase  } from '@fortawesome/free-solid-svg-icons';
 
-export default function GerenciarColaborador() {
+export default function GerenciarColaborador({ project }: any) {
   return (
     <ChakraProvider>
       <Box display="flex" flexDirection="column" height="100vh" position="relative">
@@ -29,35 +30,6 @@ export default function GerenciarColaborador() {
             </Text>
           </Center>
         </Box>
-
-        {/* Box no canto esquerdo */}
-        <Box
-            width="25vh"
-            height="100%" 
-            bg="#A7A3FF"
-            p={4}
-            position="absolute"
-            top={0} 
-            left={0} 
-            zIndex={1}
-        >
-            {/* Botão Projects */}
-            <Box mt={4}>
-                <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3" marginBottom={2} width="90%">
-                    <FontAwesomeIcon icon={faBriefcase} style={{ marginRight: '4px', color: '#F0EFFF' }} />
-                        Projects
-                </Button>
-            </Box>
-
-            { /* Botão Time Records */}
-            <Box>
-                <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3" marginBottom={2} width="90%">
-                    <FontAwesomeIcon icon={faClock} style={{ marginRight: '4px', color: '#F0EFFF' }} />
-                        Time Records
-                </Button>
-            </Box>
-        </Box>
-       
 
         {/* Box no meio da página */}
         <Box
@@ -111,7 +83,13 @@ export default function GerenciarColaborador() {
                     <Tbody>
                     {/* Linhas da tabela */}
                     <Tr>
-                        <Td>Maria da Silva</Td>
+                        <Td>
+                            <Link 
+                                width={"30%"} 
+                                href={`/main/projects/info/${project.id}/gerenciar-colaborador/relatorio-colaborador`}>
+                                    Maria da Silva
+                            </Link>
+                        </Td>
                         <Td>-01:00 HOURS</Td>
                         <Td>email@example.com</Td>
                         <Td>
