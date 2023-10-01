@@ -42,7 +42,7 @@ export default function TimeRecordsTable({ projectList }: any) {
                   </Link>
                 </Td>
                 <Td>
-                  <Link href={`time-records/project/info/${project.id}`}>
+                  <Link href={`time-records/project/${project.id}/info`}>
                     <Button>
                       <Icon width={"2em"} height={"2em"} as={FiFileText} />
                     </Button>

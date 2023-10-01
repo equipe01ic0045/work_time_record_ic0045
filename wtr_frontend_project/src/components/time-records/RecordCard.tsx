@@ -1,13 +1,10 @@
 'use client';
 
-import { Button, Box, Text, useToast, Card, CardBody, CardHeader, Heading, IconButton, Textarea } from "@chakra-ui/react";
+import { Button, Box, Text, useToast, Card } from "@chakra-ui/react";
 import { useState } from "react";
-import DocumentRow from "./documentRow";
-import { AddIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/navigation";
 import Clock from "./Clock";
 import TimeRecordData from "@/types/TimeRecordData";
-import RecordDocument from "@/types/RecordDocument";
 import TimeRecordService from "@/services/TimeRecordService";
 
 export default function RecordCard(props: { projectId: number }) {
@@ -31,8 +28,6 @@ export default function RecordCard(props: { projectId: number }) {
     description: '',
     projectId: props.projectId,
   });
-
-  const [documents, setDocuments] = useState<RecordDocument[]>([]);
 
   async function getLocation() {
     const coordinates = await new Promise<GeolocationCoordinates>((resolve, reject) => {
@@ -65,7 +60,7 @@ export default function RecordCard(props: { projectId: number }) {
   async function newRecordHandler() {
     const location = await getLocation();
 
-    const record = { ...newRecord, date: new Date(), documents, location };
+    const record = { ...newRecord, date: new Date(), location };
     setRecord(record);
 
     try {
@@ -94,88 +89,32 @@ export default function RecordCard(props: { projectId: number }) {
     }
   }
 
-  function onSelectFileOnIndex(index: number) {
-    return (data: RecordDocument) => {
-      documents[index] = data;
-      setDocuments(
-        documents.map((doc, i) => i === index ? data : doc)
-      );
-    }
-  }
-
-  function removeDocumentRow(index: number) {
-    return () => {
-      const cloned = [...documents];
-      cloned.splice(index, 1);
-      setDocuments(cloned);
-    }
-  }
-
-  function addDocument() {
-    setDocuments([...documents, { file: null, description: '' }]);
-  }
-
   return (
-    <Box
+    <Card
       display={"flex"}
       flexDirection={"column"}
       alignItems={"center"}
       justifyContent={"center"}
-      width={"50%"}
-      height={"50%"}
-      minW="300px"
-      // background={"blueviolet"}
       borderRadius={"1em"}
+      padding={20}
+      margin={10}
       gap={"2em"}
+      variant={"filled"}
     >
       {iconUser}
+      <Text fontSize={"md"}>
+        {newRecord.date.toLocaleDateString()}
+      </Text>
       <Clock />
       <Button
         onClick={newRecordHandler}
         minHeight={"50px"}
         background={"blueviolet"}
         color={"white"}
+        colorScheme="blackAlpha"
       >
         Efetuar registro de Tempo
       </Button>
-      <Text fontSize={"md"}>
-        {newRecord.date.toLocaleDateString()}
-      </Text>
-
-      <Card marginY={5} variant={"filled"} w="100%">
-        <CardHeader display="flex" justifyContent={"space-between"}>
-          <Heading as="h2" size={"lg"}>Lista de Documentos</Heading>
-          <IconButton bg={"white"} aria-label="Adicionar" icon={<AddIcon />} onClick={addDocument} />
-        </CardHeader>
-        <CardBody>
-          {documents.map((row, index) => (
-            <DocumentRow
-              description={row.description}
-              file={row.file}
-              handleRemove={removeDocumentRow(index)}
-              key={index}
-              onInputChange={onSelectFileOnIndex(index)}
-            />
-          ))}
-        </CardBody>
-      </Card>
-
-      <Card marginY={5} variant={"filled"} w="100%">
-        <CardHeader>
-          <Heading aria-label="description" as="h2" size={"lg"}>Descrição</Heading>
-        </CardHeader>
-        <CardBody>
-          <Textarea
-            aria-labelledby="description"
-            variant="filled"
-            bg="white"
-            _hover={{ bg: "white" }}
-            minHeight={100}
-            value={newRecord.description}
-            onChange={(e) => setRecord({ ...newRecord, description: e.target.value })}
-          />
-        </CardBody>
-      </Card>
-    </Box>
+    </Card>
   );
 }

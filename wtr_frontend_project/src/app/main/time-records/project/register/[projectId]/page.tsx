@@ -1,39 +1,22 @@
 'use client';
+import HeaderBox from "@/components/global/HeaderBox";
 import RecordCard from "@/components/time-records/RecordCard";
 import { CalendarIcon } from "@chakra-ui/icons";
 import { Box, Heading, Text } from "@chakra-ui/react";
 
 export default function Page({ params }: any) {
   return (
-    <Box
-      display={"flex"}
-      flexDirection={"column"}
-      alignItems={"center"}
-      // justifyContent={"center"}
-      width={"100%"}
-      // padding={"2em"}
-      gap={"2em"}
-    >
-
-      <Box backgroundColor="#F0EFFF" w="100%" noOfLines={1} padding="4em" fontWeight="light">
-        <Heading textColor="#4D47C3" as="h1" size="2xl" >{params.projectId}</Heading>
-      </Box>
+    <Box w={"100%"}>
+      <HeaderBox title={`Projeto ${params.projectId}`} />
       <Box
         display={"flex"}
-        flexDirection={"row"}
-        gap={"1em"}
+        flexDirection={"column"}
         alignItems={"center"}
-        justifyContent={"start"}
         width={"100%"}
-        padding={"1em"}
+        gap={"2em"}
       >
-        <CalendarIcon boxSize={12} />
-        <Text fontSize={"4xl"}>
-          Nome do Projeto
-        </Text>
+        <RecordCard projectId={params.projectId} />
       </Box>
-      <RecordCard projectId={params.projectId} />
-
     </Box>
   )
 }

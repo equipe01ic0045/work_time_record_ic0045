@@ -1,11 +1,13 @@
 'use client';
+import HeaderBox from "@/components/global/HeaderBox";
 import TimeRecordRow from "@/components/time-records/TimeRecordRow";
 import TimeRecordService from "@/services/TimeRecordService";
 import TimeRecord from "@/types/TimeRecord";
-import { CalendarIcon, Search2Icon } from "@chakra-ui/icons";
-import { Box, Button, Flex, HStack, Heading, IconButton, Input, Spacer, Table, TableContainer, Tbody, Th, Thead, Tr, useToast } from "@chakra-ui/react";
+import { Icon, Search2Icon } from "@chakra-ui/icons";
+import { Box, Button, Flex, HStack, Heading, IconButton, Input, Table, TableContainer, Tbody, Th, Thead, Tr, useToast } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { FaRegFileLines } from "react-icons/fa6";
 
 export default function Page({ params }: any) {
   const [timeRecords, setTimeRecords] = useState<TimeRecord[]>([]);
@@ -39,7 +41,8 @@ export default function Page({ params }: any) {
             "documents": [],
             "description": "Dados para testes (caso dê erro)",
             "user_message": "2",
-            "location": "string"
+            "location": "Salvador",
+            "status": "Pendente"
           }
         ]);
       }
@@ -59,43 +62,40 @@ export default function Page({ params }: any) {
   }
 
   return (
-    <Box
-      display={"flex"}
-      flexDirection={"column"}
-      alignItems={"center"}
-      // justifyContent={"center"}
-      width={"100%"}
-      // padding={"2em"}
-      gap={"5em"}
-    >
+    <Box w={"100%"}>
+      <HeaderBox title={`Projeto ${params.projectId}`} />
 
-      <Box backgroundColor="#F0EFFF" w="100%" noOfLines={1} padding="4em" fontWeight="light">
-        <Heading textColor="#4D47C3" as="h1" size="2xl" >{params.projectId}</Heading>
-      </Box>
+      <Box
+        display={"flex"}
+        flexDir={"column"}
+        width={"90%"}
+        mt={20}
+        mx={"auto"}
+        gap={"2em"}
+      >
 
-      <TableContainer>
-        <Flex marginY="30px" minWidth="fit-content" alignItems="center" gap="2">
-          <HStack>
-            <CalendarIcon boxSize={8} />
-            <Heading as="h2">Lista de Registros</Heading>
-          </HStack>
-          <Spacer />
-          <HStack spacing={4}>
-            <HStack bg="#F0EFFF" rounded="md" padding={3} spacing={1}>
+        <HStack>
+          <Icon boxSize="3rem" as={FaRegFileLines} />
+          <Heading as="h1" size="2xl">
+            Registros
+          </Heading>
+        </HStack>
+
+        <TableContainer>
+          <Flex marginY={10} minWidth="fit-content" alignItems="center" gap="2" justifyContent={"space-between"}>
+            <HStack bg="#F0EFFF" rounded="md" padding={3} spacing={2}>
               <Input
                 bg="white"
                 type="date"
                 width="min-content"
                 value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-              />
+                onChange={(e) => setFromDate(e.target.value)} />
               <Input
                 bg="white"
                 type="date"
                 width="min-content"
                 value={toDate}
-                onChange={e => setToDate(e.target.value)}
-              />
+                onChange={e => setToDate(e.target.value)} />
               <IconButton
                 bg="#4D47C3"
                 colorScheme="#4D47C3"
@@ -103,28 +103,36 @@ export default function Page({ params }: any) {
                 icon={<Search2Icon />}
                 size="md"
                 isLoading={isLoadingSearch}
-                onClick={filterByDate}
-              />
+                onClick={filterByDate} />
             </HStack>
-            <Button size="md" fontSize="xs" bg="#4D47C3" colorScheme="#4D47C3" textTransform={"uppercase"}>Gerar Relatório</Button>
-          </HStack>
-        </Flex>
+            <Button
+              size="lg"
+              fontSize="xs"
+              bg="#4D47C3"
+              colorScheme="#4D47C3"
+              textTransform={"uppercase"}
+            >
+              Gerar Relatório
+            </Button>
+          </Flex>
 
-        <Table>
-          <Thead bg={"#4D47C3"}>
-            <Tr>
-              <Th textColor={"white"}>Check-in</Th>
-              <Th textColor={"white"}>Check-out</Th>
-              <Th textColor={"white"}>Documentos</Th>
-              <Th textColor={"white"}>Descrição</Th>
-              <Th textColor={"white"}>Tempo registrado</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {Array.isArray(timeRecords) && timeRecords.map((record) => <TimeRecordRow key={record.time_record_id} record={record} />)}
-          </Tbody>
-        </Table>
-      </TableContainer>
+          <Table>
+            <Thead bg={"#4D47C3"}>
+              <Tr>
+                <Th textColor={"white"}>Check-in</Th>
+                <Th textColor={"white"}>Check-out</Th>
+                <Th textColor={"white"}>Status</Th>
+                <Th textColor={"white"}>Documentos</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {timeRecords.map((record) => (
+                <TimeRecordRow key={record.time_record_id} projectId={params.projectId} record={record} />
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
     </Box>
   )
 }

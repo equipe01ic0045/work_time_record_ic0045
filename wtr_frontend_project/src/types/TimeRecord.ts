@@ -3,8 +3,9 @@ type TimeRecord = {
   check_in_timestamp: string;
   check_out_timestamp: string;
   location: string;
-  description: string;
-  user_message: string;
+  description?: string;
+  user_message?: string;
+  status: string;
   documents: string[];
 }
 
