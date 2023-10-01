@@ -1,7 +1,7 @@
 'use client'
 
 import ProjectInfo from "@/components/projects/projectInfoComponent"
-import GerenciarColaborador from "@/components/gerenciar-colaborador/gerenciarColaboradorComponente"
+import RelatorioColaborador from "@/components/relatorio-colaborador/relatorioColaboradorComponente"
 export default function Test() {
 
     const mockDataList = 
@@ -14,6 +14,6 @@ export default function Test() {
     }
 
  return (
- <><GerenciarColaborador /></>
+ <><RelatorioColaborador /></>
  )
 }
