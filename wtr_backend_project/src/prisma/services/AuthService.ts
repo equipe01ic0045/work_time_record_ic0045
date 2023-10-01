@@ -1,24 +1,53 @@
-import { PrismaClient } from "@prisma/client";
+import { user } from "@prisma/client";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import BaseService from "./abstract/BaseService";
+import { JWT_SECRET, JWT_DEFAULT_SALT_ROUNDS } from "../../config";
+import { ConflictError, ValidationError } from "../../types/errors";
 
-export default class AuthService {
-  private prisma: PrismaClient;
-  constructor(prismaClient: PrismaClient) {
-    this.prisma = prismaClient;
-  }
-
-  async createUser(full_name: string, password: string, email: string) {
-    return this.prisma.user.create({
-      data: {
-        full_name,
+export default class AuthService extends BaseService {
+  async createUser(
+    full_name: string,
+    password: string,
+    email: string
+  ): Promise<user> {
+    // if email is available
+    if (
+      !(await this.prisma.user.findUnique({
+        where: { email },
+      }))
+    ) {
+      const passwordHash: string = await bcrypt.hash(
         password,
-        email,
-      },
-    });
+        JWT_DEFAULT_SALT_ROUNDS
+      );
+
+      return await this.prisma.user.create({
+        data: {
+          full_name,
+          password: passwordHash,
+          email,
+        },
+      });
+    } else {
+      throw new ConflictError("email");
+    }
   }
 
-  async getUserByEmail(email: string) {
-    return this.prisma.user.findUnique({
+  async authenticateUser(email: string, password: string): Promise<string> {
+    const user: user | null = await this.prisma.user.findUnique({
       where: { email },
     });
+
+    // if user exists and password matches, return token
+    if (!!user && (await bcrypt.compare(password, user.password))) {
+      return jwt.sign({ userId: user.user_id }, JWT_SECRET, {
+        expiresIn: "1d",
+      });
+    } else {
+      throw new ValidationError(
+        "email and password do not match any existing account."
+      );
+    }
   }
 }
