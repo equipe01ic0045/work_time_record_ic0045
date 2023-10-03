@@ -3,41 +3,46 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import ConflictError from "../types/errors/ConflictError";
 import ValidationError from "../types/errors/ValidationError";
-import BaseService from "./AbsBaseService";
 import { JWT_SECRET, JWT_DEFAULT_SALT_ROUNDS } from "../config";
 import { UserRepository } from "../repositories/UserRepository";
 import { AuthenticateUserRequestDTO, CreateUserRequestDTO } from "../types/dtos/UsersDTO";
 
-export default class AuthService extends BaseService {
+export default class AuthService {
   private userRepository: UserRepository;
   
   constructor() {
-    super();
     this.userRepository = new UserRepository();
   }
 
-  private  async validateLogin(userRequest: AuthenticateUserRequestDTO, foundUser?: user) {
-    return foundUser && bcrypt.compare(userRequest.password, foundUser.password)
+  private async validateLogin(hashedPassword: string, foundUser?: user) {
+    return foundUser && bcrypt.compare(hashedPassword, foundUser.password)
   }
 
-  async createUser(data: CreateUserRequestDTO): Promise<user> {
-    const foundUser = await this.userRepository.findUserByEmail(data.email);
+  async createUser({
+    fullName,
+    password,
+    email,
+  }: CreateUserRequestDTO): Promise<user> {
+    const foundUser = await this.userRepository.findUserByEmail(email);
     if (!foundUser)  { throw new ConflictError("email"); }
     const hashedPassword = await bcrypt.hash(
-      data.password,
+      password,
       JWT_DEFAULT_SALT_ROUNDS
     );
 
     return this.userRepository.createUser(
-      data.fullName,
-      data.email,
+      fullName,
+      email,
       hashedPassword,
     );
   }
 
-  async authenticateUser(data: AuthenticateUserRequestDTO): Promise<string> {
-    const foundUser = await this.userRepository.findUserByEmail(data.email) as user;
-    const isValidLogin = await this.validateLogin(data, foundUser);
+  async authenticateUser({
+    email,
+    password
+  }: AuthenticateUserRequestDTO): Promise<string> {
+    const foundUser = await this.userRepository.findUserByEmail(email) as user;
+    const isValidLogin = await this.validateLogin(password, foundUser);
     if (!isValidLogin) { 
       throw new ValidationError("email and password do not match any existing account."); 
     }

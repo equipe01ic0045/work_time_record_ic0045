@@ -2,50 +2,57 @@ import { time_record } from "@prisma/client";
 import AuthorizationError from "../types/errors/AuthorizationError";
 import ConflictError from "../types/errors/ConflictError";
 import NotFoundError from "../types/errors/NotFoundError";
-import AuthorizedService from "./AbsAuthorizedService";
 import { TimeRecordsRepository } from "../repositories/TimeRecordsRepository";
 import { UserRepository } from "../repositories/UserRepository";
 import { CheckoutTimeRecordDTO, TimeRecordsCheckinRequestDTO } from "../types/dtos/TimeRecordsDTO";
 
-export default class TimeRecordService extends AuthorizedService {
+export default class TimeRecordService {
  
   private readonly timeRecordsRepository: TimeRecordsRepository;
   private readonly usersRepository: UserRepository;
 
   constructor() {
-    super();
     this.timeRecordsRepository = new TimeRecordsRepository();
     this.usersRepository =  new UserRepository();
   }
 
-  async checkInTimeRecord(data: TimeRecordsCheckinRequestDTO): Promise<time_record> {
-    const foundUser = await this.usersRepository.findUserByUserId(data.userId);
+  async checkInTimeRecord({
+    checkInTimestamp,
+    projectId,
+    userId,
+    location,
+    userMessage
+  }: TimeRecordsCheckinRequestDTO): Promise<time_record> {
+    const foundUser = await this.usersRepository.findUserByUserId(userId);
     if (!foundUser) {  throw new AuthorizationError(); }
-    const existingCheckIn = await this.timeRecordsRepository.findOpenCheckinTimeRecord(data.userId, data.projectId);
+    const existingCheckIn = await this.timeRecordsRepository.findOpenCheckinTimeRecord(userId, projectId);
     if (existingCheckIn) { throw new ConflictError("open check-in"); }
-    return this.timeRecordsRepository
-      .createTimeRecord(
-        data.userId, 
-        data.projectId, 
-        data.checkInTimestamp, 
-        data.userMessage, 
-        data.location
+    return this.timeRecordsRepository.createTimeRecord(
+        userId, 
+        projectId, 
+        checkInTimestamp, 
+        userMessage, 
+        location
       );
   }
 
-  async checkOutTimeRecord(data: CheckoutTimeRecordDTO): Promise<time_record> {
-    const foundUser =  await this.usersRepository.findUserByUserId(data.userId);
+  async checkOutTimeRecord({
+    checkOutTimestamp,
+    projectId,
+    userId
+  }: CheckoutTimeRecordDTO): Promise<time_record> {
+    const foundUser =  await this.usersRepository.findUserByUserId(userId);
     if (!foundUser) { throw new AuthorizationError(); }
     const existingCheckIn = await this.timeRecordsRepository
       .findOpenCheckinTimeRecord(
-        data.userId,
-        data.projectId,
+        userId,
+        projectId,
       );
     if (!existingCheckIn) { throw new NotFoundError("open check-in"); }
 
     return this.timeRecordsRepository.checkoutTimeRecord(
       existingCheckIn.time_record_id,
-      data.checkOutTimestamp ?? new Date()
+      checkOutTimestamp ?? new Date()
     );
     
   }
