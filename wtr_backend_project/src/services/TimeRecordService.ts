@@ -3,17 +3,17 @@ import AuthorizationError from "../types/errors/AuthorizationError";
 import ConflictError from "../types/errors/ConflictError";
 import NotFoundError from "../types/errors/NotFoundError";
 import { TimeRecordsRepository } from "../repositories/TimeRecordsRepository";
-import { UserRepository } from "../repositories/UserRepository";
 import { CheckoutTimeRecordDTO, TimeRecordsCheckinRequestDTO } from "../types/dtos/TimeRecordsDTO";
+import { ProjectRepository } from "../repositories/ProjectRepository";
 
 export default class TimeRecordService {
  
   private readonly timeRecordsRepository: TimeRecordsRepository;
-  private readonly usersRepository: UserRepository;
+  private readonly projectsRepository: ProjectRepository
 
   constructor() {
     this.timeRecordsRepository = new TimeRecordsRepository();
-    this.usersRepository =  new UserRepository();
+    this.projectsRepository = new ProjectRepository();
   }
 
   async checkInTimeRecord({
@@ -23,8 +23,8 @@ export default class TimeRecordService {
     location,
     userMessage
   }: TimeRecordsCheckinRequestDTO): Promise<time_record> {
-    const foundUser = await this.usersRepository.findUserByUserId(userId);
-    if (!foundUser) {  throw new AuthorizationError(); }
+    const foundUserProjectRole = await this.projectsRepository.findUserProjectRole(userId, projectId);
+    if (!foundUserProjectRole) {  throw new AuthorizationError(); }
     const existingCheckIn = await this.timeRecordsRepository.findOpenCheckinTimeRecord(userId, projectId);
     if (existingCheckIn) { throw new ConflictError("open check-in"); }
     return this.timeRecordsRepository.createTimeRecord(
@@ -41,8 +41,8 @@ export default class TimeRecordService {
     projectId,
     userId
   }: CheckoutTimeRecordDTO): Promise<time_record> {
-    const foundUser =  await this.usersRepository.findUserByUserId(userId);
-    if (!foundUser) { throw new AuthorizationError(); }
+    const foundUserProjectRole =  await this.projectsRepository.findUserProjectRole(userId, projectId);
+    if (!foundUserProjectRole) { throw new AuthorizationError(); }
     const existingCheckIn = await this.timeRecordsRepository
       .findOpenCheckinTimeRecord(
         userId,
