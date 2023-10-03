@@ -1,4 +1,4 @@
-import { UserRole } from "../types/dtos/ProjectsDTO";
+import { UserRole } from "prisma/prisma-client";
 import { BaseRepository } from "./BaseRepository";
 
 
