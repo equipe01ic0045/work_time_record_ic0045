@@ -1,17 +1,11 @@
-import { PrismaClient } from "@prisma/client";
-import PrismaClientSingleton from "../prisma/client"; 
 import { UserRole } from "../types/dtos/ProjectsDTO";
+import { BaseRepository } from "./BaseRepository";
 
 
 
 
 
-export class ProjectRepository {
-    private readonly client: PrismaClient
-
-    constructor() {
-      this.client = PrismaClientSingleton.getInstance().getClient();
-    }
+export class ProjectRepository extends BaseRepository {
   
     async findProjectByProjectName(projectName: string) {
         return this.client.project.findUnique({

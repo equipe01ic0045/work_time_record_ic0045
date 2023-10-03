@@ -1,11 +1,7 @@
-import { PrismaClient } from "@prisma/client";
-import PrismaClientSingleton from "../prisma/client";
+import { BaseRepository } from "./BaseRepository";
 
-export class UserRepository {
-    private readonly client: PrismaClient;
-    constructor() {
-        this.client =  PrismaClientSingleton.getInstance().getClient();
-    }
+export class UserRepository extends BaseRepository {
+
 
     async createUser(full_name: string, email: string, password: string) {
         return this.client.user.create({
