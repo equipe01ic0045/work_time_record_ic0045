@@ -1,10 +1,11 @@
 import { PrismaClient } from "@prisma/client";
+import PrismaClientSingleton from "../prisma/client";
 
 export class TimeRecordsRepository {
     private readonly client: PrismaClient;
 
     constructor() {
-        this.client = new PrismaClient();
+        this.client = PrismaClientSingleton.getInstance().getClient();
     }
 
     async findOpenCheckinTimeRecord(userId: number, projectId: number) {

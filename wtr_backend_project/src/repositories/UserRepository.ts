@@ -1,9 +1,10 @@
 import { PrismaClient } from "@prisma/client";
+import PrismaClientSingleton from "../prisma/client";
 
 export class UserRepository {
     private readonly client: PrismaClient;
     constructor() {
-        this.client =  new PrismaClient;
+        this.client =  PrismaClientSingleton.getInstance().getClient();
     }
 
     async createUser(full_name: string, email: string, password: string) {
