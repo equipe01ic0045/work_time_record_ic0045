@@ -2,9 +2,9 @@ import {project, user_project_role } from "@prisma/client";
 import ConflictError from "../types/errors/ConflictError";
 import AuthorizationError from "../types/errors/AuthorizationError";
 import NotFoundError from "../types/errors/NotFoundError";
-import { ProjectRepository } from "../repositories/ProjectRepository";
+import { ProjectRepository } from "../prisma/repositories/ProjectRepository";
 import { AddUserToProjectRequestDTO, CreateProjectRequestDTO, UpdateUserProjectRoleRequestDTO } from "../types/dtos/ProjectsDTO";
-import { UserRepository } from "../repositories/UserRepository";
+import { UserRepository } from "../prisma/repositories/UserRepository";
 import ValidationError from "../types/errors/ValidationError";
 
 export default class ProjectService {

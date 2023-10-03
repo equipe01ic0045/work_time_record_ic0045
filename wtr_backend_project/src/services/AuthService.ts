@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import ConflictError from "../types/errors/ConflictError";
 import ValidationError from "../types/errors/ValidationError";
 import { JWT_SECRET, JWT_DEFAULT_SALT_ROUNDS } from "../config";
-import { UserRepository } from "../repositories/UserRepository";
+import { UserRepository } from "../prisma/repositories/UserRepository";
 import { AuthenticateUserRequestDTO, CreateUserRequestDTO } from "../types/dtos/UsersDTO";
 
 export default class AuthService {

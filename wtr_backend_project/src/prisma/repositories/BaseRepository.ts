@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import PrismaClientSingleton from "../prisma/client";
+import PrismaClientSingleton from "../client";
 
 export abstract class BaseRepository {
     protected client: PrismaClient

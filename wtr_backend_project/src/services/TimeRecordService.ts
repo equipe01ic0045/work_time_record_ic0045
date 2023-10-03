@@ -2,9 +2,9 @@ import { time_record } from "@prisma/client";
 import AuthorizationError from "../types/errors/AuthorizationError";
 import ConflictError from "../types/errors/ConflictError";
 import NotFoundError from "../types/errors/NotFoundError";
-import { TimeRecordsRepository } from "../repositories/TimeRecordsRepository";
+import { TimeRecordsRepository } from "../prisma/repositories/TimeRecordsRepository";
 import { CheckoutTimeRecordDTO, TimeRecordsCheckinRequestDTO } from "../types/dtos/TimeRecordsDTO";
-import { ProjectRepository } from "../repositories/ProjectRepository";
+import { ProjectRepository } from "../prisma/repositories/ProjectRepository";
 
 export default class TimeRecordService {
  

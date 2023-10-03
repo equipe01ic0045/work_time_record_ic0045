@@ -1,4 +1,4 @@
-import { UserRole } from "prisma/prisma-client";
+import { UserRole } from "@prisma/client";
 import { BaseRepository } from "./BaseRepository";
 
 
