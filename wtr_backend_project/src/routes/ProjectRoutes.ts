@@ -37,8 +37,26 @@
  *             properties:
  *               project_name:
  *                 type: string
+ *               location_required:
+ *                 type: boolean
+ *               commercial_time_required:
+ *                 type: boolean
+ *               timezone:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               commercial_time_start:
+ *                 type: integer
+ *               commercial_time_end: 
+ *                 type: integer
  *             example:
  *               project_name: projeto-legal
+ *               location_required: true
+ *               commercial_time_required: true
+ *               timezone: America/Bahia
+ *               location: Salvador, Bahia
+ *               commercial_time_start: 480
+ *               commercial_time_end: 1080
  *     responses:
  *       '201':
  *         description: Successfully created a new project.
@@ -135,14 +153,14 @@
  *             properties:
  *               user_id:
  *                 type: integer
- *               new_role:
+ *               user_role:
  *                 type: string
- *               new_hours_per_week:
+ *               user_hours_per_week:
  *                 type: integer
  *             example:
  *               user_id: 12345
- *               new_role: "ADMIN"
- *               new_hours_per_week: 20
+ *               user_role: "ADMIN"
+ *               user_hours_per_week: 20
  *     responses:
  *       '200':
  *         description: Successfully updated the user's role in the project.
@@ -216,6 +234,6 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
       this.controller.updateUserRole
     );
 
-    return this._router
+    return this._router;
   }
 }

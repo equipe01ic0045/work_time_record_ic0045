@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import authService from "../services";
 import BaseController from "./abstract/BaseController";
+import { authService } from "../services";
 import {
   AuthSuccessResponse,
   ResourceCreatedResponse,
@@ -10,7 +10,7 @@ export default class AuthController extends BaseController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
     const { full_name, password, email } = req.body;
     try {
-      await authService.createUser(full_name, password, email);
+      await authService.createUser(full_name, email, password);
       new ResourceCreatedResponse().send(res);
     } catch (error) {
       next(error);
@@ -26,6 +26,7 @@ export default class AuthController extends BaseController {
         maxAge: 3600000,
         sameSite: "strict",
       });
+
       new AuthSuccessResponse().send(res);
     } catch (error) {
       next(error);

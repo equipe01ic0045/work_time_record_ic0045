@@ -1,32 +1,34 @@
-import { BaseRepository } from "./BaseRepository";
+import { user } from ".prisma/client";
+import BaseRepository from "./abstract/BaseRepository";
 
-export class UserRepository extends BaseRepository {
+export default class UserRepository extends BaseRepository {
+  async createUser(
+    full_name: string,
+    email: string,
+    password: string
+  ): Promise<user> {
+    return this.client.user.create({
+      data: {
+        email,
+        password,
+        full_name,
+      },
+    });
+  }
 
+  async findUserByEmail(email: string): Promise<user | null> {
+    return this.client.user.findUnique({
+      where: {
+        email,
+      },
+    });
+  }
 
-    async createUser(full_name: string, email: string, password: string) {
-        return this.client.user.create({
-            data: {
-                email: email,
-                password: password,
-                full_name: full_name,
-            }
-        })
-    }
-
-
-    async findUserByEmail(email: string) {
-        return this.client.user.findUnique({
-            where: {
-                email
-            }
-        });
-    }
-
-    async findUserByUserId(userId: number) {
-        return this.client.user.findUnique({
-            where: {
-                user_id: userId,
-            }
-        });
-    }
+  async findUserByUserId(user_id: number): Promise<user | null> {
+    return this.client.user.findUnique({
+      where: {
+        user_id,
+      },
+    });
+  }
 }
