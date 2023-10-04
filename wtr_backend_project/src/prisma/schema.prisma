@@ -21,6 +21,9 @@ model user {
 model project {
   project_id         Int                 @id @default(autoincrement())
   project_name       String              @unique
+  // location_required  Boolean
+  // location           String?
+  // commercial_time    
   created_at         DateTime            @default(now())
   updated_at         DateTime            @default(now())
   user_project_roles user_project_role[]
