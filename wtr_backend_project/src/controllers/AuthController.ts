@@ -1,13 +1,16 @@
 import { NextFunction, Request, Response } from "express";
-import { authService } from "../prisma/services";
-import AuthSuccessResponse from "../types/responses/AuthSuccessResponse";
-import ResourceCreatedResponse from "../types/responses/ResourceCreatedResponse";
+import BaseController from "./abstract/BaseController";
+import { authService } from "../services";
+import {
+  AuthSuccessResponse,
+  ResourceCreatedResponse,
+} from "../types/responses";
 
-export default class AuthController {
+export default class AuthController extends BaseController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
+    const { full_name, password, email } = req.body;
     try {
-      const { full_name, password, email } = req.body;
-      await authService.createUser(full_name, password, email);
+      await authService.createUser(full_name, email, password);
       new ResourceCreatedResponse().send(res);
     } catch (error) {
       next(error);
@@ -15,16 +18,15 @@ export default class AuthController {
   }
 
   async loginUser(req: Request, res: Response, next: NextFunction) {
+    const { email, password } = req.body;
     try {
-      const { email, password } = req.body;
-
       const token = await authService.authenticateUser(email, password);
       res.cookie("token", token, {
         httpOnly: false,
         maxAge: 3600000,
         sameSite: "strict",
       });
-      
+
       new AuthSuccessResponse().send(res);
     } catch (error) {
       next(error);

@@ -1,20 +1,40 @@
 import AuthorizedRequest from "../types/interfaces/AuthorizedRequest";
 import { NextFunction, Response } from "express";
-import { projectService } from "../prisma/services";
+import { projectService } from "../services";
 import { project } from "@prisma/client";
-import ResourceCreatedResponse from "../types/responses/ResourceCreatedResponse";
-import ResourceUpdatedResponse from "../types/responses/ResourceUpdatedResponse";
-import DataRetrievedResponse from "../types/responses/DataRetrievedResponse";
+import BaseController from "./abstract/BaseController";
+import {
+  ResourceCreatedResponse,
+  ResourceUpdatedResponse,
+  DataRetrievedResponse,
+} from "../types/responses";
 
-export default class ProjectController {
+export default class ProjectController extends BaseController {
   async createNewProject(
     req: AuthorizedRequest,
     res: Response,
     next: NextFunction
   ) {
+    const {
+      project_name,
+      location_required,
+      commercial_time_required,
+      timezone,
+      location,
+      commercial_time_start,
+      commercial_time_end,
+    } = req.body;
     try {
-      const { project_name } = req.body;
-      await projectService.createProject(project_name, req.user!.userId);
+      await projectService.createProject(
+        req.user!.userId,
+        project_name,
+        location_required,
+        commercial_time_required,
+        timezone,
+        location,
+        commercial_time_start,
+        commercial_time_end
+      );
       new ResourceCreatedResponse().send(res);
     } catch (error) {
       next(error);
@@ -26,12 +46,12 @@ export default class ProjectController {
     res: Response,
     next: NextFunction
   ) {
+    const { project_id } = req.params;
+    const { user_id, user_role, user_hours_per_week } = req.body;
     try {
-      const { project_id } = req.params;
-      const { user_id, user_role, user_hours_per_week } = req.body;
       await projectService.addUserToProject(
-        parseInt(project_id),
         req.user!.userId,
+        parseInt(project_id),
         user_id,
         user_role,
         user_hours_per_week
@@ -47,15 +67,15 @@ export default class ProjectController {
     res: Response,
     next: NextFunction
   ) {
+    const { project_id } = req.params;
+    const { user_id, user_role, user_hours_per_week } = req.body;
     try {
-      const { project_id } = req.params;
-      const { user_id, new_role, new_hours_per_week } = req.body;
       await projectService.updateProjectUserRole(
-        parseInt(project_id),
         req.user!.userId,
+        parseInt(project_id),
         user_id,
-        new_role,
-        new_hours_per_week
+        user_role,
+        user_hours_per_week
       );
       new ResourceUpdatedResponse().send(res);
     } catch (error) {
@@ -83,8 +103,8 @@ export default class ProjectController {
     res: Response,
     next: NextFunction
   ) {
+    const { project_id } = req.params;
     try {
-      const { project_id } = req.params;
       const projectUsers = await projectService.getProjectUsers(
         req.user!.userId,
         parseInt(project_id)

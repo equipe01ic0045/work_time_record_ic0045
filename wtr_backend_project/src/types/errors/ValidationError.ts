@@ -1,4 +1,4 @@
-import BaseError from "./BaseError";
+import BaseError from "./abstract/BaseError";
 
 export default class ValidationError extends BaseError {
   constructor(message: string) {
