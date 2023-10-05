@@ -2,35 +2,23 @@
 
 import ProjectsTable from "@/components/projects/ProjectsTable";
 import HeaderBox from "@/components/global/HeaderBox";
+import ProjectService from "@/services/ProjectService";
 import { Box, Button } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import Project from "@/types/Project";
 
 export default function Projects() {
-  const mockDataList = [
-    {
-      id: 1,
-      projectName: "projeto-legal-01",
-      owner: "infra@latam.com.br",
-      users: 58,
-    },
-    {
-      id: 2,
-      projectName: "projeto-legal-02",
-      owner: "projetos@ifood.com",
-      users: 128,
-    },
-    {
-      id: 3,
-      projectName: "projeto-legal-03",
-      owner: "infra@casasbahia.com.br",
-      users: 128,
-    },
-    {
-      id: 4,
-      projectName: "projeto-legal-04",
-      owner: "admin@redemix.com.br",
-      users: 128,
-    },
-  ];
+  const projectService = new ProjectService();
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  async function getProjects() {
+    const projectsData = await projectService.getUserProjects()
+    setProjects(projectsData);
+  }
+
+  useEffect(() => {
+    getProjects();
+  }, []);
 
   return (
     <Box display={"flex"} flexDirection={"column"} width={"100%"}>
@@ -43,7 +31,7 @@ export default function Projects() {
         alignItems={"start"}
       >
         <Button size={"lg"}>+ Novo Projeto</Button>
-        <ProjectsTable projectList={mockDataList} />
+        <ProjectsTable projectList={projects} />
       </Box>
     </Box>
   );

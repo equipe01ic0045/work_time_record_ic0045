@@ -1,17 +1,19 @@
-import axios, { AxiosResponse } from "axios";
+import ProjectListData from "@/types/ProjectListData";
+import { AxiosResponse } from "axios";
+import axios from "./axios";
 
-export interface newProjectData{
-    project_name: string
+export interface newProjectData {
+  project_name: string;
 }
 
 export default class ProjectService {
-  public async getUserProjects() : Promise<AxiosResponse> {
-    return axios.get("projects");
+  public async getUserProjects() {
+    const result = await axios.get("projects");
+    const projects: ProjectListData[] = result.data.data
+    return projects;
   }
 
-  public async createNewProject(data:newProjectData):Promise<AxiosResponse>{
-    return axios.post("projects",data)
+  public async createNewProject(data: newProjectData): Promise<AxiosResponse> {
+    return axios.post("projects", data);
   }
-
-  
 }
