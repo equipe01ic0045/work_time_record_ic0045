@@ -19,6 +19,7 @@ export default class ProjectService {
   async createProject(
     userId: number,
     projectName: string,
+    projectDescription:string,
     locationRequired: boolean,
     commercialTimeRequired: boolean,
     timezone: string,
@@ -34,6 +35,7 @@ export default class ProjectService {
       const newProject = await this.projectRepository.createProject(
         userId,
         projectName,
+        projectDescription,
         locationRequired,
         commercialTimeRequired,
         timezone,
@@ -107,7 +109,20 @@ export default class ProjectService {
     );
   }
 
-  async getUserProjects(userId: number): Promise<project[]> {
+  async getProjectById(userId: number, projectId: number) {
+    const foundRole = await this.projectRepository.findUserProjectRole(
+      userId,
+      projectId
+    );
+
+    if (foundRole) {
+      return this.projectRepository.findProjectById(projectId);
+    } else {
+      throw new AuthorizationError();
+    }
+  }
+
+  async getUserProjects(userId: number) {
     const foundUser = await this.userRepository.findUserByUserId(userId);
     if (!foundUser) {
       throw new AuthorizationError();
@@ -119,7 +134,7 @@ export default class ProjectService {
     return userProjects.map((userRole) => userRole.project);
   }
 
-  async getProjectUsers(userId: number, projectId: number): Promise<any> {
+  async getProjectUsers(userId: number, projectId: number) {
     const foundUser = await this.projectRepository.findUserProjectRole(
       userId,
       projectId

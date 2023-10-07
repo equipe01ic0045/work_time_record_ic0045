@@ -37,6 +37,8 @@
  *             properties:
  *               project_name:
  *                 type: string
+ *               project_description:
+ *                 type: string
  *               location_required:
  *                 type: boolean
  *               commercial_time_required:
@@ -47,10 +49,11 @@
  *                 type: string
  *               commercial_time_start:
  *                 type: integer
- *               commercial_time_end: 
+ *               commercial_time_end:
  *                 type: integer
  *             example:
  *               project_name: projeto-legal
+ *               project_description: esta e uma descricao do projeto
  *               location_required: true
  *               commercial_time_required: true
  *               timezone: America/Bahia
@@ -170,6 +173,31 @@
  *         description: Unauthorized. User is not authenticated.
  */
 
+/**
+ * @swagger
+ * /projects/{project_id}:
+ *   get:
+ *     summary: Get project info
+ *     tags: [Projects]
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: project_id
+ *         required: true
+ *         description: The ID of the project.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Successfully got project info data.
+ *       '400':
+ *         description: Bad request. Invalid input data.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
+
 import ProjectController from "../controllers/ProjectController";
 import ProjectRelatedRoutes from "./abstract/ProjectRelatedRoutes";
 import { body } from "express-validator";
@@ -195,9 +223,19 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
           .withMessage(
             'Nome do projeto inválido. Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen, examplo: "examplo-nome-de-projeto-32"'
           ),
+        body("project_description")
+          .isString()
+          .withMessage("Descricao do projeto requerida")
       ],
       this.validate,
       this.controller.createNewProject
+    );
+
+    this._router.get(
+      "/:project_id",
+      ...this.projectIdValidation,
+      this.validate,
+      this.controller.getProjectInfo
     );
 
     this._router.get(

@@ -29,20 +29,20 @@ export default function TimeRecordsTable({ projectList }: any) {
         <Tbody>
           {projectList.map((project: any) => {
             return (
-              <Tr key={project.id}>
+              <Tr key={project.project_id}>
                 <Td>
-                  <Button>{project.projectName}</Button>
+                  <Button>{project.project_name}</Button>
                 </Td>
-                <Td>{project.owner}</Td>
+                <Td>{project.owner.email}</Td>
                 <Td>
-                  <Link href={`time-records/project/register/${project.id}`}>
+                  <Link href={`time-records/project/register/${project.project_id}`}>
                     <Button>
                       <Icon width={"2em"} height={"2em"} as={FiClock} />
                     </Button>
                   </Link>
                 </Td>
                 <Td>
-                  <Link href={`time-records/project/${project.id}/info`}>
+                  <Link href={`time-records/project/${project.project_id}/info`}>
                     <Button>
                       <Icon width={"2em"} height={"2em"} as={FiFileText} />
                     </Button>

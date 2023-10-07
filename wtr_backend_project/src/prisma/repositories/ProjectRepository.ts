@@ -11,6 +11,7 @@ export default class ProjectRepository extends BaseRepository {
   async createProject(
     userId: number,
     projectName: string,
+    projectDescription: string,
     locationRequired: boolean,
     commercialTimeRequired: boolean,
     timezone: string,
@@ -21,32 +22,18 @@ export default class ProjectRepository extends BaseRepository {
     const newProject = await this.client.project.create({
       data: {
         project_name: projectName,
+        project_description: projectDescription,
         location_required: locationRequired,
         commercial_time_required: commercialTimeRequired,
         location: location,
         timezone: timezone,
         commercial_time_start: commercialTimeStart,
         commercial_time_end: commercialTimeEnd,
+        owner_id: userId,
       },
     });
 
-    await this.client.user_project_role.create({
-      data: {
-        user: {
-          connect: {
-            user_id: userId,
-          },
-        },
-        project: {
-          connect: {
-            project_id: newProject.project_id,
-          },
-        },
-        role: "ADMIN",
-        hours_per_week: 40,
-      },
-    });
-
+    await this.addUserToProject(userId, newProject.project_id, 40, "ADMIN");
     return newProject;
   }
 
@@ -72,13 +59,40 @@ export default class ProjectRepository extends BaseRepository {
     });
   }
 
+  async findProjectById(projectId: number) {
+    return this.client.project.findUnique({
+      where: {
+        project_id: projectId,
+      },
+      include: {
+        owner: {
+          select: { email: true },
+        },
+      },
+    });
+  }
+
   async findProjectsByUserId(userId: number) {
     return this.client.user_project_role.findMany({
       where: {
         user_id: userId,
       },
       select: {
-        project: true,
+        project: {
+          select: {
+            project_id: true,
+            project_name: true,
+            timezone: true,
+            commercial_time_start: true,
+            commercial_time_end: true,
+            users_count: true,
+            owner: {
+              select: {
+                email: true,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -108,7 +122,7 @@ export default class ProjectRepository extends BaseRepository {
     hoursPerWeek: number,
     userRole: UserRole
   ): Promise<user_project_role> {
-    return this.client.user_project_role.create({
+    const newContributor = await this.client.user_project_role.create({
       data: {
         user_id: userId,
         hours_per_week: hoursPerWeek,
@@ -116,6 +130,17 @@ export default class ProjectRepository extends BaseRepository {
         project_id: projectId,
       },
     });
+
+    await this.client.project.update({
+      where: {
+        project_id: projectId,
+      },
+      data: {
+        users_count: { increment: 1 },
+      },
+    });
+
+    return newContributor;
   }
 
   async findUserProjectRole(
