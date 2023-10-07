@@ -1,12 +1,12 @@
 'use client'
 
-import {  Box, Button, Center, ChakraProvider, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
+import {  Box, Button, Center, ChakraProvider, Table, Tbody, Td, Th, Thead, Tr, Text, Link } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faClock, faFileContract, faBriefcase  } from '@fortawesome/free-solid-svg-icons';
 
 export default function RelatorioColaborador() {
 
-    const mockDataList = 
+    const project = 
     {
       id: 1,
       projectName: "Projeto 01",
@@ -86,9 +86,13 @@ export default function RelatorioColaborador() {
                           <Td>08:00 HOURS</Td>
                           <Td>YES</Td>
                           <Td>
-                              <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
-                                  <FontAwesomeIcon icon={faFileContract} style={{ marginRight: '4px', color: '#F0EFFF' }} />
-                              </Button>
+                              <Link 
+                                  width={"30%"} 
+                                  href={`/main/projects/info/${project.id}/manageColaborator/reportColaborator/justifyColaborator`}>
+                                <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
+                                    <FontAwesomeIcon icon={faFileContract} style={{ marginRight: '4px', color: '#F0EFFF' }} />
+                                </Button>
+                              </Link>
                           </Td>   
                       </Tr>
                       <Tr>
