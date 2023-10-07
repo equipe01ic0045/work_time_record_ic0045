@@ -1,10 +1,26 @@
 'use client';
 
 import HeaderBox from "@/components/global/HeaderBox";
-import DocumentRow from "@/components/time-records/documentRow";
-import RecordDocument from "@/types/RecordDocument";
-import { AddIcon, EditIcon } from "@chakra-ui/icons";
-import { Box, Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Divider, FormControl, FormHelperText, FormLabel, HStack, Heading, Icon, IconButton, Input, InputGroup, InputRightAddon, Stack, StackDivider, Text, Textarea, useToast } from "@chakra-ui/react";
+import { AttachmentIcon, EditIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Card,
+  CardBody,
+  CardHeader,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  HStack,
+  Heading,
+  IconButton,
+  Input,
+  Stack,
+  StackDivider,
+  Textarea,
+  useToast
+} from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
@@ -56,13 +72,22 @@ export default function Page({ params }: { params: { timeRecordId: string } }) {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-                <FormHelperText>Insira todos os detalhes cabíveis para sua justificativa.</FormHelperText>
+                <FormHelperText>Insira os detalhes para sua justificativa.</FormHelperText>
               </FormControl>
+
               <FormControl>
                 <FormLabel>Selecione o arquivo</FormLabel>
-                <ButtonGroup w="100%" isAttached variant='outline' onClick={e => fileInputRef.current?.click()}>
-                  <Button w='100%'>{document?.name}</Button>
-                  <IconButton aria-label='Add to friends' icon={<AddIcon />} />
+                <ButtonGroup
+                  w="100%"
+                  bg="white"
+                  isAttached
+                  variant='outline'
+                  onClick={e => fileInputRef.current?.click()}
+                >
+                  <Button w='100%' justifyContent='start' overflow='hidden'>
+                    {document?.name || 'Selecione o arquivo'}
+                  </Button>
+                  <IconButton aria-label='Anexe arquivo' icon={<AttachmentIcon />} />
                 </ButtonGroup>
                 <Input
                   ref={fileInputRef}

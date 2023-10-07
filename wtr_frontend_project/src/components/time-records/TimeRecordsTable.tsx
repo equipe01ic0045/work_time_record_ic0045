@@ -1,5 +1,5 @@
 "use client";
-import { Icon } from "@chakra-ui/react";
+import { Icon, useToast } from "@chakra-ui/react";
 import { FiClock } from "react-icons/fi";
 import { FiFileText } from "react-icons/fi";
 import {
@@ -13,8 +13,25 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function TimeRecordsTable({ projectList }: any) {
+  const toast = useToast();
+  const router = useRouter();
+
+  const checkInProject = async (projectId: string) => {
+    // TODO: Do check-in
+    router.refresh();
+    toast({
+      title: "Check-in realizado",
+      description: "Check-in realizado com sucesso!",
+      duration: 2000,
+      status: "success",
+      isClosable: true,
+      position: "top-right",
+    });
+  };
+
   return (
     <TableContainer width={"100%"}>
       <Table variant="simple" background={"gray.200"}>
@@ -35,11 +52,10 @@ export default function TimeRecordsTable({ projectList }: any) {
                 </Td>
                 <Td>{project.owner}</Td>
                 <Td>
-                  <Link href={`time-records/project/register/${project.id}`}>
-                    <Button>
-                      <Icon width={"2em"} height={"2em"} as={FiClock} />
-                    </Button>
-                  </Link>
+                  <Button onClick={(e) => checkInProject(project.id)}>
+                    {/* TODO: condition to choose FiClock or FiCheckCircle based in project info */}
+                    <Icon width={"2em"} height={"2em"} as={FiClock} />
+                  </Button>
                 </Td>
                 <Td>
                   <Link href={`time-records/project/${project.id}/info`}>
