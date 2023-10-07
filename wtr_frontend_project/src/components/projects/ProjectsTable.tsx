@@ -75,17 +75,19 @@ export default function ProjectsTable({
                 <Td>{project.owner.email}</Td>
                 <Td>{commercialTimeFormat}</Td>
                 <Td>
-                  <Button
-                    width={"auto"}
-                    minWidth={"100px"}
-                    display="flex"
-                    flexDirection={"row"}
-                    alignItems={"center"}
-                    justifyContent={"space-between"}
-                  >
-                    {project.users_count}
-                    {iconUser}
-                  </Button>
+                  <Link href={`/main/projects/info/${project.project_id}/manageColaborator`}>
+                    <Button
+                      width={"auto"}
+                      minWidth={"100px"}
+                      display="flex"
+                      flexDirection={"row"}
+                      alignItems={"center"}
+                      justifyContent={"space-between"}
+                    >
+                      {project.users_count}
+                      {iconUser}
+                    </Button>
+                  </Link>
                 </Td>
               </Tr>
             );

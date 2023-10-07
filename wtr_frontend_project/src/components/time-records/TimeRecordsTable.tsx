@@ -31,7 +31,7 @@ export default function TimeRecordsTable({ projectList }: any) {
             return (
               <Tr key={project.project_id}>
                 <Td>
-                  <Button>{project.project_name}</Button>
+                  {project.project_name}
                 </Td>
                 <Td>{project.owner.email}</Td>
                 <Td>

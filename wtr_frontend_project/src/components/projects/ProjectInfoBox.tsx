@@ -154,10 +154,9 @@ export default function ProjectInfoBox({ project }: any) {
                 {svgReports}Relatorios
               </Button>
             </Link>
-            <Link
-              width={"30%"}
-              href={`/main/projects/info/${project.id}/gerenciar-colaborador`}
-            >
+            <Link 
+              width={"30%"} 
+              href={`/main/projects/info/${project.id}/manageColaborator`}>
               <Button
                 textColor={"white"}
                 gap={"0.5em"}
