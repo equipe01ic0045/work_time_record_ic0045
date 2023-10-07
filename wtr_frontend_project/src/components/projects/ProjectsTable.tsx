@@ -56,7 +56,6 @@ export default function ProjectsTable({
         </Thead>
         <Tbody>
           {projectList.map((project: ProjectListData) => {
-            console.log(projectList)
             let commercialTimeFormat: string = "";
             if (project.commercial_time_start && project.commercial_time_end) {
               commercialTimeFormat = `${getFormattedCommercialTime(

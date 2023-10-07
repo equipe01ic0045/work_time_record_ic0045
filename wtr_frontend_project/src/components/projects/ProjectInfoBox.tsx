@@ -89,10 +89,15 @@ export default function ProjectInfoBox({ project }: any) {
           }}
         >
           {[
-            ["NOME DO PROJETO", project.projectName],
-            ["PROPRIETÁRIO", project.owner],
+            ["NOME DO PROJETO", project.project_name],
+            ["PROPRIETÁRIO", project.owner.email],
             ["LOCALIZAÇÃO", project.location],
-            ["HORÁRIO COMERCIAL", project.commercial_time],
+            ["LOCALIZAÇÃO REQUERIDA", project.location_required? "Sim" : "Nao"],
+            ["TIMEZONE", project.timezone],
+            ["HORÁRIO COMERCIAL (INÍCIO)", project.commercial_time_start],
+            ["HORÁRIO COMERCIAL (FIM)", project.commercial_time_end],
+            ["HORÁRIO COMERCIAL REQUERIDO", project.commercial_time_required? "Sim" : "Nao"],
+            ["DATA DE CRIAÇÃO", project.created_at],
           ]
             .map((n) => {
               return { label: n[0], value: n[1] };
@@ -136,25 +141,27 @@ export default function ProjectInfoBox({ project }: any) {
             alignItems={"center"}
             justifyContent={"space-between"}
           >
-            <Link 
-              width={"30%"} 
-              href={`/main/projects/info/${project.id}/reports`}>
-                <Button
-                  gap={"0.5em"} 
-                  paddingX={'30%'}
-                  textColor={"white"}
-                  background={"blueviolet"}
-                >
-                  {svgReports}Relatorios
-                </Button>
+            <Link
+              width={"30%"}
+              href={`/main/projects/info/${project.id}/reports`}
+            >
+              <Button
+                gap={"0.5em"}
+                paddingX={"30%"}
+                textColor={"white"}
+                background={"blueviolet"}
+              >
+                {svgReports}Relatorios
+              </Button>
             </Link>
-            <Link 
-              width={"30%"} 
-              href={`/main/projects/info/${project.id}/gerenciar-colaborador`}>
+            <Link
+              width={"30%"}
+              href={`/main/projects/info/${project.id}/gerenciar-colaborador`}
+            >
               <Button
                 textColor={"white"}
                 gap={"0.5em"}
-                paddingX={'30%'}
+                paddingX={"30%"}
                 background={"blueviolet"}
               >
                 {svgCollab}Colaboradores
@@ -176,25 +183,10 @@ export default function ProjectInfoBox({ project }: any) {
               flex: 1,
               padding: gap,
               textAlign: "justify",
+              width: 1200 // change that later
             }}
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque porttitor turpis nec leo efficitur, vitae consectetur
-            leo hendrerit. Aliquam ut lectus risus. Sed ante velit, tempus at
-            ullamcorper non, cursus non purus. Sed ac metus enim. Curabitur at
-            arcu in arcu tincidunt dapibus. Proin dictum efficitur velit ac
-            molestie. Pellentesque habitant morbi tristique senectus et netus et
-            malesuada fames ac turpis egestas. Duis ornare dolor felis, nec
-            elementum risus faucibus a. Suspendisse potenti. Nulla sit amet
-            tincidunt sapien. Maecenas sit amet posuere erat. Aenean ac mattis
-            augue. Nam at dignissim ante. Ut blandit posuere sapien, quis
-            elementum diam euismod a. Praesent non gravida ante. Nam diam erat,
-            euismod mattis aliquet sit amet, blandit a ex. Cras luctus bibendum
-            ipsum a malesuada. Donec fermentum sapien eget libero scelerisque,
-            eu mollis dolor maximus. Integer dictum dictum sapien, et lacinia
-            eros lacinia vel. Aliquam vestibulum tortor elit, nec tincidunt orci
-            rutrum vitae. Mauris non semper arcu. Ut id porta metus. Integer
-            viverra porttitor neque quis commodo.
+            {project.project_description}
           </Box>
         </Box>
       </Box>
