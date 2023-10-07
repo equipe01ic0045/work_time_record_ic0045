@@ -45,17 +45,19 @@ export default function ProjectsTable({ projectList }: any) {
                 </Td>
                 <Td>{project.owner}</Td>
                 <Td>
-                  <Button
-                    width={"auto"}
-                    minWidth={"100px"}
-                    display="flex"
-                    flexDirection={"row"}
-                    alignItems={"center"}
-                    justifyContent={"space-between"}
-                  >
-                    {project.users}
-                    {iconUser}
-                  </Button>
+                  <Link href={`/main/projects/info/${project.id}/manageColaborator`}>
+                    <Button
+                      width={"auto"}
+                      minWidth={"100px"}
+                      display="flex"
+                      flexDirection={"row"}
+                      alignItems={"center"}
+                      justifyContent={"space-between"}
+                    >
+                      {project.users}
+                      {iconUser}
+                    </Button>
+                  </Link>
                 </Td>
               </Tr>
             );

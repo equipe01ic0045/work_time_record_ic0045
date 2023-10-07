@@ -86,7 +86,7 @@ export default function GerenciarColaborador({ project }: any) {
                         <Td>
                             <Link 
                                 width={"30%"} 
-                                href={`/main/projects/info/${project.id}/gerenciar-colaborador/relatorio-colaborador`}>
+                                href={`/main/projects/info/${project.id}/manageColaborator/reportColaborator`}>
                                     Maria da Silva
                             </Link>
                         </Td>
