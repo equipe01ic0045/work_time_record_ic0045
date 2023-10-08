@@ -1,5 +1,5 @@
 "use client";
-import { Icon, IconButton, useToast } from "@chakra-ui/react";
+import { Icon, IconButton } from "@chakra-ui/react";
 import { FiClock } from "react-icons/fi";
 import { FiFileText } from "react-icons/fi";
 import {
@@ -13,25 +13,9 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import ProjectListData from "@/types/ProjectListData";
 
-export default function TimeRecordsTable({ projectList }: any) {
-  const toast = useToast();
-  const router = useRouter();
-
-  const checkInProject = async (projectId: string) => {
-    // TODO: Do check-in
-    router.refresh();
-    toast({
-      title: "Check-in realizado",
-      description: "Check-in realizado com sucesso!",
-      duration: 2000,
-      status: "success",
-      isClosable: true,
-      position: "top-right",
-    });
-  };
-
+export default function TimeRecordsTable({ projectsList }: any) {
   return (
     <TableContainer width={"100%"}>
       <Table variant="simple" background={"gray.200"}>
@@ -44,24 +28,27 @@ export default function TimeRecordsTable({ projectList }: any) {
           </Tr>
         </Thead>
         <Tbody>
-          {projectList.map((project: any) => {
+          {projectsList.map((projectData: ProjectListData) => {
             return (
-              <Tr key={project.id}>
+              <Tr key={projectData.project.project_id}>
+                <Td>{projectData.project.project_name}</Td>
+                <Td>{projectData.project.owner.email}</Td>
                 <Td>
-                  {project.projectName}
-                </Td>
-                <Td>{project.owner}</Td>
-                <Td>
-                  <Link href={`time-records/project/register/${project.id}`}>
+                  <Link
+                    href={`time-records/project/register/${projectData.project.project_id}`}
+                  >
                     <IconButton
                       aria-label="Fazer registro"
                       icon={<Icon boxSize="2em" as={FiClock} />}
                       p={3}
+                      color={projectData.open_check_in ? "orange" : "black"}
                     />
                   </Link>
                 </Td>
                 <Td>
-                  <Link href={`time-records/project/${project.id}/info`}>
+                  <Link
+                    href={`time-records/project/${projectData.project.project_id}/info`}
+                  >
                     <IconButton
                       aria-label="Ver registros"
                       icon={<Icon boxSize="2em" as={FiFileText} />}
@@ -69,11 +56,11 @@ export default function TimeRecordsTable({ projectList }: any) {
                     />
                   </Link>
                 </Td>
-              </Tr>
+              </Tr >
             );
           })}
-        </Tbody>
-      </Table>
-    </TableContainer>
+        </Tbody >
+      </Table >
+    </TableContainer >
   );
 }

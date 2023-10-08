@@ -63,7 +63,7 @@ export default function Page({ params }: any) {
 
   return (
     <Box w={"100%"}>
-      <HeaderBox title={`Projeto ${params.projectId}`} />
+      <HeaderBox title={`Registros / nome-projeto`} />
 
       <Box
         display={"flex"}

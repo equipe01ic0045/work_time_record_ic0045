@@ -105,7 +105,7 @@ export default function Page({
 
   return (
     <VStack w={"100%"} spacing="3rem">
-      <HeaderBox title={`Projeto ${params.projectId}`} />
+      <HeaderBox title={`Registro / nome projeto`} />
 
       <form onSubmit={newRecordHandler}>
         <Box
