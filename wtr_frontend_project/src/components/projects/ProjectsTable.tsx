@@ -57,7 +57,7 @@ export default function ProjectsTable({
         <Tbody>
           {projectsList.map((projectData: ProjectListData) => {
             let commercialTimeFormat: string = "";
-            if (project.commercial_time_start!=undefined  && project.commercial_time_end!=undefined) { // 0 is false, but 0 is 12:00 AM. 
+            if (projectData.project.commercial_time_start!=undefined  && projectData.project.commercial_time_end!=undefined) { // 0 is false, but 0 is 12:00 AM. 
               commercialTimeFormat = `${getFormattedCommercialTime(
                 projectData.project.commercial_time_start
               )} - ${getFormattedCommercialTime(
