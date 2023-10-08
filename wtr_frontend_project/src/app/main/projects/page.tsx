@@ -7,7 +7,9 @@ import { Box, Button } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ProjectListData from "@/types/ProjectListData";
 
+import { useRouter } from "next/navigation";
 export default function Projects() {
+  const router = useRouter();
   const projectService = new ProjectService();
   const [projects, setProjects] = useState<ProjectListData[]>([]);
 
@@ -30,7 +32,7 @@ export default function Projects() {
         gap={"2em"}
         alignItems={"start"}
       >
-        <Button size={"lg"}>+ Novo Projeto</Button>
+        <Button size={"lg"} onClick={()=>router.push("/main/projects/create")}>+ Novo Projeto</Button>
         <ProjectsTable projectList={projects} />
       </Box>
     </Box>

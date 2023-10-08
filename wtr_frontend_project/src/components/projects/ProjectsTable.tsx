@@ -38,7 +38,7 @@ export default function ProjectsTable({
   }
 
   function getFormattedCommercialTime(commercialTime: number): string {
-    const hour = commercialTime / 60;
+    const hour = Math.floor(commercialTime / 60);
     const minute = commercialTime % 60;
     return `${formatToTwoDigits(hour)}:${formatToTwoDigits(minute)}`;
   }
@@ -57,7 +57,7 @@ export default function ProjectsTable({
         <Tbody>
           {projectList.map((project: ProjectListData) => {
             let commercialTimeFormat: string = "";
-            if (project.commercial_time_start && project.commercial_time_end) {
+            if (project.commercial_time_start!=undefined  && project.commercial_time_end!=undefined) { // 0 is false, but 0 is 12:00 AM. 
               commercialTimeFormat = `${getFormattedCommercialTime(
                 project.commercial_time_start
               )} - ${getFormattedCommercialTime(
