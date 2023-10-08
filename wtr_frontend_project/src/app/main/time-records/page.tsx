@@ -11,7 +11,7 @@ export default function TimeRecords() {
   const [projects, setProjects] = useState<ProjectListData[]>([]);
 
   async function getProjects() {
-    const projectsData = await projectService.getUserProjects()
+    const projectsData = await projectService.getUserProjects();
     setProjects(projectsData);
   }
 
@@ -23,7 +23,7 @@ export default function TimeRecords() {
     <Box display={"flex"} flexDirection={"column"} width={"100%"}>
       <HeaderBox title={`Registros`} />
       <Box padding={"2em"}>
-        <TimeRecordsTable projectList={projects} />
+        <TimeRecordsTable projectsList={projects} />
       </Box>
     </Box>
   );

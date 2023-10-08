@@ -3,7 +3,7 @@
 import ProjectsTable from "@/components/projects/ProjectsTable";
 import HeaderBox from "@/components/global/HeaderBox";
 import ProjectService from "@/services/ProjectService";
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Link } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ProjectListData from "@/types/ProjectListData";
 
@@ -12,7 +12,7 @@ export default function Projects() {
   const [projects, setProjects] = useState<ProjectListData[]>([]);
 
   async function getProjects() {
-    const projectsData = await projectService.getUserProjects()
+    const projectsData = await projectService.getUserProjects();
     setProjects(projectsData);
   }
 
@@ -30,8 +30,13 @@ export default function Projects() {
         gap={"2em"}
         alignItems={"start"}
       >
-        <Button size={"lg"}>+ Novo Projeto</Button>
-        <ProjectsTable projectList={projects} />
+        <Link
+          href={`/main/projects/new-project`}
+        >
+          <Button size={"lg"}>+ Novo Projeto</Button>
+        </Link>
+
+        <ProjectsTable projectsList={projects} />
       </Box>
     </Box>
   );
