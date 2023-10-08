@@ -40,7 +40,7 @@ export default function TimeRecordsTable({
                 <Td>
                   <Link
                     href={{
-                      pathname: `time-records/project/register/${projectData.project.project_id}`,
+                      pathname: `time-records/project/${projectData.project.project_id}/register`,
                       query: { hasOpenCheckIn: projectData.open_check_in || '' },
                     }}
                   >
