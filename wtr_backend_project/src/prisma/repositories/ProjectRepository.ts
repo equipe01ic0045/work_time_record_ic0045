@@ -88,11 +88,13 @@ export default class ProjectRepository extends BaseRepository {
             users_count: true,
             owner: {
               select: {
+                full_name: true,
                 email: true,
               },
             },
           },
         },
+        open_check_in: true,
       },
     });
   }
