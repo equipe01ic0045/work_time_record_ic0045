@@ -18,7 +18,7 @@ export default class TimeRecordsRepository extends BaseRepository {
     userMessage?: string,
     location?: string
   ) {
-    return this.client.time_record.create({
+    const newTimeRecord = await this.client.time_record.create({
       data: {
         user_id: userId,
         project_id: projectId,
@@ -27,17 +27,37 @@ export default class TimeRecordsRepository extends BaseRepository {
         location: location,
       },
     });
+
+    await this.client.user_project_role.update({
+      where: { user_id_project_id: { user_id: userId, project_id: projectId } },
+      data: { open_check_in: true },
+    });
+
+    return newTimeRecord;
   }
 
   async checkoutTimeRecord(timeRecordId: number, checkoutTimeStamp: Date) {
-    return this.client.time_record.update({
+    const openTimeRecord = await this.client.time_record.update({
       where: {
         time_record_id: timeRecordId,
         check_out_timestamp: null,
       },
       data: {
         check_out_timestamp: checkoutTimeStamp,
+        updated_at: new Date(),
       },
     });
+
+    await this.client.user_project_role.update({
+      where: {
+        user_id_project_id: {
+          user_id: openTimeRecord.user_id,
+          project_id: openTimeRecord.project_id,
+        },
+      },
+      data: { open_check_in: false },
+    });
+
+    return openTimeRecord;
   }
 }

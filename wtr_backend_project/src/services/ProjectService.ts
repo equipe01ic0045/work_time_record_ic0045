@@ -131,7 +131,7 @@ export default class ProjectService {
     const userProjects = await this.projectRepository.findProjectsByUserId(
       userId
     );
-    return userProjects.map((userRole) => userRole.project);
+    return userProjects
   }
 
   async getProjectUsers(userId: number, projectId: number) {
