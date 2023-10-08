@@ -1,40 +1,29 @@
 "use client";
 import HeaderBox from "@/components/global/HeaderBox";
 import TimeRecordsTable from "@/components/time-records/TimeRecordsTable";
+import ProjectService from "@/services/ProjectService";
+import ProjectListData from "@/types/ProjectListData";
 import { Box } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 export default function TimeRecords() {
-  const mockDataList = [
-    {
-      id: 1,
-      projectName: "projeto-legal-01",
-      owner: "infra@latam.com.br",
-      users: 58,
-    },
-    {
-      id: 2,
-      projectName: "projeto-legal-02",
-      owner: "projetos@ifood.com",
-      users: 128,
-    },
-    {
-      id: 3,
-      projectName: "projeto-legal-03",
-      owner: "infra@casasbahia.com.br",
-      users: 128,
-    },
-    {
-      id: 4,
-      projectName: "projeto-legal-04",
-      owner: "admin@redemix.com.br",
-      users: 128,
-    },
-  ];
+  const projectService = new ProjectService();
+  const [projects, setProjects] = useState<ProjectListData[]>([]);
+
+  async function getProjects() {
+    const projectsData = await projectService.getUserProjects();
+    setProjects(projectsData);
+  }
+
+  useEffect(() => {
+    getProjects();
+  }, []);
+
   return (
     <Box display={"flex"} flexDirection={"column"} width={"100%"}>
-      <HeaderBox title={`Registros / {usuario}`} />
+      <HeaderBox title={`Registros`} />
       <Box padding={"2em"}>
-        <TimeRecordsTable projectList={mockDataList} />
+        <TimeRecordsTable projectsList={projects} />
       </Box>
     </Box>
   );

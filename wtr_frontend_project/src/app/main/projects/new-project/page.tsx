@@ -1,7 +1,7 @@
 'use client'
 
-import ProjectInfo from "@/components/projects/projectInfoComponent"
-import AdicionarProjetoComponent from "@/components/adicionar-projeto/adicionarProjetoComponent"
+import AddProjectBox from "@/components/projects/AddProject"
+
 export default function Test() {
 
     const mockDataList = 
@@ -14,6 +14,6 @@ export default function Test() {
     }
 
  return (
- <><AdicionarProjetoComponent /></>
+ <><AddProjectBox /></>
  )
 }

@@ -7,7 +7,7 @@ import { Box, Heading, Text } from "@chakra-ui/react";
 export default function Page({ params }: any) {
   return (
     <Box w={"100%"}>
-      <HeaderBox title={`Projeto ${params.projectId}`} />
+      <HeaderBox title={`Registro / nome projeto`} />
       <Box
         display={"flex"}
         flexDirection={"column"}
