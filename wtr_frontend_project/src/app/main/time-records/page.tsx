@@ -32,7 +32,7 @@ export default function TimeRecords() {
   ];
   return (
     <Box display={"flex"} flexDirection={"column"} width={"100%"}>
-      <HeaderBox title={`Projetos`} />
+      <HeaderBox title={`Registros / {usuario}`} />
       <Box padding={"2em"}>
         <TimeRecordsTable projectList={mockDataList} />
       </Box>
