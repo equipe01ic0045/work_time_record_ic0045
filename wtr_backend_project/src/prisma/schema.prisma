@@ -52,6 +52,7 @@ model user_project_role {
   hours_per_week       Int
   created_at           DateTime @default(now())
   updated_at           DateTime @default(now())
+  open_check_in        Boolean  @default(false)
   user                 user     @relation(fields: [user_id], references: [user_id])
   project              project  @relation(fields: [project_id], references: [project_id])
 
@@ -67,6 +68,7 @@ model time_record {
   user_message        String?
   location            String?
   created_at          DateTime           @default(now())
+  updated_at          DateTime           @default(now())
   user                user               @relation(fields: [user_id], references: [user_id])
   project             project            @relation(fields: [project_id], references: [project_id])
   absense_documents   absense_document[]

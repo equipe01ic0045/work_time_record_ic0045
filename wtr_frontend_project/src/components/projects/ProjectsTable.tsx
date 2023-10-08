@@ -14,9 +14,9 @@ import {
 
 // Note: o Owner é simplesmente o primeiro admin do projeto no banco
 export default function ProjectsTable({
-  projectList,
+  projectsList,
 }: {
-  projectList: ProjectListData[];
+  projectsList: ProjectListData[];
 }) {
   const iconUser = (
     <svg
@@ -55,37 +55,43 @@ export default function ProjectsTable({
           </Tr>
         </Thead>
         <Tbody>
-          {projectList.map((project: ProjectListData) => {
+          {projectsList.map((projectData: ProjectListData) => {
             let commercialTimeFormat: string = "";
             if (project.commercial_time_start!=undefined  && project.commercial_time_end!=undefined) { // 0 is false, but 0 is 12:00 AM. 
               commercialTimeFormat = `${getFormattedCommercialTime(
-                project.commercial_time_start
+                projectData.project.commercial_time_start
               )} - ${getFormattedCommercialTime(
-                project.commercial_time_end
-              )} (${project.timezone})`;
+                projectData.project.commercial_time_end
+              )} (${projectData.project.timezone})`;
             }
 
             return (
-              <Tr key={project.project_id}>
+              <Tr key={projectData.project.project_id}>
                 <Td>
-                  <Link href={`/main/projects/info/${project.project_id}`}>
-                    <Button>{project.project_name}</Button>
+                  <Link
+                    href={`/main/projects/info/${projectData.project.project_id}`}
+                  >
+                    <Button>{projectData.project.project_name}</Button>
                   </Link>
                 </Td>
-                <Td>{project.owner.email}</Td>
+                <Td>{projectData.project.owner.email}</Td>
                 <Td>{commercialTimeFormat}</Td>
                 <Td>
-                  <Button
-                    width={"auto"}
-                    minWidth={"100px"}
-                    display="flex"
-                    flexDirection={"row"}
-                    alignItems={"center"}
-                    justifyContent={"space-between"}
+                  <Link
+                    href={`/main/projects/info/${projectData.project.project_id}/manageColaborator`}
                   >
-                    {project.users_count}
-                    {iconUser}
-                  </Button>
+                    <Button
+                      width={"auto"}
+                      minWidth={"100px"}
+                      display="flex"
+                      flexDirection={"row"}
+                      alignItems={"center"}
+                      justifyContent={"space-between"}
+                    >
+                      {projectData.project.users_count}
+                      {iconUser}
+                    </Button>
+                  </Link>
                 </Td>
               </Tr>
             );
