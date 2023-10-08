@@ -1,5 +1,5 @@
 "use client";
-import { Icon, useToast } from "@chakra-ui/react";
+import { Icon, IconButton, useToast } from "@chakra-ui/react";
 import { FiClock } from "react-icons/fi";
 import { FiFileText } from "react-icons/fi";
 import {
@@ -39,7 +39,7 @@ export default function TimeRecordsTable({ projectList }: any) {
           <Tr>
             <Th textColor={"white"}>NOME DO PROJETO</Th>
             <Th textColor={"white"}>PROPRIETÁRIO</Th>
-            <Th textColor={"white"}>REGISTROS</Th>
+            <Th textColor={"white"}>REGISTRAR</Th>
             <Th textColor={"white"}>INFORMAÇÕES</Th>
           </Tr>
         </Thead>
@@ -52,16 +52,21 @@ export default function TimeRecordsTable({ projectList }: any) {
                 </Td>
                 <Td>{project.owner}</Td>
                 <Td>
-                  <Button onClick={(e) => checkInProject(project.id)}>
-                    {/* TODO: condition to choose FiClock or FiCheckCircle based in project info */}
-                    <Icon width={"2em"} height={"2em"} as={FiClock} />
-                  </Button>
+                  <Link href={`time-records/project/register/${project.id}`}>
+                    <IconButton
+                      aria-label="Fazer registro"
+                      icon={<Icon boxSize="2em" as={FiClock} />}
+                      p={3}
+                    />
+                  </Link>
                 </Td>
                 <Td>
                   <Link href={`time-records/project/${project.id}/info`}>
-                    <Button>
-                      <Icon width={"2em"} height={"2em"} as={FiFileText} />
-                    </Button>
+                    <IconButton
+                      aria-label="Ver registros"
+                      icon={<Icon boxSize="2em" as={FiFileText} />}
+                      p={3}
+                    />
                   </Link>
                 </Td>
               </Tr>
