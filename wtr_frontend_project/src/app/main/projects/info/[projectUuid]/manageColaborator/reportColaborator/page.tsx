@@ -15,13 +15,15 @@ export default function RelatorioColaborador() {
       users: 58234
     }
 
+    const lista = ["DATE","TIME RECORD", "JUSTIFICATION", "DOCUMENTS"]
+
  return (
   <>
     {/* <RelatorioColaborador project={mockDataList}/> */}
       <ChakraProvider>
         <Box display="flex" flexDirection="column" height="100vh" position="relative">
           {/* Box no topo da página */}
-          <Box bg="#F0EFFF" p={4} height="20vh" width="149%">
+          <Box bg="#F0EFFF" p={4} height="20vh" width="157%">
             <Center>
               {/* Título */}
               <Text fontSize="xl" fontWeight="bold" color="#4D47C3" fontFamily="">
@@ -37,9 +39,9 @@ export default function RelatorioColaborador() {
             flexDirection="column"
             p={4}
             bg="white" 
-            marginLeft="55vh" 
+            marginLeft="20vh" 
             zIndex={0} 
-            width="80%"
+            width="100%"
           >   
               <Text mt={2} fontSize={'3xl'} color="#4D47C3">
                   MARIA DA SILVA
@@ -52,32 +54,11 @@ export default function RelatorioColaborador() {
               <Box maxW="800px" width="100%" borderWidth="1px" borderRadius="lg" p={4} bg="#F0EFFF">
                   <Table variant="striped" >
                       <Thead>
-                      <Tr>
-                          <Th
-                          bg="#4D47C3" 
-                          color="white" 
-                          >
-                              DATE
-                          </Th>
-                          <Th
-                              bg="#4D47C3" 
-                              color="white" 
-                              >
-                                  TIME RECORD
-                              </Th>
-                          <Th
-                              bg="#4D47C3" 
-                              color="white"
-                              >
-                                  JUSTIFICATION
-                              </Th>
-                          <Th
-                              bg="#4D47C3" 
-                              color="white" 
-                              >
-                                  DOCUMENTS
-                              </Th>
-                          </Tr>
+                        <Tr>                            
+                            {lista.map((item : any)=>{return <Th bg="#4D47C3" 
+                            color="white" > 
+                            {item} </Th>})}
+                        </Tr>
                       </Thead>
                       <Tbody>
                       {/* Linhas da tabela */}
