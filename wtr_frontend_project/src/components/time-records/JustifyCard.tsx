@@ -1,3 +1,4 @@
+import TimeRecordData from "@/types/TimeRecordData";
 import { EditIcon, AttachmentIcon } from "@chakra-ui/icons";
 import { Button, ButtonGroup, Card, CardBody, CardHeader, FormControl, FormHelperText, FormLabel, HStack, Heading, IconButton, Input, Stack, StackDivider, Textarea } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
@@ -8,17 +9,13 @@ export type JustifyData = {
 };
 
 export default function JustifyCard({
-  onJustify
+  record,
+  setRecord,
 }: {
-  onJustify: (data: JustifyData) => void
+  record: TimeRecordData,
+  setRecord: (record: TimeRecordData) => void
 }) {
-  const [description, setDescription] = useState<string>('');
-  const [document, setDocument] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    onJustify({ description, document });
-  }, [description, document, onJustify]);
 
   return (
     <Card variant={"filled"} size="lg" maxW="500px">
@@ -40,8 +37,8 @@ export default function JustifyCard({
               bg="white"
               _hover={{ bg: "white" }}
               minHeight={100}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={record.description}
+              onChange={(e) => setRecord({ ...record, description: e.target.value })}
             />
             <FormHelperText>Insira os detalhes para sua justificativa.</FormHelperText>
           </FormControl>
@@ -56,7 +53,7 @@ export default function JustifyCard({
               onClick={e => fileInputRef.current?.click()}
             >
               <Button w='100%' justifyContent='start' overflow='hidden'>
-                {document?.name || 'Selecione o arquivo'}
+                {record.document?.name || 'Selecione o arquivo'}
               </Button>
               <IconButton aria-label='Anexe arquivo' icon={<AttachmentIcon />} />
             </ButtonGroup>
@@ -64,7 +61,7 @@ export default function JustifyCard({
               ref={fileInputRef}
               type="file"
               hidden
-              onChange={e => setDocument(e.target.files && e.target.files[0])}
+              onChange={e => setRecord({ ...record, document: e.target.files?.[0] })}
             />
             <FormHelperText>
               Se necessário mais de um arquivo/documento,

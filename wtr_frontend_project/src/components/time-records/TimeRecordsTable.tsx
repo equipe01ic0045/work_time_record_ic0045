@@ -15,7 +15,11 @@ import {
 import Link from "next/link";
 import ProjectListData from "@/types/ProjectListData";
 
-export default function TimeRecordsTable({ projectsList }: any) {
+export default function TimeRecordsTable({
+  projectsList,
+}: {
+  projectsList: ProjectListData[],
+}) {
   return (
     <TableContainer width={"100%"}>
       <Table variant="simple" background={"gray.200"}>
@@ -35,7 +39,10 @@ export default function TimeRecordsTable({ projectsList }: any) {
                 <Td>{projectData.project.owner.email}</Td>
                 <Td>
                   <Link
-                    href={`time-records/project/register/${projectData.project.project_id}`}
+                    href={{
+                      pathname: `time-records/project/register/${projectData.project.project_id}`,
+                      query: { hasOpenCheckIn: projectData.open_check_in || '' },
+                    }}
                   >
                     <IconButton
                       aria-label="Fazer registro"

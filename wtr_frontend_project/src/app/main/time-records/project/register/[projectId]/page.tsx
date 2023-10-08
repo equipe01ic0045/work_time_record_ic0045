@@ -5,6 +5,7 @@ import RecordCard from "@/components/time-records/RecordCard";
 import TimeRecordService from "@/services/TimeRecordService";
 import TimeRecordData from "@/types/TimeRecordData";
 import { Box, Button, VStack, useToast } from "@chakra-ui/react";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
@@ -13,7 +14,7 @@ export default function Page({
   searchParams,
 }: {
   params: { projectId: number }
-  searchParams: { hasOpenRecord: boolean }
+  searchParams: { hasOpenCheckIn: boolean }
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -63,7 +64,7 @@ export default function Page({
     setRecord(record);
 
     try {
-      if (searchParams.hasOpenRecord) {
+      if (searchParams.hasOpenCheckIn) {
         await timeRecordService.checkOut(record);
       } else {
         await timeRecordService.checkIn(record);
@@ -73,17 +74,18 @@ export default function Page({
         title: 'Registro de horario efetuado',
         description: "Você será redirecionado para a página anterior.",
         status: 'success',
-        duration: 1500,
+        duration: 2000,
         isClosable: true,
         position: "top-right",
-        onCloseComplete: () => router.back()
+        onCloseComplete: () => {
+          router.back();
+        }
       });
     } catch (e) {
-      console.warn(e);
       toast({
         title: 'Erro ao efetuar registro de horario.',
-        description: e instanceof Error
-          ? e.message
+        description: e instanceof AxiosError && e?.response?.data.message
+          ? e.response.data.message
           : "Verifique os dados preenchidos e tente novamente.",
         status: 'error',
         duration: 3000,
@@ -117,8 +119,7 @@ export default function Page({
         >
           <RecordCard projectId={params.projectId} onDateChange={onDateChange} />
 
-          {showJustifyCard
-            && <JustifyCard onJustify={setJustifyData} />}
+          {showJustifyCard && <JustifyCard record={newRecord} setRecord={setRecord} />}
 
           <Button
             type="submit"
@@ -128,7 +129,7 @@ export default function Page({
             colorScheme="blackAlpha"
             mb={"2em"}
           >
-            Efetuar {searchParams.hasOpenRecord ? 'Check-out' : 'Check-in'}
+            Efetuar {searchParams.hasOpenCheckIn ? 'Check-out' : 'Check-in'}
           </Button>
         </Box>
       </form>
