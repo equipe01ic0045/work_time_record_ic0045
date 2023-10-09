@@ -22,13 +22,13 @@ export default class ProjectService {
 
   public async getProjectUsers(projectId:number){
     const result = await axios.get("projects/"+projectId+"/users")
-    return result.data.data as ProjectUsers
+    return result.data.data as ProjectUsers[]
   }
 
-  public async postProjectUsers(projectId:number, user_id: number, user_role: string, user_hours_per_week: number){
+  public async postProjectUsers(projectId:number, user_email: string, user_role: string, user_hours_per_week: number){
     const { data } = await axios.post("projects/"+projectId+"/users",
       {
-        user_id: user_id,
+        user_email: user_email,
         user_role: user_role,
         user_hours_per_week: user_hours_per_week
       }

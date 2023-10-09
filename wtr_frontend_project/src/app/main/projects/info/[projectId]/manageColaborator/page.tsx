@@ -4,7 +4,7 @@ import { Box, Button, Center, ChakraProvider, Table, Tbody, Td, Th, Thead, Tr, V
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faClock, faProjectDiagram, faBriefcase  } from '@fortawesome/free-solid-svg-icons';
 //import Modal from "@/components/modalAddUser/modalAddUser"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Select, Input} from '@chakra-ui/react';
 import ProjectService from "@/services/ProjectService";
 import ProjectUsers from '@/types/ProjectUsers';
@@ -18,8 +18,12 @@ export default function GerenciarColaborador({params}:any) {
 
   async function getUsers() {
     const usersData = await projectService.getProjectUsers(params.projectId);
-    // setUsers(usersData);
+    setUsers(usersData);
   }
+
+  useEffect(() => {
+    getUsers();
+  }, []);
 
     const project = 
     {
@@ -62,9 +66,7 @@ export default function GerenciarColaborador({params}:any) {
     };
   
     const handleConfirm = () => {
-      // projectService.postProjectUsers(params.projectId,formData.email,formData.role,formData.horas)
-      
-      console.log(formData);
+      projectService.postProjectUsers(params.projectId,formData.email,formData.role.toUpperCase(),parseInt(formData.horas))
     
       setIsOpen(false);
     };
