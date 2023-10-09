@@ -37,7 +37,7 @@ export default function ProjectInfo({ params }: any) {
   }, []);
 
   return (
-    <Box display={"flex"} flexDirection={"column"}>
+    <Box display={"flex"} flexDirection={"column"} width={'100%'}>
       <HeaderBox title={`Projeto / ${projectInfo? projectInfo.project_name : "...loading"}`} />
       <Box padding={"1em"}>
         <ProjectInfoBox project={projectInfo? projectInfo: loadingData} />
