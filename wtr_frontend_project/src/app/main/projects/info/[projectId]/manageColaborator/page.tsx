@@ -184,6 +184,7 @@ export default function GerenciarColaborador({params}:any) {
                       onChange={handleSelectChange}
                     >
                       <option value="Admin">Admin</option>
+                      <option value="MANAGER">MANAGER</option>
                       <option value="Colaborator">Colaborator</option>
                     </Select>
                   </Td>
