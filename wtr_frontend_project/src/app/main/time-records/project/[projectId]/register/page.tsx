@@ -1,6 +1,6 @@
 'use client';
 import HeaderBox from "@/components/global/HeaderBox";
-import JustifyCard, { JustifyData } from "@/components/time-records/JustifyCard";
+import JustifyCard from "@/components/time-records/JustifyCard";
 import RecordCard from "@/components/time-records/RecordCard";
 import TimeRecordService from "@/services/TimeRecordService";
 import TimeRecordData from "@/types/TimeRecordData";
@@ -97,17 +97,9 @@ export default function Page({
 
   const onDateChange = () => setShowJustifyCard(true);
 
-  const setJustifyData = (data: JustifyData) => {
-    setRecord({
-      ...newRecord,
-      description: data.description,
-      document: data.document,
-    });
-  };
-
   return (
     <VStack w={"100%"} spacing="3rem">
-      <HeaderBox title={`Registro / nome projeto`} />
+      <HeaderBox title={`Registro / Projeto ${params.projectId}`} />
 
       <form onSubmit={newRecordHandler}>
         <Box

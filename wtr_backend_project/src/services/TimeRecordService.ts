@@ -70,4 +70,17 @@ export default class TimeRecordService {
       checkoutTimeStamp ?? new Date()
     );
   }
+
+  async getUserTimeRecordsInProject(
+    userId: number,
+    projectId: number,
+  ) {
+    const foundUserProjectRole =
+      await this.projectsRepository.findUserProjectRole(userId, projectId);
+    if (!foundUserProjectRole) {
+      throw new AuthorizationError();
+    }
+
+    return this.timeRecordsRepository.getUserTimeRecordsInProject(userId, projectId);
+  }
 }

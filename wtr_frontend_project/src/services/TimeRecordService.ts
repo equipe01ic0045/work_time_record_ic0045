@@ -4,8 +4,16 @@ import PaginationData from "@/types/PaginationData";
 import TimeRecord from "@/types/TimeRecord";
 
 export default class TimeRecordService {
-  async getTimeRecords(...args: unknown[]): Promise<PaginationData<TimeRecord>> {
-    throw new Error("Method not implemented.");
+  async getTimeRecords(projectId: number): Promise<PaginationData<TimeRecord>> {
+    const {data} = await axios.get(`/projects/time-records/${projectId}`);
+
+    console.log(data.data);
+    
+    return {
+      page: 1,
+      limit: 100,
+      results: data.data,
+    };
   }
 
   async checkIn(record: TimeRecordData) {
