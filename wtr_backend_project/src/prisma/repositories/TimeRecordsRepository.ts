@@ -60,4 +60,17 @@ export default class TimeRecordsRepository extends BaseRepository {
 
     return openTimeRecord;
   }
+
+  async getUserTimeRecordsInProject(userId: number, projectId: number) {
+    return this.client.time_record.findMany({
+      where: {
+        user_id: userId,
+        project_id: projectId,
+      },
+      orderBy: {
+        check_in_timestamp: "desc",
+      },
+      take: 100,
+    });
+  }
 }

@@ -6,7 +6,7 @@ import TimeRecord from "@/types/TimeRecord";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
 import { Box, Button, Flex, HStack, Heading, IconButton, Input, Table, TableContainer, Tbody, Th, Thead, Tr, useToast } from "@chakra-ui/react";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FaRegFileLines } from "react-icons/fa6";
 
 export default function Page({ params }: any) {
@@ -15,8 +15,7 @@ export default function Page({ params }: any) {
   const [toDate, setToDate] = useState<string>(dayjs().endOf('month').format('YYYY-MM-DD'));
   const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
   const toast = useToast();
-
-  const timeRecordService = new TimeRecordService();
+  const timeRecordService = useMemo(() => new TimeRecordService(), []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,55 +31,34 @@ export default function Page({ params }: any) {
           isClosable: true,
           position: "top-right",
         });
-
-        setTimeRecords([
-          {
-            "time_record_id": 1,
-            "check_in_timestamp": "2021-08-01T02:00:00.000Z",
-            "check_out_timestamp": "2021-08-01T04:00:00.000Z",
-            "documents": [],
-            "description": "Dados para testes (caso dê erro)",
-            "user_message": "2",
-            "location": "Salvador",
-            "status": "Pendente"
-          }
-        ]);
       }
 
     };
 
     fetchData();
-  }, [params.projectId]);
+  }, [params.projectId, timeRecordService, toast]);
 
   const filterByDate = async () => {
     setIsLoadingSearch(true);
 
-    const data = await timeRecordService.getTimeRecords(params.projectId, fromDate, toDate);
+    // TODO: implementar filtro por data
+    // const data = await timeRecordService.getTimeRecords(params.projectId, fromDate, toDate);
 
-    setTimeRecords(data.results);
+    // setTimeRecords(data.results);
     setIsLoadingSearch(false);
   }
 
   return (
     <Box w={"100%"}>
-      <HeaderBox title={`Registros / nome-projeto`} />
+      <HeaderBox title={`Registros / Projeto ${params.projectId}`} />
 
       <Box
         display={"flex"}
         flexDir={"column"}
         width={"90%"}
-        mt={20}
         mx={"auto"}
         gap={"2em"}
       >
-
-        <HStack>
-          <Icon boxSize="3rem" as={FaRegFileLines} />
-          <Heading as="h1" size="2xl">
-            Registros
-          </Heading>
-        </HStack>
-
         <TableContainer>
           <Flex marginY={10} minWidth="fit-content" alignItems="center" gap="2" justifyContent={"space-between"}>
             <HStack bg="#F0EFFF" rounded="md" padding={3} spacing={2}>

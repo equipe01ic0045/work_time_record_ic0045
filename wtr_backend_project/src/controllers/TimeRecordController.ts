@@ -3,6 +3,7 @@ import AuthorizedRequest from "../types/interfaces/AuthorizedRequest";
 import { NextFunction, Response } from "express";
 import { timeRecordService } from "../services";
 import {
+  DataRetrievedResponse,
   ResourceCreatedResponse,
   ResourceUpdatedResponse,
 } from "../types/responses";
@@ -45,6 +46,24 @@ export default class TimeRecordController extends BaseController {
         checkOutTimestamp
       );
       new ResourceUpdatedResponse().send(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getUserTimeRecordsInProject(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const { project_id } = req.params;
+
+    try {
+      const timeRecords = await timeRecordService.getUserTimeRecordsInProject(
+        req.user!.userId,
+        parseInt(project_id)
+      );
+      new DataRetrievedResponse().send(res, timeRecords);
     } catch (error) {
       next(error);
     }
