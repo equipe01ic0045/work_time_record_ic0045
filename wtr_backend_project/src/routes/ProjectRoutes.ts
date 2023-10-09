@@ -91,14 +91,14 @@
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
- *                 type: integer
+ *               user_email:
+ *                 type: string
  *               user_role:
  *                 type: string
  *               user_hours_per_week:
  *                 type: integer
  *             example:
- *               user_id: 2
+ *               user_email: "teste@email.com"
  *               user_role: "MANAGER"
  *               user_hours_per_week: 40
  *     responses:
@@ -154,14 +154,14 @@
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
- *                 type: integer
+ *               user_email:
+ *                 type: string
  *               user_role:
  *                 type: string
  *               user_hours_per_week:
  *                 type: integer
  *             example:
- *               user_id: 12345
+ *               user_email: "teste@email.com"
  *               user_role: "ADMIN"
  *               user_hours_per_week: 20
  *     responses:
@@ -247,7 +247,7 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
 
     const userProjectRoleValidation = [
       ...this.projectIdValidation,
-      body("user_id").isInt().withMessage("ID do usuario deve ser um inteiro"),
+      body("user_email").isEmail().withMessage("Email do usuario inválido"),
       body("user_role")
         .custom((value: string) =>
           Object.values(UserRole).includes(value as UserRole)

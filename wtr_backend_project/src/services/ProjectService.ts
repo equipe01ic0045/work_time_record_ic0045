@@ -19,7 +19,7 @@ export default class ProjectService {
   async createProject(
     userId: number,
     projectName: string,
-    projectDescription:string,
+    projectDescription: string,
     locationRequired: boolean,
     commercialTimeRequired: boolean,
     timezone: string,
@@ -52,7 +52,7 @@ export default class ProjectService {
   async addUserToProject(
     adminUserId: number,
     projectId: number,
-    contributorId: number,
+    contributorEmail: string,
     contributorRole: UserRole,
     contributorHoursPerWeek: number
   ): Promise<user_project_role> {
@@ -64,13 +64,18 @@ export default class ProjectService {
     if (!foundAdminRole) {
       throw new AuthorizationError();
     }
-    const foundUser = await this.userRepository.findUserByUserId(contributorId);
+
+    const foundUser = await this.userRepository.findUserByEmail(
+      contributorEmail
+    );
+
     if (!foundUser) {
       throw new NotFoundError("user");
     }
+    
     try {
       return this.projectRepository.addUserToProject(
-        contributorId,
+        foundUser.user_id,
         projectId,
         contributorHoursPerWeek,
         contributorRole
@@ -83,7 +88,7 @@ export default class ProjectService {
   async updateProjectUserRole(
     adminId: number,
     projectId: number,
-    contributorId: number,
+    contributorEmail: string,
     newContributorRole: UserRole,
     newHoursPerWeek: number
   ): Promise<user_project_role> {
@@ -96,13 +101,15 @@ export default class ProjectService {
       throw new AuthorizationError();
     }
 
-    const foundUser = await this.userRepository.findUserByUserId(contributorId);
+    const foundUser = await this.userRepository.findUserByEmail(
+      contributorEmail
+    );
     if (!foundUser) {
       throw new NotFoundError("user");
     }
 
     return this.projectRepository.updateUserProjectRole(
-      contributorId,
+      foundUser.user_id,
       projectId,
       newContributorRole,
       newHoursPerWeek
@@ -131,7 +138,7 @@ export default class ProjectService {
     const userProjects = await this.projectRepository.findProjectsByUserId(
       userId
     );
-    return userProjects
+    return userProjects;
   }
 
   async getProjectUsers(userId: number, projectId: number) {
