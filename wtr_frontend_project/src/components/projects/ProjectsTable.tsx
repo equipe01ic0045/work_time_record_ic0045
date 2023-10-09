@@ -1,4 +1,5 @@
 "use client";
+import ProjectListData from "@/types/ProjectListData";
 import {
   Table,
   Thead,
@@ -12,7 +13,11 @@ import {
 } from "@chakra-ui/react";
 
 // Note: o Owner é simplesmente o primeiro admin do projeto no banco
-export default function ProjectsTable({ projectList }: any) {
+export default function ProjectsTable({
+  projectsList,
+}: {
+  projectsList: ProjectListData[];
+}) {
   const iconUser = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -24,6 +29,20 @@ export default function ProjectsTable({ projectList }: any) {
     </svg>
   );
 
+  function formatToTwoDigits(num: number): string {
+    let integerStr = num.toString();
+    while (integerStr.length < 2) {
+      integerStr = "0" + integerStr;
+    }
+    return integerStr;
+  }
+
+  function getFormattedCommercialTime(commercialTime: number): string {
+    const hour = Math.floor(commercialTime / 60);
+    const minute = commercialTime % 60;
+    return `${formatToTwoDigits(hour)}:${formatToTwoDigits(minute)}`;
+  }
+
   return (
     <TableContainer width={"100%"}>
       <Table variant="simple" background={"gray.200"}>
@@ -31,21 +50,36 @@ export default function ProjectsTable({ projectList }: any) {
           <Tr>
             <Th textColor={"white"}>NOME DO PROJETO</Th>
             <Th textColor={"white"}>PROPRIETÁRIO</Th>
+            <Th textColor={"white"}>HORÁRIO COMERCIAL</Th>
             <Th textColor={"white"}>USUÁRIOS</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {projectList.map((project: any) => {
+          {projectsList.map((projectData: ProjectListData) => {
+            let commercialTimeFormat: string = "";
+            if (projectData.project.commercial_time_start!=undefined  && projectData.project.commercial_time_end!=undefined) { // 0 is false, but 0 is 12:00 AM. 
+              commercialTimeFormat = `${getFormattedCommercialTime(
+                projectData.project.commercial_time_start
+              )} - ${getFormattedCommercialTime(
+                projectData.project.commercial_time_end
+              )} (${projectData.project.timezone})`;
+            }
+
             return (
-              <Tr key={project.id}>
+              <Tr key={projectData.project.project_id}>
                 <Td>
-                  <Link href={`/main/projects/info/${project.id}`}>
-                    <Button>{project.projectName}</Button>
+                  <Link
+                    href={`/main/projects/info/${projectData.project.project_id}`}
+                  >
+                    <Button>{projectData.project.project_name}</Button>
                   </Link>
                 </Td>
-                <Td>{project.owner}</Td>
+                <Td>{projectData.project.owner.email}</Td>
+                <Td>{commercialTimeFormat}</Td>
                 <Td>
-                  <Link href={`/main/projects/info/${project.id}/manageColaborator`}>
+                  <Link
+                    href={`/main/projects/info/${projectData.project.project_id}/manageColaborator`}
+                  >
                     <Button
                       width={"auto"}
                       minWidth={"100px"}
@@ -54,7 +88,7 @@ export default function ProjectsTable({ projectList }: any) {
                       alignItems={"center"}
                       justifyContent={"space-between"}
                     >
-                      {project.users}
+                      {projectData.project.users_count}
                       {iconUser}
                     </Button>
                   </Link>
