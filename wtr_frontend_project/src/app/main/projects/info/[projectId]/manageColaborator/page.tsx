@@ -3,6 +3,9 @@
 import { Box, Button, Center, ChakraProvider, Table, Tbody, Td, Th, Thead, Tr, VStack, Text, Link} from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faClock, faProjectDiagram, faBriefcase  } from '@fortawesome/free-solid-svg-icons';
+//import Modal from "@/components/modalAddUser/modalAddUser"
+import { useState } from 'react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Select, Input} from '@chakra-ui/react';
 
 export default function GerenciarColaborador() {
 
@@ -15,13 +18,51 @@ export default function GerenciarColaborador() {
       users: 58234
     }
 
+    const [isOpen, setIsOpen] = useState(false);
+    const [formData, setFormData] = useState({
+      role: 'User',
+      horas: '',
+      email: '',
+    });
+  
+    const toggleModal = () => {
+      setIsOpen(!isOpen);
+    };
+  
+    const handleSelectChange = (
+      e: React.ChangeEvent<HTMLSelectElement>
+    ) => {
+      const { value } = e.target;
+      setFormData({
+        ...formData,
+        role: value,
+      });
+    };
+  
+    const handleChange = (
+      e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+      const { name, value } = e.target;
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    };
+  
+    const handleConfirm = () => {
+      
+      console.log(formData);
+    
+      setIsOpen(false);
+    };
+
  return (
   <>
     {/* <GerenciarColaborador project={project}/> */}
     <ChakraProvider>
         <Box display="flex" flexDirection="column" height="100vh" position="relative">
           {/* Box no topo da página */}
-          <Box bg="#F0EFFF" p={4} height="20vh" width="144%">
+          <Box bg="#F0EFFF" p={4} height="20vh" width="132%">
             <Center>
               {/* Título */}
               <Text fontSize="xl" fontWeight="bold" color="#4D47C3" fontFamily="">
@@ -37,12 +78,13 @@ export default function GerenciarColaborador() {
             flexDirection="column"
             p={4}
             bg="white" 
-            marginLeft="55vh" 
+            marginLeft="20vh" 
             zIndex={0} 
-            width="80%"
+            width="100%"
           >   
               <Box mt={4} style={{ justifyContent: 'flex-start' }}>
-                  <Button size="sm" bg="#FFFFFF" color="#4D47C3" fontSize="xl" marginBottom={2}>USER +</Button>
+                  <Button size="sm" bg="#FFFFFF" color="#4D47C3" fontSize="xl" marginBottom={2} onClick={toggleModal}>USER +</Button>           
+
               </Box>
 
               <Box mt={4}></Box>
@@ -155,6 +197,69 @@ export default function GerenciarColaborador() {
           </Box>
         </Box>
       </ChakraProvider>
+      {/* <Modal isOpen={isOpen} onClose={toggleModal} handleChange={handleChange} handleConfirm={handleConfirm} handleSelectChange={handleSelectChange}/> */}
+
+      <Modal isOpen={isOpen} onClose={toggleModal}>
+        <ModalOverlay />
+        <ModalContent>
+          {/* <ModalHeader>Criar Novo Usuário</ModalHeader> */}
+          <ModalCloseButton />
+          <ModalBody>
+            <Table >
+              <Tbody>
+                <Tr>
+                  <Td>Role:</Td>
+                  <Td>
+                    <Select
+                      name="role"
+                      value={formData.role}
+                      onChange={handleSelectChange}
+                    >
+                      <option value="Admin">Admin</option>
+                      <option value="Colaborator">Colaborator</option>
+                    </Select>
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Td>Horas:</Td>
+                  <Td>
+                    <Input
+                      type="number"
+                      name="horas"
+                      value={formData.horas}
+                      onChange={handleChange}
+                    />
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Td>Email:</Td>
+                  <Td>
+                    <Input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                  </Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </ModalBody>
+
+          <ModalFooter>
+            <Box textAlign="center" width="100%">
+              <Button
+                colorScheme="green"
+                color="white"
+                onClick={handleConfirm}
+              >
+                Confirmar
+              </Button>
+            </Box>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
   </>
  )
 }
