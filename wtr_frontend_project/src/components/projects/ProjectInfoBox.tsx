@@ -173,7 +173,7 @@ export default function ProjectInfoBox({ project }: any) {
             </Link>
             <Link 
               width={"30%"} 
-              href={`/main/projects/info/${project.id}/manageColaborator`}>
+              href={`/main/projects/info/${project.project_id}/manageColaborator`}>
               <Button
                 textColor={"white"}
                 gap={"0.5em"}
