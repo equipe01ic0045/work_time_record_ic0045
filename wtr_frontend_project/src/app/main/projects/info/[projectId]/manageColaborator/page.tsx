@@ -6,8 +6,20 @@ import { faTrash, faEdit, faClock, faProjectDiagram, faBriefcase  } from '@forta
 //import Modal from "@/components/modalAddUser/modalAddUser"
 import { useState } from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Select, Input} from '@chakra-ui/react';
+import ProjectService from "@/services/ProjectService";
+import ProjectUsers from '@/types/ProjectUsers';
+import HeaderBox from '@/components/global/HeaderBox';
 
-export default function GerenciarColaborador() {
+export default function GerenciarColaborador({params}:any) {
+
+  const projectService = new ProjectService();
+
+  const [users, setUsers] = useState<ProjectUsers[]>([]);
+
+  async function getUsers() {
+    const usersData = await projectService.getProjectUsers(params.projectId);
+    // setUsers(usersData);
+  }
 
     const project = 
     {
@@ -50,6 +62,7 @@ export default function GerenciarColaborador() {
     };
   
     const handleConfirm = () => {
+      // projectService.postProjectUsers(params.projectId,formData.email,formData.role,formData.horas)
       
       console.log(formData);
     
@@ -60,16 +73,9 @@ export default function GerenciarColaborador() {
   <>
     {/* <GerenciarColaborador project={project}/> */}
     <ChakraProvider>
-        <Box display="flex" flexDirection="column" height="100vh" position="relative">
+        <Box display={"flex"} flexDirection={"column"} width={'100%'}>
           {/* Box no topo da página */}
-          <Box bg="#F0EFFF" p={4} height="20vh" width="132%">
-            <Center>
-              {/* Título */}
-              <Text fontSize="xl" fontWeight="bold" color="#4D47C3" fontFamily="">
-                  PROJECTS / PROJECT p_0012 / COLABORADORES
-              </Text>
-            </Center>
-          </Box>
+          <HeaderBox title={`Projeto / ${params.projectInfo? params.projectInfo.project_name : "...loading"}`} />
 
           {/* Box no meio da página */}
           <Box
@@ -107,12 +113,12 @@ export default function GerenciarColaborador() {
                               >
                                   TIME DEBT
                               </Th>
-                          <Th
+                          {/* <Th
                               bg="#4D47C3" 
                               color="white"
                               >
                                   EMAIL
-                              </Th>
+                              </Th> */}
                           <Th
                               bg="#4D47C3" 
                               color="white" 
@@ -122,73 +128,33 @@ export default function GerenciarColaborador() {
                           </Tr>
                       </Thead>
                       <Tbody>
-                      {/* Linhas da tabela */}
-                      <Tr>
-                          <Td>
-                              <Link 
-                                  width={"30%"} 
-                                  href={`/main/projects/info/${project.id}/manageColaborator/reportColaborator`}>
-                                      Maria da Silva
-                              </Link>
-                          </Td>
-                          <Td>-01:00 HOURS</Td>
-                          <Td>email@example.com</Td>
-                          <Td>
-                              <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
-                                  <FontAwesomeIcon icon={faEdit} style={{ marginRight: '4px', color: '#F0EFFF' }} />
-                                      Editar
-                              </Button>
-                              <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
-                                  <FontAwesomeIcon icon={faTrash} style={{ marginRight: '4px', color: '#F0EFFF' }} />
-                                      Excluir
-                              </Button>
-                          </Td>   
-                      </Tr>
-                      <Tr>
-                          <Td>Pedro Antônio</Td>
-                          <Td>+01:00 HOURS</Td>
-                          <Td>pedro@mail.com</Td>
-                          <Td>
-                              <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
-                                  <FontAwesomeIcon icon={faEdit} style={{ marginRight: '4px', color: '#F0EFFF' }} />
-                                      Editar
-                              </Button>
-                              <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
-                                  <FontAwesomeIcon icon={faTrash} style={{ marginRight: '4px', color: '#F0EFFF' }} />
-                                      Excluir
-                              </Button>
-                          </Td>
-                      </Tr>
-                      <Tr>
-                          <Td>Gustavo Luiz</Td>
-                          <Td>-00:23 HOURS</Td>
-                          <Td>gustavo@mail.com</Td>
-                          <Td>
-                              <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
-                                  <FontAwesomeIcon icon={faEdit} style={{ marginRight: '4px', color: '#F0EFFF' }} />
-                                      Editar
-                              </Button>
-                              <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
-                                  <FontAwesomeIcon icon={faTrash} style={{ marginRight: '4px', color: '#F0EFFF' }} />
-                                      Excluir
-                              </Button>
-                          </Td>
-                      </Tr>
-                      <Tr>
-                          <Td>Lara Carvalho</Td>
-                          <Td>00:00 HOURS</Td>
-                          <Td>lara@mail.com</Td>
-                          <Td>
-                              <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
-                                  <FontAwesomeIcon icon={faEdit} style={{ marginRight: '4px', color: '#F0EFFF' }} />
-                                      Editar
-                              </Button>
-                              <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
-                                  <FontAwesomeIcon icon={faTrash} style={{ marginRight: '4px', color: '#F0EFFF' }} />
-                                      Excluir
-                              </Button>
-                          </Td>
-                      </Tr>
+                        {/* Linhas da tabela */}
+                        {users.map((user: ProjectUsers) => {
+                          return (
+                            <Tr key={user.user.user_id}>
+                              <Td>
+                                  <Link 
+                                      width={"30%"} 
+                                      href={`/main/projects/info/${project.id}/manageColaborator/reportColaborator`}>
+                                          {user.user.full_name}
+                                  </Link>
+                              </Td>
+                              {/* <Td>-01:00 HOURS</Td> */}
+                              <Td>{user.user.email}</Td>
+                              <Td>
+                                  <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
+                                      <FontAwesomeIcon icon={faEdit} style={{ marginRight: '4px', color: '#F0EFFF' }} />
+                                          Editar
+                                  </Button>
+                                  <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
+                                      <FontAwesomeIcon icon={faTrash} style={{ marginRight: '4px', color: '#F0EFFF' }} />
+                                          Excluir
+                                  </Button>
+                              </Td>   
+                            </Tr>
+                          );
+                        })}
+                  
                       </Tbody>
                   </Table>
               </Box>
