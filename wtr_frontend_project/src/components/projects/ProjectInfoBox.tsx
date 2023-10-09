@@ -66,6 +66,20 @@ export default function ProjectInfoBox({ project }: any) {
     </svg>
   );
 
+  function formatToTwoDigits(num: number): string {
+    let integerStr = num.toString();
+    while (integerStr.length < 2) {
+      integerStr = "0" + integerStr;
+    }
+    return integerStr;
+  }
+
+  function getFormattedCommercialTime(commercialTime: number): string {
+    const hour = Math.floor(commercialTime / 60); // result without floor is float
+    const minute = commercialTime % 60;
+    return `${formatToTwoDigits(hour)}:${formatToTwoDigits(minute)}`;
+  }
+
   return (
     <Box
       background={"purple.200"}
@@ -94,8 +108,8 @@ export default function ProjectInfoBox({ project }: any) {
             ["LOCALIZAÇÃO", project.location],
             ["LOCALIZAÇÃO REQUERIDA", project.location_required? "Sim" : "Nao"],
             ["TIMEZONE", project.timezone],
-            ["HORÁRIO COMERCIAL (INÍCIO)", project.commercial_time_start],
-            ["HORÁRIO COMERCIAL (FIM)", project.commercial_time_end],
+            ["HORÁRIO COMERCIAL (INÍCIO)", getFormattedCommercialTime(project.commercial_time_start)],
+            ["HORÁRIO COMERCIAL (FIM)", getFormattedCommercialTime(project.commercial_time_end)],
             ["HORÁRIO COMERCIAL REQUERIDO", project.commercial_time_required? "Sim" : "Nao"],
             ["DATA DE CRIAÇÃO", project.created_at],
           ]
@@ -118,6 +132,9 @@ export default function ProjectInfoBox({ project }: any) {
                       padding: gap,
                       backgroundColor: white,
                       textAlign: "center",
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
                     }}
                   >
                     {item.value}
@@ -182,7 +199,7 @@ export default function ProjectInfoBox({ project }: any) {
               flex: 1,
               padding: gap,
               textAlign: "justify",
-              width: 1200 // change that later
+              width: '100%'
             }}
           >
             {project.project_description}
