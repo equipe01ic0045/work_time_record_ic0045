@@ -48,12 +48,12 @@ export default class ProjectController extends BaseController {
     next: NextFunction
   ) {
     const { project_id } = req.params;
-    const { user_id, user_role, user_hours_per_week } = req.body;
+    const { user_email, user_role, user_hours_per_week } = req.body;
     try {
       await projectService.addUserToProject(
         req.user!.userId,
         parseInt(project_id),
-        user_id,
+        user_email,
         user_role,
         user_hours_per_week
       );
@@ -69,12 +69,12 @@ export default class ProjectController extends BaseController {
     next: NextFunction
   ) {
     const { project_id } = req.params;
-    const { user_id, user_role, user_hours_per_week } = req.body;
+    const { user_email, user_role, user_hours_per_week } = req.body;
     try {
       await projectService.updateProjectUserRole(
         req.user!.userId,
         parseInt(project_id),
-        user_id,
+        user_email,
         user_role,
         user_hours_per_week
       );
