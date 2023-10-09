@@ -7,8 +7,6 @@ export default class TimeRecordService {
   async getTimeRecords(projectId: number): Promise<PaginationData<TimeRecord>> {
     const {data} = await axios.get(`/projects/time-records/${projectId}`);
 
-    console.log(data.data);
-    
     return {
       page: 1,
       limit: 100,

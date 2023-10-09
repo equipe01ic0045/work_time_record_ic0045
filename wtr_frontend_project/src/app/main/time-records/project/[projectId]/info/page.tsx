@@ -18,14 +18,11 @@ export default function Page({ params }: any) {
   const timeRecordService = useMemo(() => new TimeRecordService(), []);
 
   useEffect(() => {
-    console.warn('loading');
-
     const fetchData = async () => {
       try {
         const data = await timeRecordService.getTimeRecords(params.projectId);
         setTimeRecords(data.results);
       } catch (e) {
-        console.warn(e);
         toast({
           title: "Erro ao carregar registros",
           description: "Não foi possível carregar os registros do projeto.",
