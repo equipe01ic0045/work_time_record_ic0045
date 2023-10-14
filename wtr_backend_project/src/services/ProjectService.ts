@@ -26,25 +26,17 @@ export default class ProjectService {
     commercialTimeStart?: number,
     commercialTimeEnd?: number
   ): Promise<project> {
-    const foundProject = await this.projectRepository.findProjectByProjectName(
-      projectName
+    const newProject = await this.projectRepository.createProject(
+      userId,
+      projectName,
+      locationRequired,
+      commercialTimeRequired,
+      timezone,
+      location,
+      commercialTimeStart,
+      commercialTimeEnd
     );
-
-    if (!foundProject) {
-      const newProject = await this.projectRepository.createProject(
-        userId,
-        projectName,
-        locationRequired,
-        commercialTimeRequired,
-        timezone,
-        location,
-        commercialTimeStart,
-        commercialTimeEnd
-      );
-      return newProject;
-    } else {
-      throw new ConflictError("project");
-    }
+    return newProject;
   }
 
   async addUserToProject(

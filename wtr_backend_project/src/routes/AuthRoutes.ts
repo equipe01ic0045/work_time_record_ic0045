@@ -68,8 +68,8 @@
 
 import AuthController from "../controllers/AuthController";
 import BaseRoutes from "./abstract/BaseRoutes";
-import { body } from "express-validator";
 import { Router } from "express";
+import { CreateUserRequestSchema, LoginRequestSchema } from "../validation/schemas/UserRequestSchema";
 
 export default class AuthRoutes extends BaseRoutes {
   constructor(protected controller: AuthController = new AuthController()) {
@@ -79,27 +79,14 @@ export default class AuthRoutes extends BaseRoutes {
   get router(): Router {
     this._router.post(
       "/register",
-      [
-        body("full_name")
-          .isString()
-          .withMessage("Nome completo inválido")
-          .isLength({ min: 1 })
-          .withMessage("Insira o nome completo"),
-        body("email").isEmail().withMessage("Email inválido"),
-        body("password")
-          .isLength({ min: 8 })
-          .withMessage("Senha deve ter pelo menos 8 caracteres."),
-      ],
+      CreateUserRequestSchema,
       this.validate,
       this.controller.registerUser
     );
 
     this._router.post(
       "/login",
-      [
-        body("email").isEmail().withMessage("Email inválido"),
-        body("password").isString().withMessage("Senha deve ser uma string"),
-      ],
+      LoginRequestSchema,
       this.validate,
       this.controller.loginUser
     );

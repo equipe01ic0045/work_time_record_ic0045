@@ -175,6 +175,7 @@ import ProjectRelatedRoutes from "./abstract/ProjectRelatedRoutes";
 import { body } from "express-validator";
 import { UserRole } from "@prisma/client";
 import { Router } from "express";
+import { CreateProjectRequestSchema } from "../validation/schemas/ProjectsRequestSchema";
 
 export default class ProjectRoutes extends ProjectRelatedRoutes {
   constructor(
@@ -187,15 +188,7 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
     this._router.get("/", this.controller.getUserProjects);
     this._router.post(
       "/",
-      [
-        body("project_name")
-          .notEmpty()
-          .withMessage("Nome do projeto requerido")
-          .custom((value: string) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
-          .withMessage(
-            'Nome do projeto inválido. Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen, examplo: "examplo-nome-de-projeto-32"'
-          ),
-      ],
+      CreateProjectRequestSchema,
       this.validate,
       this.controller.createNewProject
     );
