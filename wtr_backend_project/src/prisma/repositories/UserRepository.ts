@@ -17,7 +17,7 @@ export default class UserRepository extends BaseRepository {
   }
 
   async findUserByEmail(email: string): Promise<user | null> {
-    return this.client.user.findUnique({
+    return this.client.user.findFirst({
       where: {
         email,
       },

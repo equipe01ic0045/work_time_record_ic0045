@@ -2,8 +2,9 @@ import { UserRole, project, user_project_role } from "@prisma/client";
 import BaseRepository from "./abstract/BaseRepository";
 
 export default class ProjectRepository extends BaseRepository {
+  
   async findProjectByProjectName(projectName: string) {
-    return this.client.project.findUnique({
+    return this.client.project.findFirst({
       where: { project_name: projectName },
     });
   }
