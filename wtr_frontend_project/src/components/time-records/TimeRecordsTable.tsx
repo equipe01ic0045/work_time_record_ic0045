@@ -18,12 +18,12 @@ export default function TimeRecordsTable({ projectList }: any) {
   return (
     <TableContainer width={"100%"}>
       <Table variant="simple" background={"gray.200"}>
-        <Thead bg={"blueviolet"}>
+        <Thead bg={"#4D47C3"}>
           <Tr>
             <Th textColor={"white"}>NOME DO PROJETO</Th>
             <Th textColor={"white"}>PROPRIETÁRIO</Th>
             <Th textColor={"white"}>REGISTROS</Th>
-            <Th textColor={"white"}>INFORMAÇÕES</Th>
+            <Th textColor={"white"}>JUSTIFICATIVAS</Th>
           </Tr>
         </Thead>
         <Tbody>

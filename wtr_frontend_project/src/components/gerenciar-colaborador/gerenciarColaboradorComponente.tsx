@@ -64,7 +64,7 @@ export default function GerenciarColaborador({ project }: any) {
                             bg="#4D47C3" 
                             color="white" 
                             >
-                                TIME DEBT
+                                PORTUGUÊIS
                             </Th>
                         <Th
                             bg="#4D47C3" 

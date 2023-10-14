@@ -78,7 +78,7 @@ export default function Page({ params }: { params: { timeRecordId: string } }) {
 
         <Card marginY={5} variant={"filled"} w="100%">
           <CardHeader>
-            <Heading aria-label="description" as="h2" size={"lg"}>Descrição</Heading>
+            <Heading aria-label="description" as="h2" size={"lg"}>Justificativa</Heading>
           </CardHeader>
           <CardBody>
             <Textarea
