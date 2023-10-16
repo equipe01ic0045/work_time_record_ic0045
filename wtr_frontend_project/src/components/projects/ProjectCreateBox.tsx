@@ -2,6 +2,7 @@
 import { Link, Text, Box, Button, Input, Textarea, Checkbox, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 
 export default function ProjectCreateBox({ project }: any) {
   const router = useRouter();
@@ -182,7 +183,7 @@ export default function ProjectCreateBox({ project }: any) {
              gap={gap}
           >
             <Button background={"blueviolet"} color={white} flex={1} onClick={(ev)=>createProject(ev)}>{project.edit ? 'Edit' : 'Create'}</Button>
-            <Button background={"blueviolet"} color={white} onClick={()=> router.push(project.edit ? '/main/projects/info/'+project.project_id : '/main/projects')}>Cancel</Button>
+            <Button background={"blueviolet"} color={white} onClick={()=> router.push(project.edit ? '/main/projects/info/'+project.project_id : '/main/projects')}><ArrowBackIcon color={white} fontSize={25}/></Button>
           </Box>
           <Box
             background={"blueviolet"}
