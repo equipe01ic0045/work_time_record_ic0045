@@ -119,7 +119,7 @@ export default function TimeRecordsTable({
             <Th textColor={"white"}>NOME DO PROJETO</Th>
             <Th textColor={"white"}>PROPRIETÁRIO</Th>
             <Th textColor={"white"}>REGISTRAR</Th>
-            <Th textColor={"white"}>INFORMAÇÕES</Th>
+            <Th textColor={"white"}>REGISTROS FEITOS</Th>
           </Tr>
         </Thead>
         <Tbody>
