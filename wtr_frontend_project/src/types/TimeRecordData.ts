@@ -1,11 +1,9 @@
-import RecordDocument from "./RecordDocument";
-
 type TimeRecordData = {
   date: Date;
-  documents: RecordDocument[];
-  description: string;
+  document?: File|null;
+  description?: string;
   projectId: number;
-  location?: { latitude: number, longitude: number };
-}
+  location?: string;
+};
 
 export default TimeRecordData;

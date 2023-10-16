@@ -10,6 +10,7 @@ export default function RegistrationComponent() {
   const router = useRouter();
   const toast = useToast();
   const [newUser, setNewUser] = useState({
+    full_name: "",
     email: "",
     password: "",
     confirmEmail: "",
@@ -76,6 +77,15 @@ export default function RegistrationComponent() {
       </Box>
 
       <Box display="flex" flexDirection="column" gap="1em" mt="1em">
+        <Input
+            placeholder="nome completo"
+            type="text"
+            name="full_name"
+            value={newUser.full_name}
+            onChange={inputHandler}
+            bgColor="Lavender" 
+            color="blueviolet"
+          />
         <Input placeholder="email" type="email" name="email" value={newUser.email} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
         <Input placeholder="confirme o email" type="email" name="confirmEmail" value={newUser.confirmEmail} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
 

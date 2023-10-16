@@ -37,8 +37,29 @@
  *             properties:
  *               project_name:
  *                 type: string
+ *               project_description:
+ *                 type: string
+ *               location_required:
+ *                 type: boolean
+ *               commercial_time_required:
+ *                 type: boolean
+ *               timezone:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               commercial_time_start:
+ *                 type: integer
+ *               commercial_time_end:
+ *                 type: integer
  *             example:
  *               project_name: projeto-legal
+ *               project_description: esta e uma descricao do projeto
+ *               location_required: true
+ *               commercial_time_required: true
+ *               timezone: America/Bahia
+ *               location: Salvador, Bahia
+ *               commercial_time_start: 480
+ *               commercial_time_end: 1080
  *     responses:
  *       '201':
  *         description: Successfully created a new project.
@@ -70,14 +91,14 @@
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
- *                 type: integer
+ *               user_email:
+ *                 type: string
  *               user_role:
  *                 type: string
  *               user_hours_per_week:
  *                 type: integer
  *             example:
- *               user_id: 2
+ *               user_email: "teste@email.com"
  *               user_role: "MANAGER"
  *               user_hours_per_week: 40
  *     responses:
@@ -133,16 +154,16 @@
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
- *                 type: integer
- *               new_role:
+ *               user_email:
  *                 type: string
- *               new_hours_per_week:
+ *               user_role:
+ *                 type: string
+ *               user_hours_per_week:
  *                 type: integer
  *             example:
- *               user_id: 12345
- *               new_role: "ADMIN"
- *               new_hours_per_week: 20
+ *               user_email: "teste@email.com"
+ *               user_role: "ADMIN"
+ *               user_hours_per_week: 20
  *     responses:
  *       '200':
  *         description: Successfully updated the user's role in the project.
@@ -151,6 +172,31 @@
  *       '401':
  *         description: Unauthorized. User is not authenticated.
  */
+
+/**
+ * @swagger
+ * /projects/{project_id}:
+ *   get:
+ *     summary: Get project info
+ *     tags: [Projects]
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: project_id
+ *         required: true
+ *         description: The ID of the project.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Successfully got project info data.
+ *       '400':
+ *         description: Bad request. Invalid input data.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
 
 import ProjectController from "../controllers/ProjectController";
 import ProjectRelatedRoutes from "./abstract/ProjectRelatedRoutes";
@@ -177,9 +223,19 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
           .withMessage(
             'Nome do projeto inválido. Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen, examplo: "examplo-nome-de-projeto-32"'
           ),
+        body("project_description")
+          .isString()
+          .withMessage("Descricao do projeto requerida")
       ],
       this.validate,
       this.controller.createNewProject
+    );
+
+    this._router.get(
+      "/:project_id",
+      ...this.projectIdValidation,
+      this.validate,
+      this.controller.getProjectInfo
     );
 
     this._router.get(
@@ -191,7 +247,7 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
 
     const userProjectRoleValidation = [
       ...this.projectIdValidation,
-      body("user_id").isInt().withMessage("ID do usuario deve ser um inteiro"),
+      body("user_email").isEmail().withMessage("Email do usuario inválido"),
       body("user_role")
         .custom((value: string) =>
           Object.values(UserRole).includes(value as UserRole)
@@ -216,6 +272,6 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
       this.controller.updateUserRole
     );
 
-    return this._router
+    return this._router;
   }
 }

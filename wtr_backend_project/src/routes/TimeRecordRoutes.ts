@@ -77,6 +77,28 @@
  *                check_out_timestamp: "2023-08-22 13:57:40"
  */
 
+/**
+ * @swagger
+ * /projects/time-records/{project_id}:
+ *   get:
+ *     summary: Get user time records in a project
+ *     tags: [Time Records]
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: project_id
+ *         required: true
+ *         description: The ID of the project.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Successfully checked out a time record.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
 import { Router } from "express";
 import TimeRecordController from "../controllers/TimeRecordController";
 import ProjectRelatedRoutes from "./abstract/ProjectRelatedRoutes";
@@ -122,6 +144,15 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
       ],
       this.validate,
       this.controller.checkOutTimeRecord
+    );
+
+    this._router.get(
+      "/:project_id",
+      [
+        ...this.projectIdValidation,
+      ],
+      this.validate,
+      this.controller.getUserTimeRecordsInProject
     );
 
     return this._router
