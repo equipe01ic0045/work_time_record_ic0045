@@ -88,8 +88,8 @@ export default function ProjectsTable({
                       alignItems={"center"}
                       justifyContent={"space-between"}
                     >
-                      {projectData.project.users_count}
                       {iconUser}
+                      {projectData.project.users_count}
                     </Button>
                   </Link>
                 </Td>

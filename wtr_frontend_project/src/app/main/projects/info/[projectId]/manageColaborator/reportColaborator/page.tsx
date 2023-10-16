@@ -2,7 +2,7 @@
 
 import {  Box, Button, Center, ChakraProvider, Table, Tbody, Td, Th, Thead, Tr, Text, Link } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit, faClock, faFileContract, faBriefcase  } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faEdit, faClock, faFileContract, faBriefcase,  faBan, faCircleCheck  } from '@fortawesome/free-solid-svg-icons';
 
 export default function RelatorioColaborador() {
 
@@ -15,7 +15,7 @@ export default function RelatorioColaborador() {
       users: 58234
     }
 
-    const lista = ["DATE","TIME RECORD", "JUSTIFICATION", "DOCUMENTS"]
+    const lista = ["DATA","TEMPO GRAVADO", "AÇÃO", "JUSTIFICATIVA"]
 
  return (
   <>
@@ -65,7 +65,13 @@ export default function RelatorioColaborador() {
                       <Tr>
                           <Td>27/08/2023</Td>
                           <Td>08:00 HOURS</Td>
-                          <Td>YES</Td>
+                          <Td>
+                            <Button size="sm" ml={2} colorScheme="green" bgColor="green">
+                                <FontAwesomeIcon icon={faCircleCheck} style={{ marginRight: '4px', color: '#F0EFFF' }} />
+                            </Button>
+                            <Button size="sm" ml={2} colorScheme="red" bgColor="red">
+                                <FontAwesomeIcon icon={faBan} style={{ marginRight: '4px', color: '#F0EFFF' }} />
+                            </Button> </Td>
                           <Td>
                               <Link 
                                   width={"30%"} 
