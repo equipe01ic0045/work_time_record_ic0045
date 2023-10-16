@@ -63,7 +63,7 @@ export default function ProjectCreateBox({ project }: any) {
             isClosable: true,
             position: "top-right"
           })
-          router.push('/main/projects')
+          router.push(project.edit ? '/main/projects/info/'+project.project_id : '/main/projects')
     })
     .catch((error)=>{
         console.log(error.status)
