@@ -18,8 +18,8 @@ export default class TimeRecordService {
     const { data } = await axios.post(
       `/projects/time-records/${record.projectId}/check-in`,
       {
-        user_message: record.description,
-        location: record.location,
+        user_message: record.description || "",
+        location: record.location || "Salvador, Bahia",
         check_in_timestamp: record.date.toISOString(),
         document: record.document,
       },

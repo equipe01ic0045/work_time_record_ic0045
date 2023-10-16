@@ -1,7 +1,7 @@
 type TimeRecordData = {
   date: Date;
   document?: File|null;
-  description: string;
+  description?: string;
   projectId: number;
   location?: string;
 };
