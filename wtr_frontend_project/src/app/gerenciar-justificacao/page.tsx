@@ -1,30 +1,10 @@
-// 'use client'
-
-// import ProjectInfo from "@/components/modalAddUser/modalAddUser"
-
-// export default function Test() {
-
-//     const mockDataList = 
-//     {
-//       id: 1,
-//       projectName: "Projeto 01",
-//       manager: "Luiz Silva",
-//       company: "LATAM",
-//       users: 58234
-//     }
-
-//  return (
-//  <><ProjectInfo /></>
-//  )
-// }
-
 'use client'
 
 import {  Box, Button, Center, ChakraProvider, Table, Tbody, Td, Th, Thead, Tr, Text, Link } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faClock, faFileContract, faBriefcase, faBan, faCircleCheck      } from '@fortawesome/free-solid-svg-icons';
 
-export default function RelatorioColaborador() {
+export default function GerenciarJustificacao() {
 
     const project = 
     {
