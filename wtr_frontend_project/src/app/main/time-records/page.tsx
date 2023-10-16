@@ -7,16 +7,11 @@ import { Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 export default function TimeRecords() {
-  const projectService = new ProjectService();
   const [projects, setProjects] = useState<ProjectListData[]>([]);
 
-  async function getProjects() {
-    const projectsData = await projectService.getUserProjects();
-    setProjects(projectsData);
-  }
-
   useEffect(() => {
-    getProjects();
+    new ProjectService().getUserProjects()
+      .then((projectsList) => setProjects(projectsList));
   }, []);
 
   return (

@@ -1,13 +1,16 @@
 'use client';
 import HeaderBox from "@/components/global/HeaderBox";
+import Clock from "@/components/time-records/Clock";
 import JustifyCard from "@/components/time-records/JustifyCard";
+import JustifyCardBody from "@/components/time-records/JustifyCardBody";
 import RecordCard from "@/components/time-records/RecordCard";
 import TimeRecordService from "@/services/TimeRecordService";
 import TimeRecordData from "@/types/TimeRecordData";
-import { Box, Button, VStack, useToast } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Alert, AlertIcon, Box, Button, Card, CardBody, Icon, VStack, useToast } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { PiUserFocusFill } from "react-icons/pi";
 
 export default function Page({
   params,
@@ -19,10 +22,8 @@ export default function Page({
   const router = useRouter();
   const toast = useToast();
 
-  const [showJustifyCard, setShowJustifyCard] = useState(false);
   const [newRecord, setRecord] = useState<TimeRecordData>({
     date: new Date(),
-    description: '',
     projectId: params.projectId,
   });
 
@@ -95,8 +96,6 @@ export default function Page({
     }
   }
 
-  const onDateChange = () => setShowJustifyCard(true);
-
   return (
     <VStack w={"100%"} spacing="3rem">
       <HeaderBox title={`Registro / Projeto ${params.projectId}`} />
@@ -109,20 +108,12 @@ export default function Page({
           width="lg"
           gap={"2em"}
         >
-          <RecordCard projectId={params.projectId} onDateChange={onDateChange} />
-
-          {showJustifyCard && <JustifyCard record={newRecord} setRecord={setRecord} />}
-
-          <Button
-            type="submit"
-            minHeight={"50px"}
-            background={"blueviolet"}
-            color={"white"}
-            colorScheme="blackAlpha"
-            mb={"2em"}
-          >
-            Efetuar {searchParams.hasOpenCheckIn ? 'Check-out' : 'Check-in'}
-          </Button>
+          <RecordCard
+            record={newRecord}
+            setRecord={setRecord}
+            projectId={params.projectId}
+            hasOpenCheckIn={searchParams.hasOpenCheckIn}
+          />
         </Box>
       </form>
     </VStack>
