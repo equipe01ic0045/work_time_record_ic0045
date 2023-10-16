@@ -49,6 +49,40 @@ export default class ProjectService {
     }
   }
 
+  async updateProject(
+    projectId : number,
+    projectName: string,
+    projectDescription: string,
+    locationRequired: boolean,
+    commercialTimeRequired: boolean,
+    timezone: string,
+    location?: string,
+    commercialTimeStart?: number,
+    commercialTimeEnd?: number
+  ): Promise<project> {
+
+    const newProject = await this.projectRepository.updateProject(
+      projectId,
+      projectName,
+      projectDescription,
+      locationRequired,
+      commercialTimeRequired,
+      timezone,
+      location,
+      commercialTimeStart,
+      commercialTimeEnd
+    );
+    return newProject;
+  }
+
+  async deleteProject(
+    projectId : number,
+  ): Promise<boolean> {
+      await this.projectRepository.deleteProject(projectId);
+      return true;
+  }
+
+
   async addUserToProject(
     adminUserId: number,
     projectId: number,

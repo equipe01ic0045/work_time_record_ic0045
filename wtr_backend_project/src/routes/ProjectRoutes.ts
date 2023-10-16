@@ -71,6 +71,86 @@
 
 /**
  * @swagger
+ * /projects:
+ *   put:
+ *     summary: Update a project
+ *     tags: [Projects]
+ *     security:
+ *       - CookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               project_id:
+ *                 type: integer
+ *               project_name:
+ *                 type: string
+ *               project_description:
+ *                 type: string
+ *               location_required:
+ *                 type: boolean
+ *               commercial_time_required:
+ *                 type: boolean
+ *               timezone:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               commercial_time_start:
+ *                 type: integer
+ *               commercial_time_end:
+ *                 type: integer
+ *             example:
+ *               project_id: 1
+ *               project_name: projeto-legal
+ *               project_description: esta e uma descricao do projeto
+ *               location_required: true
+ *               commercial_time_required: true
+ *               timezone: America/Bahia
+ *               location: Salvador, Bahia
+ *               commercial_time_start: 480
+ *               commercial_time_end: 1080
+ *     responses:
+ *       '201':
+ *         description: Successfully updated a project.
+ *       '400':
+ *         description: Bad request. Invalid input data.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
+/**
+ * @swagger
+ * /projects:
+ *   delete:
+ *     summary: Delete a project
+ *     tags: [Projects]
+ *     security:
+ *       - CookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               project_id:
+ *                 type: integer
+ *             example:
+ *               project_id: 1
+ *     responses:
+ *       '201':
+ *         description: Successfully deleted a project.
+ *       '400':
+ *         description: Bad request. Invalid input data.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
+/**
+ * @swagger
  * /projects/{project_id}/users:
  *   post:
  *     summary: Add a user to a project
@@ -229,6 +309,37 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
       ],
       this.validate,
       this.controller.createNewProject
+    );
+    this._router.put(
+      "/",
+      [
+        body("project_name")
+          .notEmpty()
+          .withMessage("Nome do projeto requerido")
+          .custom((value: string) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
+          .withMessage(
+            'Nome do projeto inválido. Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen, examplo: "examplo-nome-de-projeto-32"'
+          ),
+          body("project_description")
+            .isString()
+            .withMessage("Descricao do projeto requerida")
+      ],
+      this.validate,
+      this.controller.updateProject
+    );
+
+    this._router.delete(
+      "/",
+      [
+        body("project_id")
+          .notEmpty()
+          .custom((value: string) => /^[0-9]+$/.test(value))
+          .withMessage(
+            'ID do projeto inválido'
+          ),
+      ],
+      this.validate,
+      this.controller.deleteProject
     );
 
     this._router.get(

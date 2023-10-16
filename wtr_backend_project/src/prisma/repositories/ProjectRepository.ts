@@ -37,6 +37,47 @@ export default class ProjectRepository extends BaseRepository {
     return newProject;
   }
 
+  async updateProject(
+    projectId: number,
+    projectName: string,
+    projectDescription: string,
+    locationRequired: boolean,
+    commercialTimeRequired: boolean,
+    timezone: string,
+    location?: string,
+    commercialTimeStart?: number,
+    commercialTimeEnd?: number
+  ): Promise<project> {
+    const project = await this.client.project.update({
+      where: {
+        project_id : projectId,
+      },
+      data: {
+        project_name: projectName,
+        project_description: projectDescription,
+        location_required: locationRequired,
+        commercial_time_required: commercialTimeRequired,
+        location: location,
+        timezone: timezone,
+        commercial_time_start: commercialTimeStart,
+        commercial_time_end: commercialTimeEnd,
+      },
+    });
+
+    return project;
+  }
+  async deleteProject(
+    projectId: number,
+  ): Promise<boolean> {
+    await this.client.project.delete({
+      where: {
+        project_id : projectId,
+      },
+    });
+
+    return true;
+  }
+
   async updateUserProjectRole(
     contributorId: number,
     projectId: number,

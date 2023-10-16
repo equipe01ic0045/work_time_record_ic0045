@@ -42,7 +42,7 @@ export default function ProjectCreateBox({ project }: any) {
     ['commercial_time_start', 'commercial_time_end'].forEach(key => data[key] = data[key].split(":").map((n : string) => parseInt(n)).reduce((p: number, c: number) => c + p*60))
     console.log(data);
     fetch('http://localhost:5000/projects',{
-        method: "POST",
+        method: project.edit ? "PUT" : "POST",
         headers: {
             "Content-Type": "application/json",
         },
@@ -56,7 +56,7 @@ export default function ProjectCreateBox({ project }: any) {
         
         console.log(response);
         toast({
-            title: 'Projeto criado com sucesso!',
+            title: 'Sucesso!',
             description: "",
             status: 'success',
             duration: 3000,
@@ -68,7 +68,7 @@ export default function ProjectCreateBox({ project }: any) {
     .catch((error)=>{
         console.log(error.status)
         toast({
-            title: 'Falha na criação de projeto!\n'+error,
+            title: 'Erro!\n'+error,
             description: "",
             status: 'error',
             duration: 3000,
@@ -181,8 +181,8 @@ export default function ProjectCreateBox({ project }: any) {
             justifyContent={"space-between"}
              gap={gap}
           >
-            <Button background={"blueviolet"} color={white} flex={1} onClick={(ev)=>createProject(ev)}>Create</Button>
-            <Button background={"blueviolet"} onClick={()=>router.push('/main/projects')}>{svgTrash}</Button>
+            <Button background={"blueviolet"} color={white} flex={1} onClick={(ev)=>createProject(ev)}>{project.edit ? 'Edit' : 'Create'}</Button>
+            <Button background={"blueviolet"} color={white} onClick={()=> router.push(project.edit ? '/main/projects/info/'+project.project_id : '/main/projects')}>Cancel</Button>
           </Box>
           <Box
             background={"blueviolet"}

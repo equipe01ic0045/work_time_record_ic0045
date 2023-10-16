@@ -54,7 +54,7 @@ model user_project_role {
   updated_at           DateTime @default(now())
   open_check_in        Boolean  @default(false)
   user                 user     @relation(fields: [user_id], references: [user_id])
-  project              project  @relation(fields: [project_id], references: [project_id])
+  project              project  @relation(fields: [project_id], references: [project_id], onDelete: Cascade)
 
   @@unique([user_id, project_id]) // a single user record per project
 }
@@ -70,7 +70,7 @@ model time_record {
   created_at          DateTime           @default(now())
   updated_at          DateTime           @default(now())
   user                user               @relation(fields: [user_id], references: [user_id])
-  project             project            @relation(fields: [project_id], references: [project_id])
+  project             project            @relation(fields: [project_id], references: [project_id], onDelete: Cascade)
   absense_documents   absense_document[]
 }
 

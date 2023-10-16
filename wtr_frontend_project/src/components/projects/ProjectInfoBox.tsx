@@ -1,7 +1,11 @@
 "use client";
-import { Link, Text, Box, Button } from "@chakra-ui/react";
+import { Link, Text, Box, Button, useToast } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 
 export default function ProjectInfoBox({ project }: any) {
+  const router = useRouter();
+  const toast = useToast();
+
   const white = "#fff";
   const gap = "10px";
   const padding = "20px";
@@ -79,6 +83,46 @@ export default function ProjectInfoBox({ project }: any) {
     const minute = commercialTime % 60;
     return `${formatToTwoDigits(hour)}:${formatToTwoDigits(minute)}`;
   }
+
+  function deleteProject(event: any) {
+      fetch('http://localhost:5000/projects',{
+          method: "DELETE",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            project_id : project.project_id,
+          })
+      })
+      .then(response => response.json())
+      .then(response => {
+          if(!response.success)
+              throw new Error(response.message);
+          
+          console.log(response);
+          toast({
+              title: 'Projeto deletado com sucesso!',
+              description: "",
+              status: 'success',
+              duration: 3000,
+              isClosable: true,
+              position: "top-right"
+            })
+            router.push('/main/projects')
+      })
+      .catch((error)=>{
+          console.log(error.status)
+          toast({
+              title: 'Falha na deleção de projeto!\n'+error,
+              description: "",
+              status: 'error',
+              duration: 3000,
+              isClosable: true,
+              position: "top-right"
+          })
+      });
+    }
 
   return (
     <Box
@@ -182,8 +226,8 @@ export default function ProjectInfoBox({ project }: any) {
                 {svgCollab}Colaboradores
               </Button>
             </Link>
-            <Button background={"#4D47C3"}>{svgEdits}</Button>
-            <Button background={"#4D47C3"}>{svgTrash}</Button>
+            <Button background={"#4D47C3"}  onClick={()=> router.push('/main/projects/update/'+project.project_id)}>{svgEdits}</Button>
+            <Button background={"#4D47C3"} onClick={(ev) => deleteProject(ev)}>{svgTrash}</Button>
           </Box>
           <Box
             background={"#4D47C3"}
