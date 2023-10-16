@@ -82,7 +82,7 @@ export default function ProjectInfoBox({ project }: any) {
 
   return (
     <Box
-      background={"purple.200"}
+      background={"#F0EFFF"}
       style={{
         width: "100%",
         display: "flex",
@@ -120,7 +120,7 @@ export default function ProjectInfoBox({ project }: any) {
               return (
                 <Box key={"item_" + i} style={{ display: "flex" }}>
                   <Box
-                    background={"blueviolet"}
+                    background={"#4D47C3"}
                     textColor={"white"}
                     style={{ flex: 1, padding: gap, textAlign: "center" }}
                   >
@@ -158,18 +158,17 @@ export default function ProjectInfoBox({ project }: any) {
             alignItems={"center"}
             justifyContent={"space-between"}
           >
-            <Link
-              width={"30%"}
-              href={`/main/projects/info/${project.id}/reports`}
-            >
-              <Button
-                gap={"0.5em"}
-                paddingX={"30%"}
-                textColor={"white"}
-                background={"blueviolet"}
-              >
-                {svgReports}Relatorios
-              </Button>
+            <Link 
+              width={"30%"} 
+              href={`/main/projects/info/${project.id}/reports`}>
+                <Button
+                  gap={"0.5em"} 
+                  paddingX={'30%'}
+                  textColor={"white"}
+                  background={"#4D47C3"}
+                >
+                  {svgReports}Relatorios
+                </Button>
             </Link>
             <Link 
               width={"30%"} 
@@ -177,17 +176,17 @@ export default function ProjectInfoBox({ project }: any) {
               <Button
                 textColor={"white"}
                 gap={"0.5em"}
-                paddingX={"30%"}
-                background={"blueviolet"}
+                paddingX={'30%'}
+                background={"#4D47C3"}
               >
                 {svgCollab}Colaboradores
               </Button>
             </Link>
-            <Button background={"blueviolet"}>{svgEdits}</Button>
-            <Button background={"blueviolet"}>{svgTrash}</Button>
+            <Button background={"#4D47C3"}>{svgEdits}</Button>
+            <Button background={"#4D47C3"}>{svgTrash}</Button>
           </Box>
           <Box
-            background={"blueviolet"}
+            background={"#4D47C3"}
             textColor={"white"}
             style={{ padding: gap, textAlign: "center" }}
           >

@@ -4,6 +4,7 @@ import { Box, Button, Text, Input, useToast } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function RegistrationComponent() {
   const router = useRouter();
@@ -16,6 +17,9 @@ export default function RegistrationComponent() {
     confirmPassword: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const userService = new UserService();
 
   function inputHandler(event: any) {
@@ -24,16 +28,12 @@ export default function RegistrationComponent() {
   }
 
   function registerHandler() {
-    if (
-      newUser.email == newUser.confirmEmail &&
-      newUser.password == newUser.confirmPassword
-    ) {
+    if (newUser.email === newUser.confirmEmail && newUser.password === newUser.confirmPassword) {
       userService
         .registerUser(newUser)
-        .then((response) => {
+        .then(() => {
           toast({
             title: "registro completo",
-            description: "",
             status: "success",
             duration: 3000,
             isClosable: true,
@@ -41,24 +41,18 @@ export default function RegistrationComponent() {
           });
           router.push("/");
         })
-        .catch((error) => {
+        .catch(() => {
           toast({
             title: "falha no registro",
-            description: "",
             status: "error",
             duration: 3000,
             isClosable: true,
             position: "top-right",
           });
         });
-    }
-    if (
-      newUser.email != newUser.confirmEmail ||
-      newUser.password != newUser.confirmPassword
-    ) {
+    } else {
       toast({
-        title: "dados invalidos",
-        description: "",
+        title: "dados inválidos",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -68,65 +62,71 @@ export default function RegistrationComponent() {
   }
 
   return (
-    <Box
-      display={"flex"}
-      flexDirection={"column"}
-      alignItems={"center"}
-      justifyContent={"start"}
-      gap={"0.5em"}
-      padding={"0.5em"}
-      width={"100%"}
-    >
-      <Text fontSize={"6xl"}>pontocerto.ic</Text>
-      <Text fontSize={"2xl"}>Bem Vindo, Registre-se !</Text>
+    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="start" gap="0.5em" p="0.5em" w="100%">
+      <Text fontSize="6xl" color="blueviolet">
+        Ponto Certo
+      </Text>
 
-      <Box display={"flex"} flexDirection={"column"} gap={"1em"}>
+      <Box display="flex" flexDirection="column" gap="0.5em" alignItems="center">
+        <Text fontSize="2xl" color="blueviolet">
+          Inscreva-se
+        </Text>
+        <Text fontSize="sm" color="blueviolet">
+          Bem-vindo
+        </Text>
+      </Box>
+
+      <Box display="flex" flexDirection="column" gap="1em" mt="1em">
         <Input
-          placeholder="nome completo"
-          type="text"
-          name="full_name"
-          value={newUser.full_name}
-          onChange={inputHandler}
-        />
-        <Input
-          placeholder="email"
-          type="email"
-          name="email"
-          value={newUser.email}
-          onChange={inputHandler}
-        />
-        <Input
-          placeholder="confirme o email"
-          type="email"
-          name="confirmEmail"
-          value={newUser.confirmEmail}
-          onChange={inputHandler}
-        />
-        <Input
-          placeholder="senha"
-          type="password"
-          name="password"
-          value={newUser.password}
-          onChange={inputHandler}
-        />
-        <Input
-          placeholder="confirme a senha "
-          type="password"
-          name="confirmPassword"
-          value={newUser.confirmPassword}
-          onChange={inputHandler}
-        />
-        <Button
-          background={"blueviolet"}
-          textColor={"white"}
-          onClick={registerHandler}
-        >
-          registrar
+            placeholder="nome completo"
+            type="text"
+            name="full_name"
+            value={newUser.full_name}
+            onChange={inputHandler}
+            bgColor="Lavender" 
+            color="blueviolet"
+          />
+        <Input placeholder="email" type="email" name="email" value={newUser.email} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
+        <Input placeholder="confirme o email" type="email" name="confirmEmail" value={newUser.confirmEmail} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
+
+        <Box position="relative">
+          <Input
+            placeholder="senha"
+            type={showPassword ? 'text' : 'password'}
+            name="password"
+            value={newUser.password}
+            onChange={inputHandler}
+            bgColor="Lavender"
+            color="blueviolet"
+          />
+          <Box position="absolute" right="10px" top="50%" transform="translateY(-50%)" cursor="pointer" onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </Box>
+        </Box>
+
+        <Box position="relative">
+          <Input
+            placeholder="confirme a senha"
+            type={showConfirmPassword ? 'text' : 'password'}
+            name="confirmPassword"
+            value={newUser.confirmPassword}
+            onChange={inputHandler}
+            bgColor="Lavender"
+            color="blueviolet"
+          />
+          <Box position="absolute" right="10px" top="50%" transform="translateY(-50%)" cursor="pointer" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+          </Box>
+        </Box>
+
+        <Button bg="blueviolet" color="white" onClick={registerHandler}>
+          Registrar
         </Button>
-        <Box display={"flex"} flexDirection={"row"} gap={"1em"}>
-          <Text>já tem registro ?</Text>
-          <Link href={"/"}>
-            <Text textColor={"blue"}>login</Text>
+        
+        <Box display="flex" flexDirection="column" gap="0.5em" alignItems="center">
+          <Text>já tem registro?</Text>
+          <Link href="/">
+            <Text color="blue">Login</Text>
           </Link>
         </Box>
       </Box>
