@@ -301,11 +301,18 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
           .withMessage("Nome do projeto requerido")
           .custom((value: string) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
           .withMessage(
-            'Nome do projeto inválido. Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen, examplo: "examplo-nome-de-projeto-32"'
+            'Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen'
           ),
         body("project_description")
           .isString()
-          .withMessage("Descricao do projeto requerida")
+          .withMessage("Descricao do projeto requerida"),
+        body("location")
+          .isString()
+          .custom((value: string) => /^[a-zA-z ]+$/.test(value))
+          .withMessage("Localização deve conter apenas letras maiúsculas, minúsculas e espaço."),
+        body('commercial_time_end')
+          .custom((value, {req}) => parseInt(value) > req.body.commercial_time_start)
+          .withMessage("O horario fim deve ser maior que o horario começo."),
       ],
       this.validate,
       this.controller.createNewProject

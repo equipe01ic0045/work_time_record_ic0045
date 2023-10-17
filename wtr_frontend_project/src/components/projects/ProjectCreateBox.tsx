@@ -29,6 +29,7 @@ export default function ProjectCreateBox({ project }: any) {
 
 
   const [newUser, setNewUser] = useState(project);
+  const [newUserError, setNewUserError] = useState(new Map());
 
   function inputHandler(event: any) {
     const { name, value, type, checked } = event.target;
@@ -51,8 +52,14 @@ export default function ProjectCreateBox({ project }: any) {
     })
     .then(response => response.json())
     .then(response => {
-        if(!response.success)
+        if(!response.success){
+            const erros = new Map();
+            if(response.data.errors)
+              response.data.errors.forEach((error : any)=> erros.set(error.path, error.msg));
+            setNewUserError(erros);
+
             throw new Error(response.message);
+        }
         
         console.log(response);
         toast({
@@ -117,7 +124,7 @@ export default function ProjectCreateBox({ project }: any) {
               return { label: n[0], value: n[1], type: n[2] };
             })
             .map((item, i) => {
-              return (
+              let normalBox = (
                 <Box key={"item_" + i} style={{ display: "flex" }}>
                   <Box
                     background={"blueviolet"}
@@ -163,6 +170,19 @@ export default function ProjectCreateBox({ project }: any) {
                   
                 </Box>
               );
+              if(newUserError.has(item.value)){
+                return [(
+                  <Box key={"item_error_" + i} style={{ display: "flex" }}>
+                    <Box
+                      background={"red"}
+                      textColor={"white"}
+                      style={{ flex: 1, padding: gap, textAlign: "center" }}
+                    >
+                      {newUserError.get(item.value)}
+                    </Box>
+                  </Box>), normalBox];
+              }
+              return normalBox;
             })}
         </Box>
 
