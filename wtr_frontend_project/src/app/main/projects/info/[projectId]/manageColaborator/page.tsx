@@ -2,7 +2,7 @@
 
 import { Box, Button, Center, ChakraProvider, Table, Tbody, Td, Th, Thead, Tr, VStack, Text, Link} from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit, faClock, faProjectDiagram, faBriefcase, faBan, faCircleCheck  } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faEdit, faClock, faProjectDiagram, faBriefcase  } from '@fortawesome/free-solid-svg-icons';
 //import Modal from "@/components/modalAddUser/modalAddUser"
 import { useEffect, useState } from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Select, Input} from '@chakra-ui/react';

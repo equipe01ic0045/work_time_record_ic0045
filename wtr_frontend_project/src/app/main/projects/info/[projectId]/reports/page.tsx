@@ -1,9 +1,8 @@
 "use client";
 import HeaderBox from "@/components/global/HeaderBox";
 import ReportsTableRow from "@/components/projects/ReportsTableRow";
-import timeRecordsProvider, {
-  TimeRecord,
-} from "@/providers/TimeRecordsProvider";
+import TimeRecordService from "@/services/TimeRecordService";
+import TimeRecord from "@/types/TimeRecord";
 import { CalendarIcon, Search2Icon } from "@chakra-ui/icons";
 import {
   Box,
@@ -27,6 +26,7 @@ import { useEffect, useState } from "react";
 import  {BsFileEarmarkArrowUpFill} from "react-icons/bs"
 
 export default function Page({ params }: any) {
+  const timeRecordService = new TimeRecordService();
   const [timeRecords, setTimeRecords] = useState<TimeRecord[]>([]);
   const [fromDate, setFromDate] = useState<string>(
     dayjs().startOf("month").format("YYYY-MM-DD")
@@ -38,7 +38,7 @@ export default function Page({ params }: any) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await timeRecordsProvider.getTimeRecords(params.projectUuid);
+      const data = await timeRecordService.getTimeRecords(params.projectUuid);
 
       setTimeRecords(data.results);
     };
@@ -49,10 +49,10 @@ export default function Page({ params }: any) {
   const filterByDate = async () => {
     setIsLoadingSearch(true);
 
-    const data = await timeRecordsProvider.getTimeRecords(
+    const data = await timeRecordService.getTimeRecords(
       params.projectUuid,
-      fromDate,
-      toDate
+      // fromDate,
+      // toDate
     );
 
     setTimeRecords(data.results);
