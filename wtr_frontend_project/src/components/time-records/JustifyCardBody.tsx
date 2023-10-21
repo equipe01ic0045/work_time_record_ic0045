@@ -1,17 +1,19 @@
-import TimeRecordData from "@/types/TimeRecordData";
+import { Justification } from "@/types/TimeRecordData";
 import { AttachmentIcon } from "@chakra-ui/icons";
-import { Input, Stack, StackDivider, FormControl, FormLabel, Textarea, FormHelperText, ButtonGroup, Button, IconButton, FormErrorMessage, Alert, AlertIcon } from "@chakra-ui/react";
+import { Input, Stack, FormControl, FormLabel, Textarea, FormHelperText, ButtonGroup, Button, IconButton } from "@chakra-ui/react";
 import { useRef } from "react";
+
+interface JustifyCardBodyProps<T> {
+  requireDescription: boolean;
+  record: T;
+  setRecord: (record: T) => void;
+};
 
 export default function JustifyCardBody({
   requireDescription,
   record,
-  setRecord
-}: {
-  requireDescription: boolean,
-  record: TimeRecordData,
-  setRecord: (record: TimeRecordData) => void
-}) {
+  setRecord,
+}: JustifyCardBodyProps<Justification>) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   return (

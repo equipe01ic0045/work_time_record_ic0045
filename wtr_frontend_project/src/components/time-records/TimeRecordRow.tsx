@@ -24,25 +24,30 @@ export default function TimeRecordRow({
     ? new Date(record.check_out_timestamp)
     : null;
 
-  const duration = dayjs(checkInDate).locale('pt-br').to(checkOutDate, true);
+  const duration = dayjs
+    .duration(dayjs(checkOutDate || dayjs()).diff(checkInDate))
+    .format('HH[h] mm[min]');
+
+  const StyledTag = () => (
+    <Tag size="lg" variant="subtle" bg="lavanda.300">
+      <TagLeftIcon as={EditIcon} margin={0} color="lavanda.100" />
+    </Tag>
+  );
 
   return (
     <Tr>
+      <Td>{record.time_record_id}</Td>
       <Td>
         <HStack gap={3}>
           <Text>{checkInDate.toLocaleString()}</Text>
           <Link href={{
-            pathname: `time-records/project/${record.project_id}/info/${record.time_record_id}/justify`,
+            pathname: `info/${record.time_record_id}/justify`,
             query: {
-              projectId: record.project_id,
-              timeRecordId: record.time_record_id,
-              time: record.check_in_timestamp,
+              datetime: record.check_in_timestamp,
               type: 'check-in',
             }
           }}>
-            <Tag size="lg" variant="subtle">
-              <TagLeftIcon as={EditIcon} boxSize="6" margin={0} />
-            </Tag>
+            <StyledTag />
           </Link>
         </HStack>
       </Td>
@@ -51,19 +56,18 @@ export default function TimeRecordRow({
           <HStack gap={3}>
             <Text>{checkOutDate.toLocaleString()}</Text>
             <Link href={{
-              pathname: `time-records/project/${record.project_id}/info/${record.time_record_id}/justify`,
+              pathname: `info/${record.time_record_id}/justify`,
               query: {
-                time: record.check_in_timestamp,
+                datetime: record.check_in_timestamp,
                 type: 'check-out',
               }
             }}>
-              <Tag size="lg" variant="subtle">
-                <TagLeftIcon as={EditIcon} boxSize="6" margin={0} />
-              </Tag>
+              <StyledTag />
             </Link>
           </HStack>
         )}
       </Td>
+      <Td>{duration}</Td>
       <Td>{'OK'}</Td>
       <Td>
         <IconButton
@@ -71,7 +75,7 @@ export default function TimeRecordRow({
           size={"lg"}
           mr={3}
           aria-label="Download"
-          bg="blueviolet"
+          bg="lavanda.300"
           colorScheme="blackAlpha"
           icon={<Icon boxSize="1.5rem" color="white" as={FaRegFileLines} />}
           onClick={(e) => router.push(`info/${record.time_record_id}/justify`)}

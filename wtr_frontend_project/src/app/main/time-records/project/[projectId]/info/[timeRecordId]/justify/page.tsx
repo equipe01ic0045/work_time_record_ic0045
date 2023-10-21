@@ -2,7 +2,7 @@
 import HeaderBox from "@/components/global/HeaderBox";
 import RecordCard from "@/components/time-records/RecordCard";
 import TimeRecordService from "@/services/TimeRecordService";
-import TimeRecordData, { JustificationData } from "@/types/TimeRecordData";
+import { Justification } from "@/types/TimeRecordData";
 import { Box, VStack, useToast } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -13,25 +13,22 @@ export default function Page({
   searchParams,
 }: {
   params: { projectId: number, timeRecordId: number }
-  searchParams: { type: 'check-in' | 'check-out', time: string }
+  searchParams: { type: 'check-in' | 'check-out', datetime: string }
 }) {
   const router = useRouter();
   const toast = useToast();
 
-  const [newRecord, setRecord] = useState<JustificationData>({
-    projectId: params.projectId,
-    timeRecordId: params.timeRecordId,
+  const [justifyData, setJustifyData] = useState<Justification>({
     description: '',
     document: null,
-    date: new Date(),
+    date: new Date(searchParams.datetime),
   });
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const timeRecordService = new TimeRecordService();
 
-    const record = { ...newRecord };
-    setRecord(record);
+    setJustifyData({ ...justifyData, date: new Date() });
 
     try {
       if (searchParams.type === 'check-out') {
@@ -69,7 +66,9 @@ export default function Page({
 
   return (
     <VStack w={"100%"} spacing="3rem">
-      <HeaderBox title={`Registro / Projeto ${params.projectId}`} />
+      <HeaderBox
+        title={`Justificativa / Projeto ${params.projectId} / Registro ${params.timeRecordId}`}
+      />
 
       <form onSubmit={onSubmit}>
         <Box
@@ -80,9 +79,10 @@ export default function Page({
           gap={"2em"}
         >
           <RecordCard
-            record={newRecord}
-            setRecord={setRecord}
+            record={justifyData}
+            setRecord={setJustifyData}
             projectId={params.projectId}
+            requireDescription
           />
         </Box>
       </form>

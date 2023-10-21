@@ -1,16 +1,12 @@
 'use client';
 import HeaderBox from "@/components/global/HeaderBox";
-import Clock from "@/components/time-records/Clock";
-import JustifyCard from "@/components/time-records/JustifyCard";
-import JustifyCardBody from "@/components/time-records/JustifyCardBody";
 import RecordCard from "@/components/time-records/RecordCard";
 import TimeRecordService from "@/services/TimeRecordService";
-import TimeRecordData from "@/types/TimeRecordData";
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Alert, AlertIcon, Box, Button, Card, CardBody, Icon, VStack, useToast } from "@chakra-ui/react";
+import TimeRecordData, { Justification } from "@/types/TimeRecordData";
+import { Box, VStack, useToast } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { PiUserFocusFill } from "react-icons/pi";
 
 export default function Page({
   params,
@@ -22,10 +18,7 @@ export default function Page({
   const router = useRouter();
   const toast = useToast();
 
-  const [newRecord, setRecord] = useState<TimeRecordData>({
-    date: new Date(),
-    projectId: params.projectId,
-  });
+  const [newRecord, setRecord] = useState<Justification>({});
 
   async function getLocation() {
     const coordinates = await new Promise<GeolocationCoordinates>((resolve, reject) => {
@@ -61,14 +54,18 @@ export default function Page({
 
     const location = 'Salvador, Bahia';
 
-    const record = { ...newRecord, location };
-    setRecord(record);
+    const timeRecordData: TimeRecordData = {
+      ...newRecord,
+      date: new Date(),
+      location,
+      projectId: params.projectId
+    };
 
     try {
       if (searchParams.hasOpenCheckIn) {
-        await timeRecordService.checkOut(record);
+        await timeRecordService.checkOut(timeRecordData);
       } else {
-        await timeRecordService.checkIn(record);
+        await timeRecordService.checkIn(timeRecordData);
       }
 
       toast({
@@ -112,7 +109,6 @@ export default function Page({
             record={newRecord}
             setRecord={setRecord}
             projectId={params.projectId}
-            hasOpenCheckIn={searchParams.hasOpenCheckIn}
           />
         </Box>
       </form>

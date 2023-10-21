@@ -1,20 +1,22 @@
 'use client';
 
-import { Card, Icon, CardBody, Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Alert, AlertIcon, Box, Button, Text, Collapse } from "@chakra-ui/react";
+import { Card, CardBody, Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Alert, AlertIcon, Box, Button, Text, Collapse } from "@chakra-ui/react";
 import Clock from "./Clock";
-import { PiUserFocusFill } from "react-icons/pi";
 import JustifyCardBody from "./JustifyCardBody";
 import { useState } from "react";
-import TimeRecordData, { JustificationData } from "@/types/TimeRecordData";
+import { Justification } from "@/types/TimeRecordData";
 
-type RecordCardProps = {
+type RecordCardProps<T> = {
   projectId: number,
-  record: TimeRecordData | JustificationData,
-  setRecord: (record: TimeRecordData | JustificationData) => void,
+  record: T,
+  setRecord: (record: T) => void,
+  requireDescription?: boolean,
 };
 
-export default function RecordCard(props: RecordCardProps) {
-  const [requireDescription, setRequireDescription] = useState(false);
+export default function RecordCard(
+  props: RecordCardProps<Justification>
+) {
+  const [requireDescription, setRequireDescription] = useState(props.requireDescription || false);
 
   const onDateChange = () => setRequireDescription(true);
 
@@ -23,13 +25,13 @@ export default function RecordCard(props: RecordCardProps) {
       <CardBody display="flex" gap="2em" flexDir="column" alignItems="center">
         {/* <Icon as={PiUserFocusFill} boxSize="3xs" /> */}
 
-        <Clock onDateChange={onDateChange} />
+        <Clock onDateChange={onDateChange} defaultValue={props.record.date} />
 
         <Collapse in={requireDescription} transition={{ enter: { duration: 0.3 } }}>
           <Alert status='warning'>
             <AlertIcon />
             <Text>Ao alterar o horário do registro,
-              você <strong>deve</strong> enviar sua justificativa.</Text>
+              você <strong>deve</strong> descrever sua justificativa.</Text>
           </Alert>
         </Collapse>
 
@@ -56,7 +58,7 @@ export default function RecordCard(props: RecordCardProps) {
         <Button
           type="submit"
           minHeight={"50px"}
-          background={"#4D47C3"}
+          bg="lavanda.300"
           color={"white"}
           colorScheme="blackAlpha"
           size={"lg"}
