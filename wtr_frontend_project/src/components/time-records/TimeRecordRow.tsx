@@ -1,4 +1,4 @@
-import { Icon, IconButton, Td, Tr } from "@chakra-ui/react";
+import { HStack, Icon, IconButton, Tag, TagLeftIcon, Td, Text, Tr } from "@chakra-ui/react";
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -6,6 +6,8 @@ import 'dayjs/locale/pt-br';
 import TimeRecord from "@/types/TimeRecord";
 import { FaRegFileLines } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
+import { EditIcon } from "@chakra-ui/icons";
+import Link from "next/link";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -26,9 +28,43 @@ export default function TimeRecordRow({
 
   return (
     <Tr>
-      <Td>{checkInDate.toLocaleString()}</Td>
-      <Td>{checkOutDate?.toLocaleString()}</Td>
-      <Td>{'--'}</Td>
+      <Td>
+        <HStack gap={3}>
+          <Text>{checkInDate.toLocaleString()}</Text>
+          <Link href={{
+            pathname: `time-records/project/${record.project_id}/info/${record.time_record_id}/justify`,
+            query: {
+              projectId: record.project_id,
+              timeRecordId: record.time_record_id,
+              time: record.check_in_timestamp,
+              type: 'check-in',
+            }
+          }}>
+            <Tag size="lg" variant="subtle">
+              <TagLeftIcon as={EditIcon} boxSize="6" margin={0} />
+            </Tag>
+          </Link>
+        </HStack>
+      </Td>
+      <Td>
+        {checkOutDate && (
+          <HStack gap={3}>
+            <Text>{checkOutDate.toLocaleString()}</Text>
+            <Link href={{
+              pathname: `time-records/project/${record.project_id}/info/${record.time_record_id}/justify`,
+              query: {
+                time: record.check_in_timestamp,
+                type: 'check-out',
+              }
+            }}>
+              <Tag size="lg" variant="subtle">
+                <TagLeftIcon as={EditIcon} boxSize="6" margin={0} />
+              </Tag>
+            </Link>
+          </HStack>
+        )}
+      </Td>
+      <Td>{'OK'}</Td>
       <Td>
         <IconButton
           isDisabled
@@ -42,6 +78,6 @@ export default function TimeRecordRow({
         />
         {0}
       </Td>
-    </Tr>
+    </Tr >
   );
 }

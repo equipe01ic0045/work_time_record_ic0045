@@ -5,13 +5,12 @@ import Clock from "./Clock";
 import { PiUserFocusFill } from "react-icons/pi";
 import JustifyCardBody from "./JustifyCardBody";
 import { useState } from "react";
-import TimeRecordData from "@/types/TimeRecordData";
+import TimeRecordData, { JustificationData } from "@/types/TimeRecordData";
 
 type RecordCardProps = {
   projectId: number,
-  record: TimeRecordData,
-  setRecord: (record: TimeRecordData) => void,
-  hasOpenCheckIn: boolean
+  record: TimeRecordData | JustificationData,
+  setRecord: (record: TimeRecordData | JustificationData) => void,
 };
 
 export default function RecordCard(props: RecordCardProps) {
@@ -62,7 +61,7 @@ export default function RecordCard(props: RecordCardProps) {
           colorScheme="blackAlpha"
           size={"lg"}
         >
-          Efetuar {props.hasOpenCheckIn ? 'Check-out' : 'Check-in'}
+          Enviar
         </Button>
       </CardBody>
     </Card>
