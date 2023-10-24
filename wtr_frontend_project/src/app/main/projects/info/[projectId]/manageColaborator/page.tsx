@@ -9,6 +9,7 @@ import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody,
 import ProjectService from "@/services/ProjectService";
 import ProjectUsers from '@/types/ProjectUsers';
 import HeaderBox from '@/components/global/HeaderBox';
+import ProjectInfo from '@/types/ProjectInfo';
 
 export default function GerenciarColaborador({params}:any) {
 
@@ -25,51 +26,64 @@ export default function GerenciarColaborador({params}:any) {
     getUsers();
   }, []);
 
-    const project = 
-    {
-      id: 1,
-      projectName: "Projeto 01",
-      manager: "Luiz Silva",
-      company: "LATAM",
-      users: 58234
-    }
+  const project = 
+  {
+    id: 1,
+    projectName: "Projeto 01",
+    manager: "Luiz Silva",
+    company: "LATAM",
+    users: 58234
+  }
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [formData, setFormData] = useState({
-      role: 'User',
-      horas: '',
-      email: '',
+  const [isOpen, setIsOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    role: 'User',
+    horas: '',
+    email: '',
+  });
+
+  const toggleModal = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleSelectChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { value } = e.target;
+    setFormData({
+      ...formData,
+      role: value,
     });
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleConfirm = () => {
+    projectService.postProjectUsers(params.projectId,formData.email,formData.role.toUpperCase(),parseInt(formData.horas))
   
-    const toggleModal = () => {
-      setIsOpen(!isOpen);
-    };
-  
-    const handleSelectChange = (
-      e: React.ChangeEvent<HTMLSelectElement>
-    ) => {
-      const { value } = e.target;
-      setFormData({
-        ...formData,
-        role: value,
-      });
-    };
-  
-    const handleChange = (
-      e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-      const { name, value } = e.target;
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    };
-  
-    const handleConfirm = () => {
-      projectService.postProjectUsers(params.projectId,formData.email,formData.role.toUpperCase(),parseInt(formData.horas))
-    
-      setIsOpen(false);
-    };
+    setIsOpen(false);
+  };
+
+  const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
+
+  async function getProjectInfo() {
+    const projectInfoData = await projectService.getProjectInfo(
+      params.projectId
+    );
+    setProjectInfo(projectInfoData);
+  }
+
+  useEffect(() => {
+    getProjectInfo();
+  }, []);
 
  return (
   <>
@@ -77,7 +91,7 @@ export default function GerenciarColaborador({params}:any) {
     <ChakraProvider>
         <Box display={"flex"} flexDirection={"column"} width={'100%'}>
           {/* Box no topo da página */}
-          <HeaderBox title={`Projeto / ${params.projectInfo? params.projectInfo.project_name : "...loading"}`} />
+          <HeaderBox title={<><Link href={`/main/projects`}>Projetos</Link> / {projectInfo? <Link href={`/main/projects/info/`+ params.projectId.toString()}>{projectInfo.project_name}</Link> : "...loading"} / <Link href={`/main/projects/info/`+ params.projectId.toString()+"/manageColaborator"}>Colaboradores</Link></>} />
 
           {/* Box no meio da página */}
           <Box
@@ -99,7 +113,7 @@ export default function GerenciarColaborador({params}:any) {
 
               {/* Tabela */}
           
-              <Box maxW="800px" width="100%" borderWidth="1px" borderRadius="lg" p={4} bg="#F0EFFF">
+              <Box maxW="800px" width="100%" borderWidth="1px" bg="#F0EFFF">
                   <Table variant="striped" >
                       <Thead>
                       <Tr>

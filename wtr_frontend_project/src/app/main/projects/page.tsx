@@ -54,7 +54,7 @@ export default function Projects() {
 
   return (
     <Box display={"flex"} flexDirection={"column"} width={"100%"}>
-      <HeaderBox title={`Projetos`} />
+      <HeaderBox title={<Link href={`/main/projects`}>Projetos</Link>} />
       <Box
         display={"flex"}
         flexDirection={"column"}

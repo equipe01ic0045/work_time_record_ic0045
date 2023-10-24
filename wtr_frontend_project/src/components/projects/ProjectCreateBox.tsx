@@ -12,23 +12,6 @@ export default function ProjectCreateBox({ project }: any) {
   const gap = "10px";
   const padding = "20px";
 
-
-  const svgTrash = (
-    <svg
-      width="24"
-      height="24"
-      xmlns="http://www.w3.org/2000/svg"
-      fillRule="evenodd"
-      clipRule="evenodd"
-    >
-      <path
-        d="M19 24h-14c-1.104 0-2-.896-2-2v-16h18v16c0 1.104-.896 2-2 2m-9-14c0-.552-.448-1-1-1s-1 .448-1 1v9c0 .552.448 1 1 1s1-.448 1-1v-9zm6 0c0-.552-.448-1-1-1s-1 .448-1 1v9c0 .552.448 1 1 1s1-.448 1-1v-9zm6-5h-20v-2h6v-1.5c0-.827.673-1.5 1.5-1.5h5c.825 0 1.5.671 1.5 1.5v1.5h6v2zm-12-2h4v-1h-4v1z"
-        fill="white"
-      />
-    </svg>
-  );
-
-
   const [newUser, setNewUser] = useState(project);
   const [newUserError, setNewUserError] = useState(new Map());
 
@@ -202,8 +185,7 @@ export default function ProjectCreateBox({ project }: any) {
             justifyContent={"space-between"}
              gap={gap}
           >
-            <Button background={"blueviolet"} color={white} flex={1} onClick={(ev)=>createProject(ev)}>{project.edit ? 'Edit' : 'Create'}</Button>
-            <Button background={"blueviolet"} color={white} onClick={()=> router.push(project.edit ? '/main/projects/info/'+project.project_id : '/main/projects')}><ArrowBackIcon color={white} fontSize={25}/></Button>
+            <Button background={"blueviolet"} color={white} flex={1} onClick={(ev)=>createProject(ev)}>{project.edit ? 'Editar' : 'Criar'}</Button>
           </Box>
           <Box
             background={"blueviolet"}

@@ -3,8 +3,12 @@
 import {  Box, Button, Center, ChakraProvider, Table, Tbody, Td, Th, Thead, Tr, Text, Link } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faClock, faFileContract, faBriefcase,  faBan, faCircleCheck  } from '@fortawesome/free-solid-svg-icons';
+import { useEffect, useState } from 'react';
+import ProjectInfo from '@/types/ProjectInfo';
+import HeaderBox from '@/components/global/HeaderBox';
+import ProjectService from '@/services/ProjectService';
 
-export default function RelatorioColaborador() {
+export default function RelatorioColaborador({ params }: any) {
 
     const project = 
     {
@@ -17,20 +21,27 @@ export default function RelatorioColaborador() {
 
     const lista = ["DATA","TEMPO GRAVADO", "AÇÃO", "JUSTIFICATIVA"]
 
+    const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
+
+    const projectService = new ProjectService();
+    async function getProjectInfo() {
+        const projectInfoData = await projectService.getProjectInfo(
+        params.projectId
+        );
+        setProjectInfo(projectInfoData);
+    }
+
+    useEffect(() => {
+        getProjectInfo();
+    }, []);
+
  return (
   <>
     {/* <RelatorioColaborador project={mockDataList}/> */}
       <ChakraProvider>
-        <Box display="flex" flexDirection="column" height="100vh" position="relative">
+        <Box display={"flex"} flexDirection={"column"} width={'100%'}>
           {/* Box no topo da página */}
-          <Box bg="#F0EFFF" p={4} height="20vh" width="157%">
-            <Center>
-              {/* Título */}
-              <Text fontSize="xl" fontWeight="bold" color="#4D47C3" fontFamily="">
-                  PROJECTS / PROJECT p_0012 / COLABORADORES
-              </Text>
-            </Center>
-          </Box>
+          <HeaderBox title={<><Link href={`/main/projects`}>Projetos</Link> / {projectInfo? <Link href={`/main/projects/info/`+ params.projectId.toString()}>{projectInfo.project_name}</Link> : "...loading"} / <Link href={`/main/projects/info/`+ params.projectId.toString()+"/manageColaborator"}>Colaboradores</Link>{" / {Maria da Silva}"}</>} />
 
           {/* Box no meio da página */}
           <Box
@@ -51,7 +62,7 @@ export default function RelatorioColaborador() {
 
               {/* Tabela */}
           
-              <Box maxW="800px" width="100%" borderWidth="1px" borderRadius="lg" p={4} bg="#F0EFFF">
+              <Box maxW="800px" width="100%" borderWidth="1px" bg="#F0EFFF">
                   <Table variant="striped" >
                       <Thead>
                         <Tr>                            

@@ -6,7 +6,7 @@ import JustifyCardBody from "@/components/time-records/JustifyCardBody";
 import RecordCard from "@/components/time-records/RecordCard";
 import TimeRecordService from "@/services/TimeRecordService";
 import TimeRecordData from "@/types/TimeRecordData";
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Alert, AlertIcon, Box, Button, Card, CardBody, Icon, VStack, useToast } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Alert, AlertIcon, Box, Button, Card, CardBody, Icon, Link, VStack, useToast } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
@@ -98,7 +98,7 @@ export default function Page({
 
   return (
     <VStack w={"100%"} spacing="3rem">
-      <HeaderBox title={`Registro / Projeto ${params.projectId}`} />
+      <HeaderBox title={<><Link href={`/main/time-records`}>Registros</Link> / Projeto {params.projectId.toString()}</>} />
 
       <form onSubmit={newRecordHandler}>
         <Box
