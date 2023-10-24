@@ -63,7 +63,7 @@ export default function RelatorioColaborador({ params }: any) {
               {/* Tabela */}
           
               <Box maxW="800px" width="100%" borderWidth="1px" bg="#F0EFFF">
-                  <Table variant="striped" >
+                  <Table variant="simple" >
                       <Thead>
                         <Tr>                            
                             {lista.map((item : any)=>{return <Th bg="#4D47C3" 

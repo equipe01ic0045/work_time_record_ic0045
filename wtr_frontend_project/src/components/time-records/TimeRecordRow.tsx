@@ -25,7 +25,7 @@ export default function TimeRecordRow({
   const duration = dayjs(checkInDate).locale('pt-br').to(checkOutDate, true);
 
   return (
-    <Tr>
+    <Tr background={"#F0EFFF"}>
       <Td>{checkInDate.toLocaleString()}</Td>
       <Td>{checkOutDate?.toLocaleString()}</Td>
       <Td>{'--'}</Td>
