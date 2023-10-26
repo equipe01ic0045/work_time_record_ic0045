@@ -36,6 +36,17 @@ export default class ProjectService {
     return data
   }
 
+  public async putProjectUsers(projectId:number, user_email: string, user_role: string, user_hours_per_week: number){
+    const { data } = await axios.put("projects/"+projectId+"/users",
+      {
+        user_email: user_email,
+        user_role: user_role,
+        user_hours_per_week: user_hours_per_week
+      }
+    )
+    return data
+  }
+
   public async createNewProject(data: newProjectData): Promise<AxiosResponse> {
     return axios.post("projects", data);
   }

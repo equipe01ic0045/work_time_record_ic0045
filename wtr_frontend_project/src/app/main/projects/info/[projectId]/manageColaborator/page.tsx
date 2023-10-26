@@ -16,6 +16,7 @@ export default function GerenciarColaborador({params}:any) {
   const projectService = new ProjectService();
 
   const [users, setUsers] = useState<ProjectUsers[]>([]);
+  const [editModal, setEditModal] = useState(false)
 
   async function getUsers() {
     const usersData = await projectService.getProjectUsers(params.projectId);
@@ -42,7 +43,12 @@ export default function GerenciarColaborador({params}:any) {
     email: '',
   });
 
-  const toggleModal = () => {
+  function toggleModal(edit : Boolean){
+    if(edit){
+      setEditModal(true)
+    }else{
+      setEditModal(false)
+    }
     setIsOpen(!isOpen);
   };
 
@@ -67,7 +73,10 @@ export default function GerenciarColaborador({params}:any) {
   };
 
   const handleConfirm = () => {
-    projectService.postProjectUsers(params.projectId,formData.email,formData.role.toUpperCase(),parseInt(formData.horas))
+    if(!editModal)
+      projectService.postProjectUsers(params.projectId,formData.email,formData.role.toUpperCase(),parseInt(formData.horas))
+    else
+      projectService.putProjectUsers(params.projectId,formData.email,formData.role.toUpperCase(),parseInt(formData.horas))
   
     setIsOpen(false);
   };
@@ -139,7 +148,7 @@ export default function GerenciarColaborador({params}:any) {
                   gap={"10px"} 
                   textColor={"#4D47C3"}
                   fontSize={"2em"}
-                  onClick={toggleModal}>{svgCreate} NOVO COLABORADOR
+                  onClick={()=>toggleModal(false)}>{svgCreate} NOVO COLABORADOR
                 </Button>       
               </Box>
 
@@ -157,21 +166,21 @@ export default function GerenciarColaborador({params}:any) {
                           </Th>
                           <Th
                               bg="#4D47C3" 
-                              color="white" 
-                              >
-                                  TIME DEBT
-                              </Th>
-                          {/* <Th
-                              bg="#4D47C3" 
                               color="white"
                               >
-                                  EMAIL
-                              </Th> */}
+                                  FUNÇÃO
+                              </Th>
                           <Th
                               bg="#4D47C3" 
                               color="white" 
                               >
-                                  MANAGER
+                                  HORAS
+                              </Th>
+                          <Th
+                              bg="#4D47C3" 
+                              color="white" 
+                              >
+                                  GERENCIAR
                               </Th>
                           </Tr>
                       </Thead>
@@ -184,13 +193,13 @@ export default function GerenciarColaborador({params}:any) {
                                   <Link 
                                       width={"30%"} 
                                       href={`/main/projects/info/${project.id}/manageColaborator/reportColaborator`}>
-                                          {user.user.full_name}
+                                          {user.user.email}
                                   </Link>
                               </Td>
-                              {/* <Td>-01:00 HOURS</Td> */}
-                              <Td>{user.user.email}</Td>
+                              <Td>{user.role}</Td>
+                              <Td>{user.hours_per_week}</Td>
                               <Td>
-                                  <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
+                                  <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3" onClick={() => toggleModal(true)}>
                                       <FontAwesomeIcon icon={faEdit} style={{ marginRight: '4px', color: '#F0EFFF' }} />
                                           Editar
                                   </Button>
@@ -211,7 +220,6 @@ export default function GerenciarColaborador({params}:any) {
           </Box>
         </Box>
       </ChakraProvider>
-      {/* <Modal isOpen={isOpen} onClose={toggleModal} handleChange={handleChange} handleConfirm={handleConfirm} handleSelectChange={handleSelectChange}/> */}
 
       <Modal isOpen={isOpen} onClose={toggleModal}>
         <ModalOverlay />
