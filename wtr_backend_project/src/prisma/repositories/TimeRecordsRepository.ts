@@ -23,7 +23,6 @@ export default class TimeRecordsRepository extends BaseRepository {
         user_id: userId,
         project_id: projectId,
         check_in_timestamp: checkInTimestamp,
-        user_message: userMessage,
         location: location,
       },
     });
@@ -32,7 +31,7 @@ export default class TimeRecordsRepository extends BaseRepository {
   async checkoutTimeRecord(timeRecordId: number, checkoutTimeStamp: Date) {
     return this.client.time_record.update({
       where: {
-        time_record_id: timeRecordId,
+        id: timeRecordId,
         check_out_timestamp: null,
       },
       data: {

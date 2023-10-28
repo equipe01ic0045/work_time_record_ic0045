@@ -66,7 +66,7 @@ export default class TimeRecordService {
     }
 
     return this.timeRecordsRepository.checkoutTimeRecord(
-      existingCheckIn.time_record_id,
+      existingCheckIn.id,
       checkoutTimeStamp ?? new Date()
     );
   }

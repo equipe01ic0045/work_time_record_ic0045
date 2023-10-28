@@ -34,12 +34,12 @@ export default class ProjectRepository extends BaseRepository {
       data: {
         user: {
           connect: {
-            user_id: userId,
+            id: userId,
           },
         },
         project: {
           connect: {
-            project_id: newProject.project_id,
+            id: newProject.id,
           },
         },
         role: "ADMIN",
@@ -91,7 +91,7 @@ export default class ProjectRepository extends BaseRepository {
       select: {
         user: {
           select: {
-            user_id: true,
+            id: true,
             full_name: true,
             email: true,
           },
