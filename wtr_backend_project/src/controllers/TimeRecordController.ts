@@ -50,17 +50,96 @@ export default class TimeRecordController extends BaseController {
     }
   }
 
-  async updateCheckIn(
+  async checkinJustificationRequest(
     req: AuthorizedRequest,
     res: Response,
+    next: NextFunction,
   ) {
-    const params = req.body;
+    const {
+      project_id,
+    } = req.params;
+
+    const {
+      check_in_timestamp,
+      location,
+      user_message,
+      time_record_id,
+    } = req.body;
+
+    const fileType = req.file!.mimetype;
+    const fileSize = req.file!.size;
+    const fileBuffer = req.file!.buffer;
+    const fileName = req.file!.originalname;
+
+    try {
+      const data = await timeRecordService.checkinJustificationRequest(
+        +project_id,
+        +time_record_id,
+        req.user!.userId,
+        user_message,
+        fileName,
+        fileType,
+        fileSize,
+        fileBuffer,
+        check_in_timestamp,
+        location,
+      );
+
+      new ResourceCreatedResponse().send(res, data);
+    } catch (err) {
+      next(err);
+    }
+  }
+  
+  async checkoutJustificationRequest(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
+
+    const {
+      project_id,
+    } = req.params;
+
+    const {
+      check_out_timestamp,
+      location,
+      user_message,
+      time_record_id,
+    } = req.body;
+
+    const fileType = req.file!.mimetype;
+    const fileSize = req.file!.size;
+    const fileBuffer = req.file!.buffer;
+    const fileName = req.file!.originalname;
+
+    try {
+      const data = await timeRecordService.checkoutJustificationRequest(
+        +project_id,
+        +time_record_id,
+        req.user!.userId,
+        user_message,
+        fileName,
+        fileType,
+        fileSize,
+        fileBuffer,
+        check_out_timestamp,
+        location,
+      );
+
+      new ResourceCreatedResponse().send(res, data);
+    } catch (err) {
+      next(err);
+    }
   }
 
-  async updateCheckOut(
+  // TODO FINISH LISTING JUSTIFICATIONS
+  async listTimeRecordsJustificationRequests(
     req: AuthorizedRequest,
     res: Response,
+    next: NextFunction,
   ) {
-    const params = req.body;
+    
+
   }
 }

@@ -79,9 +79,9 @@
 
 /**
  * @swagger
- * /projects/time-records/{project_id}/check-in/justify:
- *   patch:
- *     summary: Check in a time record
+ * /projects/time-records/{project_id}/check-in/justification:
+ *   post:
+ *     summary: Opens a checkin justitification request to be approved by an admin or project manager
  *     tags: [Time Records]
  *     security:
  *       - CookieAuth: []
@@ -99,6 +99,8 @@
  *           schema:
  *             type: object
  *             properties:
+ *               time_record_id: 
+ *                 type: string
  *               user_message:
  *                 type: string
  *               location:
@@ -111,7 +113,7 @@
  *             example:
  *                user_message: "fiz o check-in de 1 hora atrás, mal 🫡"
  *                location: "Salvador, Bahia, Brazil"
- *                check_in_timestamp: "2023-08-22 13:57:40"
+ *                check_out_timestamp: "2023-08-22 13:57:40"
  *     responses:
  *       '200':
  *         description: Successfully checked in a time record.
@@ -121,9 +123,9 @@
 
 /**
  * @swagger
- * /projects/time-records/{project_id}/check-out/justify:
- *   patch:
- *     summary: Check out a time record
+ * /projects/time-records/{project_id}/check-out/justification:
+ *   post:
+ *     summary: Opens a checkout justitification request to be approved by an admin or project manager
  *     tags: [Time Records]
  *     security:
  *       - CookieAuth: []
@@ -141,6 +143,8 @@
  *           schema:
  *             type: object
  *             properties:
+ *               time_record_id:
+ *                 type: string
  *               user_message:
  *                 type: string
  *               location:
@@ -153,14 +157,13 @@
  *             example:
  *                user_message: "fiz o check-in de 1 hora atrás, mal 🫡"
  *                location: "Salvador, Bahia, Brazil"
- *                check_in_timestamp: "2023-08-22 13:57:40"
+ *                check_out_timestamp: "2023-08-22 13:57:40"
  *     responses:
  *       '200':
  *         description: Successfully checked in a time record.
  *       '401':
  *         description: Unauthorized. User is not authenticated.
  */
-
 
 import { Router } from "express";
 import TimeRecordController from "../controllers/TimeRecordController";
@@ -212,8 +215,9 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
       this.controller.checkOutTimeRecord
     );
 
-    this._router.patch("/:project_id/check-in/justify", 
-      this.storage.single("justification_file"),
+    this._router.post(
+      "/:project_id/check-in/justification",
+      this.storage.single('justification_file'),
       [
         ...this.projectIdValidation,
         body("user_message")
@@ -223,37 +227,41 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
           .withMessage(
             "mensagem de check-in ultrapassou o limite de 500 caracteres"
           ),
-        body("location").isString().withMessage("localizacao invalida"), 
+        body("location").isString().withMessage("localizacao invalida"), // change that later, validate geophaphic location
         body("check_in_timestamp")
           .isISO8601()
           .toDate()
           .withMessage("datetime invalido"),
       ],
       this.validate,
-      this.controller.updateCheckIn,
+      this.controller.checkinJustificationRequest,
     );
-
-    this._router.patch("/:project_id/check-out/justify", 
-      this.storage.single("justification_file"),
+    
+    this._router.post(
+      "/:project_id/check-out/justification",
+      this.storage.single('justification_file'),
       [
         ...this.projectIdValidation,
+        body('time_record_id')
+          .isNumeric()
+          .withMessage("Id do time record no formato inválido"),
         body("user_message")
           .isString()
           .withMessage("mensagem invalida")
           .isLength({ max: 500 })
           .withMessage(
-            "mensagem de check-out ultrapassou o limite de 500 caracteres"
+            "mensagem de check-in ultrapassou o limite de 500 caracteres"
           ),
-        body("location").isString().withMessage("localizacao invalida"), 
+        body("location").isString().withMessage("localizacao invalida"), // change that later, validate geophaphic location
         body("check_out_timestamp")
           .isISO8601()
           .toDate()
           .withMessage("datetime invalido"),
       ],
       this.validate,
-      this.controller.updateCheckIn,
+      this.controller.checkoutJustificationRequest,
     );
-
+    
     return this._router
   }
 
