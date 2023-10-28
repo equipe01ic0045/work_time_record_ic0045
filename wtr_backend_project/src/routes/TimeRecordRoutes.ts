@@ -77,14 +77,102 @@
  *                check_out_timestamp: "2023-08-22 13:57:40"
  */
 
+/**
+ * @swagger
+ * /projects/time-records/{project_id}/check-in/justify:
+ *   patch:
+ *     summary: Check in a time record
+ *     tags: [Time Records]
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: project_id
+ *         required: true
+ *         description: The ID of the project.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_message:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               check_in_timestamp:
+ *                 type: string
+ *               justification_file:
+ *                 type: string
+ *                 format: binary
+ *             example:
+ *                user_message: "fiz o check-in de 1 hora atrás, mal 🫡"
+ *                location: "Salvador, Bahia, Brazil"
+ *                check_in_timestamp: "2023-08-22 13:57:40"
+ *     responses:
+ *       '200':
+ *         description: Successfully checked in a time record.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
+/**
+ * @swagger
+ * /projects/time-records/{project_id}/check-out/justify:
+ *   patch:
+ *     summary: Check out a time record
+ *     tags: [Time Records]
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: project_id
+ *         required: true
+ *         description: The ID of the project.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_message:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               check_out_timestamp:
+ *                 type: string
+ *               justification_file:
+ *                 type: string
+ *                 format: binary
+ *             example:
+ *                user_message: "fiz o check-in de 1 hora atrás, mal 🫡"
+ *                location: "Salvador, Bahia, Brazil"
+ *                check_in_timestamp: "2023-08-22 13:57:40"
+ *     responses:
+ *       '200':
+ *         description: Successfully checked in a time record.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
+
 import { Router } from "express";
 import TimeRecordController from "../controllers/TimeRecordController";
 import ProjectRelatedRoutes from "./abstract/ProjectRelatedRoutes";
 import { body } from "express-validator";
+import multer from "multer";
 
 export default class TimeRecordRoutes extends ProjectRelatedRoutes {
+  
   constructor(
-    protected controller: TimeRecordController = new TimeRecordController()
+    protected controller: TimeRecordController = new TimeRecordController(),
+    private readonly storage = multer({storage: multer.memoryStorage()})
   ) {
     super(controller);
   }
@@ -124,6 +212,50 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
       this.controller.checkOutTimeRecord
     );
 
+    this._router.patch("/:project_id/check-in/justify", 
+      this.storage.single("justification_file"),
+      [
+        ...this.projectIdValidation,
+        body("user_message")
+          .isString()
+          .withMessage("mensagem invalida")
+          .isLength({ max: 500 })
+          .withMessage(
+            "mensagem de check-in ultrapassou o limite de 500 caracteres"
+          ),
+        body("location").isString().withMessage("localizacao invalida"), 
+        body("check_in_timestamp")
+          .isISO8601()
+          .toDate()
+          .withMessage("datetime invalido"),
+      ],
+      this.validate,
+      this.controller.updateCheckIn,
+    );
+
+    this._router.patch("/:project_id/check-out/justify", 
+      this.storage.single("justification_file"),
+      [
+        ...this.projectIdValidation,
+        body("user_message")
+          .isString()
+          .withMessage("mensagem invalida")
+          .isLength({ max: 500 })
+          .withMessage(
+            "mensagem de check-out ultrapassou o limite de 500 caracteres"
+          ),
+        body("location").isString().withMessage("localizacao invalida"), 
+        body("check_out_timestamp")
+          .isISO8601()
+          .toDate()
+          .withMessage("datetime invalido"),
+      ],
+      this.validate,
+      this.controller.updateCheckIn,
+    );
+
     return this._router
   }
+
+  
 }

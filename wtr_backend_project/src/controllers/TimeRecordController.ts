@@ -49,4 +49,18 @@ export default class TimeRecordController extends BaseController {
       next(error);
     }
   }
+
+  async updateCheckIn(
+    req: AuthorizedRequest,
+    res: Response,
+  ) {
+    const params = req.body;
+  }
+
+  async updateCheckOut(
+    req: AuthorizedRequest,
+    res: Response,
+  ) {
+    const params = req.body;
+  }
 }
