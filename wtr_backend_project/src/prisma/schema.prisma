@@ -7,6 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  USER
+}
+
+enum TimeRecordJustificationStatus {
+  APPROVED
+  PENDING
+  DENIED
+  CANCELLED
+}
+
 model user {
   id            Int                 @id @default(autoincrement())
   full_name          String
@@ -16,9 +30,10 @@ model user {
   updated_at         DateTime            @default(now())
   user_project_roles user_project_role[]
   time_records       time_record[]
-  colaborator        time_record_justification[] @relation("colaborator_fk")
-  project_manager    time_record_justification[] @relation("project_manager_fk")
+  time_records_justifications    time_record_justification[]  @relation(name: "time_record_justification_user_colaborator_fk")
+  time_record_justifications    time_record_justification?  @relation(name: "time_record_justification_user_approver_fk")
 }
+
 
 model project {
   id               Int                 @id @default(autoincrement())
@@ -33,19 +48,9 @@ model project {
   updated_at               DateTime            @default(now())
   user_project_roles       user_project_role[]
   time_records             time_record[]
+  time_records_justifications time_record_justification[] 
 }
 
-enum UserRole {
-  ADMIN
-  MANAGER
-  USER
-}
-
-enum TimeRecordJustificationStatus {
-  APPROVED
-  DENIED
-  PENDING
-}
 
 model user_project_role {
   id Int      @id @default(autoincrement())
@@ -72,31 +77,40 @@ model time_record {
   updated_at          DateTime           @default(now())
   user                user               @relation(fields: [user_id], references: [id])
   project             project            @relation(fields: [project_id], references: [id])
+  time_records_justifications time_record_justification[]
 }
 
 model absense_document {
   id Int         @id @default(autoincrement())
   document_file       Bytes
   file_name String
+  time_record_justification_id Int
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-  time_record_justification time_record_justification[] @relation("absense_document_fk")
+  time_record_justification time_record_justification @relation(fields: [time_record_justification_id], references: [id])
 }
 
 
 model time_record_justification {
   id Int @id @default(autoincrement())
-  colaborator_id Int @unique()
-  project_manager_id Int @unique()
-  absense_document_id Int 
+  colaborator_id Int 
+  approver_id Int? @unique()
+  project_id Int
+  time_record_id Int 
+  status TimeRecordJustificationStatus
+  absense_documents absense_document[] 
   user_message        String?
   updated_check_in_timestamp DateTime?
   updated_check_out_timestamp DateTime?
   updated_location String?
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) 
-  colaborator user @relation("colaborator_fk", fields: [colaborator_id], references: [id])
-  project_manager user @relation("project_manager_fk",fields: [project_manager_id], references: [id])
-  absense_document absense_document @relation("absense_document_fk", fields: [absense_document_id], references: [id])
-}
+  colaborator user @relation(name: "time_record_justification_user_colaborator_fk", fields: [colaborator_id], references: [id])
+  approver user? @relation(name: "time_record_justification_user_approver_fk", fields: [approver_id], references: [id])
+  project project @relation(fields: [project_id], references: [id])
+  time_record time_record @relation(fields: [time_record_id], references: [id])
+
+  @@unique([approver_id, id])
+  @@unique([time_record_id, id])
+ }
 
