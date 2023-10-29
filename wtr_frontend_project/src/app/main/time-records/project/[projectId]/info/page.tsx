@@ -116,8 +116,7 @@ export default function Page({ params }: any) {
                 <Th textColor={"white"}>Check-in</Th>
                 <Th textColor={"white"}>Check-out</Th>
                 <Th textColor={"white"}>Duração</Th>
-                <Th textColor={"white"}>Status</Th>
-                <Th textColor={"white"}>Documentos</Th>
+                <Th textColor={"white"}>Detalhes</Th>
               </Tr>
             </Thead>
             <Tbody>

@@ -2,7 +2,6 @@
 import { HStack, Icon, IconButton, Tooltip, useToast } from "@chakra-ui/react";
 import { FiClock, FiEdit, FiFileText } from "react-icons/fi";
 import {
-  Button,
   Table,
   TableContainer,
   Tbody,
@@ -15,12 +14,10 @@ import Link from "next/link";
 import ProjectListData from "@/types/ProjectListData";
 import { useEffect, useState } from "react";
 import TimeRecordService from "@/services/TimeRecordService";
-import { useRouter } from "next/navigation";
 
 function ProjectRow({ projectData }: { projectData: ProjectListData }) {
   const [hasOpenCheckIn, setHasOpenCheckIn] = useState<boolean>(projectData.open_check_in);
   const [recordNextAction, setRecordNextAction] = useState<string | null>();
-  const router = useRouter();
   const toast = useToast();
 
   useEffect(() => {
@@ -64,6 +61,7 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
     <Tr key={projectData.project.project_id}>
       <Td>{projectData.project.project_name}</Td>
       <Td>{projectData.project.owner.email}</Td>
+      <Td>--</Td>
       <Td>
         <HStack gap={2}>
           <Tooltip label={`${recordNextAction} rápido`}>
@@ -118,6 +116,7 @@ export default function TimeRecordsTable({
           <Tr>
             <Th textColor={"white"}>NOME DO PROJETO</Th>
             <Th textColor={"white"}>PROPRIETÁRIO</Th>
+            <Th textColor={"white"}>ÚLTIMO REGISTRO</Th>
             <Th textColor={"white"}>REGISTRAR</Th>
             <Th textColor={"white"}>REGISTROS FEITOS</Th>
           </Tr>
