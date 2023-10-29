@@ -1,10 +1,12 @@
 'use client';
 import HeaderBox from "@/components/global/HeaderBox";
 import TimeRecordRow from "@/components/time-records/TimeRecordRow";
+import ProjectService from "@/services/ProjectService";
 import TimeRecordService from "@/services/TimeRecordService";
+import ProjectInfo from "@/types/ProjectInfo";
 import TimeRecord from "@/types/TimeRecord";
-import { Search2Icon } from "@chakra-ui/icons";
-import { Box, Button, Flex, HStack, IconButton, Input, Table, TableContainer, Tbody, Th, Thead, Tr, useToast } from "@chakra-ui/react";
+import { Icon, Search2Icon } from "@chakra-ui/icons";
+import { Box, Button, Flex, HStack, Heading, IconButton, Input, Link, Table, TableContainer, Tbody, Th, Thead, Tr, useToast } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 
@@ -47,9 +49,23 @@ export default function Page({ params }: any) {
     setIsLoadingSearch(false);
   }
 
+  const projectService = new ProjectService();
+  const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
+
+  async function getProjectInfo() {
+    const projectInfoData = await projectService.getProjectInfo(
+      params.projectId
+    );
+    setProjectInfo(projectInfoData);
+  }
+
+  useEffect(() => {
+    getProjectInfo();
+  }, []);
+
   return (
     <Box w={"100%"}>
-      <HeaderBox title={`Registros / Projeto ${params.projectId}`} />
+      <HeaderBox title={<><Link href={`/main/time-records`}>Registros</Link>/ {projectInfo ? <Link href={'/main/time-records/project/' + params.projectId.toString() + '/info/'}>{projectInfo.project_name}</Link> : "...loading"}</>} />
 
       <Box
         display={"flex"}

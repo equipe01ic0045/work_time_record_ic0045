@@ -1,9 +1,11 @@
 "use client";
 import { Box, Button } from "@chakra-ui/react";
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 export default function SideMenu() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const iconCase = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -40,38 +42,76 @@ export default function SideMenu() {
       icon: iconClock,
     },
   ];
+
+  function menuToggle(){
+    setIsMenuOpen(!isMenuOpen)
+  }
   return (
-    <Box
-      display={"flex"}
-      flexDirection={"column"}
-      alignItems={"center"}
-      justifyContent={"start"}
-      gap={"0.5em"}
-      bg={"#A7A3FF"}
-      padding={"0.5em"}
-      width={"20%"}
-    >
-      {pages.map((item) => {
-        return (
-          <Link key={item.id} href={`/main/${item.link}`}>
+    <>
+      {isMenuOpen ? 
+        (<Box
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+        justifyContent={"start"}
+        gap={"0.5em"}
+        bg={"#A7A3FF"}
+        padding={"0.5em"}
+        width={"15%"}
+        >
+          <Button
+          borderRadius={"50%"}
+          bg={"#4D47C3"}
+          display={"flex"}
+          flexDirection={"row"}
+          alignItems={"center"}
+          justifyContent={"start"}
+          width={"auto"}
+          marginTop={"10px"}
+          marginLeft={"20px"}
+          onClick={() => menuToggle()}
+          >
+            <ArrowForwardIcon color={"white"} fontSize={"25px"}/>
+          </Button>
+        {pages.map((item) => {
+          return (
+            <Link key={item.id} href={`/main/${item.link}`}>
             <Button
-              bg={"white"}
-              borderRadius={"5px"}
-              padding={"1em"}
-              display={"flex"}
-              flexDirection={"row"}
-              alignItems={"center"}
-              justifyContent={"start"}
-              gap={"0.5em"}
-              width={"auto"}
-              minWidth={"175px"}
+            bg={"white"}
+            borderRadius={"5px"}
+            padding={"1em"}
+            display={"flex"}
+            flexDirection={"row"}
+            alignItems={"center"}
+            justifyContent={"start"}
+            gap={"0.5em"}
+            width={"auto"}
+            minWidth={"175px"}
             >
-              {item.icon}
-              {item.name}
+            {item.icon}
+            {item.name}
             </Button>
-          </Link>
-        );
-      })}
-    </Box>
+            </Link>
+          );
+        })}
+        </Box>)
+        : (<Button
+          position={"fixed"}
+          borderRadius={"50%"}
+          bg={"#4D47C3"}
+          display={"flex"}
+          flexDirection={"row"}
+          alignItems={"center"}
+          justifyContent={"start"}
+          width={"auto"}
+          marginTop={"10px"}
+          marginLeft={"20px"}
+          onClick={() => menuToggle()}
+          >
+            <ArrowBackIcon color={"white"} fontSize={"25px"}/>
+          </Button>
+          )
+      }
+    </>
   );
 }

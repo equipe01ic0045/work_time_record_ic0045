@@ -35,7 +35,7 @@ export default function TimeRecordRow({
   );
 
   return (
-    <Tr>
+    <Tr background={"#F0EFFF"}>
       <Td>{record.time_record_id}</Td>
       <Td>
         <HStack gap={3}>

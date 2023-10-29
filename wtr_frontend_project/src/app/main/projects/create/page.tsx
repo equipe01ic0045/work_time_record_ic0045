@@ -4,7 +4,7 @@ import HeaderBox from "@/components/global/HeaderBox";
 import ProjectCreateBox from "@/components/projects/ProjectCreateBox";
 
 import ProjectInfo from "@/types/ProjectInfo";
-import { Box } from "@chakra-ui/react";
+import { Box, Link } from "@chakra-ui/react";
 
 export default function ProjectInfo({ params }: any) {
   const loadingData = {
@@ -20,7 +20,7 @@ export default function ProjectInfo({ params }: any) {
 
   return (
     <Box display={"flex"} flexDirection={"column"} width={'100%'}>
-      <HeaderBox title={`Projeto / Criar Projeto`} />
+      <HeaderBox title={<><Link href={`/main/projects`}>Projetos</Link> / Criar Projeto</>} />
       <Box padding={"1em"}>
         <ProjectCreateBox project={loadingData} />
       </Box>

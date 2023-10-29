@@ -5,7 +5,7 @@ import ProjectInfoBox from "@/components/projects/ProjectInfoBox";
 import ProjectCreateBox from "@/components/projects/ProjectCreateBox";
 import ProjectService from "@/services/ProjectService";
 import ProjectInfo from "@/types/ProjectInfo";
-import { Box } from "@chakra-ui/react";
+import { Box, Link } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 export default function ProjectUpdate({ params }: any) {
@@ -47,7 +47,7 @@ export default function ProjectUpdate({ params }: any) {
 
   return (
     <Box display={"flex"} flexDirection={"column"} width={'100%'}>
-      <HeaderBox title={`Projeto / ${projectInfo ? projectInfo.project_name : "...loading"}`} />
+      <HeaderBox title={<><Link href={`/main/projects`}>Projetos</Link> / {projectInfo? <Link href={`/main/projects/info/`+ params.projectId.toString()}>{projectInfo.project_name}</Link> : "...loading"} / Editar</>} />
       <Box padding={"1em"}>
         {projectInfo ? <ProjectCreateBox project={projectInfo} /> : 'Loading...'}
       </Box>

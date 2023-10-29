@@ -16,13 +16,11 @@
 
 - npx prisma migrate deploy --schema=./src/prisma/schema.prisma
 
+- npx prisma db push --schema=./src/prisma/schema.prisma
+
 ## rode
 
 - npm run dev
-
-## se tiver problemas com o prisma, tente:
-
-- npx prisma db push --schema=./src/prisma/schema.prisma
 
 ## rota do swagger:
 

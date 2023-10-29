@@ -3,7 +3,7 @@ import HeaderBox from "@/components/global/HeaderBox";
 import TimeRecordsTable from "@/components/time-records/TimeRecordsTable";
 import ProjectService from "@/services/ProjectService";
 import ProjectListData from "@/types/ProjectListData";
-import { Box } from "@chakra-ui/react";
+import { Box, Link } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 export default function TimeRecords() {
@@ -16,7 +16,7 @@ export default function TimeRecords() {
 
   return (
     <Box display={"flex"} flexDirection={"column"} width={"100%"}>
-      <HeaderBox title={`Registros`} />
+      <HeaderBox title={<Link href={`/main/time-records`}>Registros</Link>} />
       <Box padding={"2em"}>
         <TimeRecordsTable projectsList={projects} />
       </Box>

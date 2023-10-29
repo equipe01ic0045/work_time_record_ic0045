@@ -38,7 +38,7 @@ export default function Page({ params }: any) {
 
   return (
     <Box w="100%">
-      <HeaderBox title={`Projeto / ${params.projectUuid} / Colaboradores / Colaborador`} />
+      <HeaderBox title={`Projetos / ${params.projectUuid} / Colaboradores / {Maria da Silva}`} />
       <Box mx="auto" mt={20} w="40%">
         <HStack mb={10} gap={3}>
           <EditIcon boxSize="3rem" />

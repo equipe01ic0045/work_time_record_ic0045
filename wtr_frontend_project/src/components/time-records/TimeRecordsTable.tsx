@@ -113,7 +113,7 @@ export default function TimeRecordsTable({
 }) {
   return (
     <TableContainer width={"100%"}>
-      <Table variant="simple" background={"gray.200"}>
+      <Table variant="simple" background={"#F0EFFF"}>
         <Thead bg={"#4D47C3"}>
           <Tr>
             <Th textColor={"white"}>NOME DO PROJETO</Th>
