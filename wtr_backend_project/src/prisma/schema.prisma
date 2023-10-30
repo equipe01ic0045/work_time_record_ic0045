@@ -9,6 +9,7 @@ datasource db {
 
 model user {
   user_id            Int                 @id @default(autoincrement())
+  picture_url        String?
   full_name          String
   password           String
   email              String              @unique
