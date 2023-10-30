@@ -9,7 +9,6 @@ import { Icon, Search2Icon } from "@chakra-ui/icons";
 import { Box, Button, Flex, HStack, Heading, IconButton, Input, Link, Table, TableContainer, Tbody, Th, Thead, Tr, useToast } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
-import { FaRegFileLines } from "react-icons/fa6";
 
 export default function Page({ params }: any) {
   const [timeRecords, setTimeRecords] = useState<TimeRecord[]>([]);
@@ -66,7 +65,7 @@ export default function Page({ params }: any) {
 
   return (
     <Box w={"100%"}>
-      <HeaderBox title={<><Link href={`/main/time-records`}>Registros</Link>/ {projectInfo? <Link href={'/main/time-records/project/'+ params.projectId.toString() + '/info/'}>{projectInfo.project_name}</Link> : "...loading"}</>} />
+      <HeaderBox title={<><Link href={`/main/time-records`}>Registros</Link>/ {projectInfo ? <Link href={'/main/time-records/project/' + params.projectId.toString() + '/info/'}>{projectInfo.project_name}</Link> : "...loading"}</>} />
 
       <Box
         display={"flex"}
@@ -113,10 +112,11 @@ export default function Page({ params }: any) {
           <Table>
             <Thead bg={"#4D47C3"}>
               <Tr>
+                <Th textColor={"white"}>ID</Th>
                 <Th textColor={"white"}>Check-in</Th>
                 <Th textColor={"white"}>Check-out</Th>
-                <Th textColor={"white"}>Status</Th>
-                <Th textColor={"white"}>Documentos</Th>
+                <Th textColor={"white"}>Duração</Th>
+                <Th textColor={"white"}>Detalhes</Th>
               </Tr>
             </Thead>
             <Tbody>

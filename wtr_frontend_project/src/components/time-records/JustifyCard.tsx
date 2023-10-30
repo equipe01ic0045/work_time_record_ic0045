@@ -3,6 +3,9 @@ import { EditIcon, AttachmentIcon } from "@chakra-ui/icons";
 import { Button, ButtonGroup, Card, CardBody, CardHeader, FormControl, FormHelperText, FormLabel, HStack, Heading, IconButton, Input, Stack, StackDivider, Textarea } from "@chakra-ui/react";
 import { useRef } from "react";
 
+/**
+ * @deprecated
+ */
 export default function JustifyCard({
   record,
   setRecord,

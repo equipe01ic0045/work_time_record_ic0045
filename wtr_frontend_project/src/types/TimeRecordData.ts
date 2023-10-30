@@ -1,7 +1,17 @@
-type TimeRecordData = {
-  date: Date;
-  document?: File|null;
+export type Justification = {
   description?: string;
+  document?: File|null;
+  date?: Date;
+};
+
+export type JustificationData = Justification & {
+  date: Date;
+  projectId: number;
+  timeRecordId: number;
+}
+
+type TimeRecordData = Justification & {
+  date: Date;
   projectId: number;
   location?: string;
 };
