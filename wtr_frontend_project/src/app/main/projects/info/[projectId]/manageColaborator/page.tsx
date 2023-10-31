@@ -165,6 +165,12 @@ export default function GerenciarColaborador({params}:any) {
                               COLABORADOR
                           </Th>
                           <Th
+                          bg="#4D47C3" 
+                          color="white" 
+                          >
+                              EMAIL
+                          </Th>
+                          <Th
                               bg="#4D47C3" 
                               color="white"
                               >
@@ -193,9 +199,10 @@ export default function GerenciarColaborador({params}:any) {
                                   <Link 
                                       width={"30%"} 
                                       href={`/main/projects/info/${project.id}/manageColaborator/reportColaborator`}>
-                                          {user.user.email}
+                                          {user.user.full_name}
                                   </Link>
                               </Td>
+                              <Td>{user.user.email}</Td>
                               <Td>{user.role}</Td>
                               <Td>{user.hours_per_week}</Td>
                               <Td>

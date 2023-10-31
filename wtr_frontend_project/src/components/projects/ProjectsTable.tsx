@@ -74,7 +74,7 @@ export default function ProjectsTable({
                     <Button color={"#4D47C3"}>{projectData.project.project_name}</Button>
                   </Link>
                 </Td>
-                <Td>{projectData.project.owner.email}</Td>
+                <Td>{projectData.project.owner.full_name}</Td>
                 <Td>{commercialTimeFormat}</Td>
                 <Td>
                   <Link
