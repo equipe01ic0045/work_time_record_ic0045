@@ -21,6 +21,11 @@ enum TimeRecordJustificationStatus {
   CANCELLED
 }
 
+enum JustificationType {
+  CHECKIN
+  CHECKOUT
+}
+
 model user {
   id            Int                 @id @default(autoincrement())
   full_name          String
@@ -84,7 +89,7 @@ model absense_document {
   id Int         @id @default(autoincrement())
   document_file       Bytes
   file_name String
-  time_record_justification_id Int
+  time_record_justification_id Int @unique()
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
   time_record_justification time_record_justification @relation(fields: [time_record_justification_id], references: [id])
@@ -96,20 +101,20 @@ model time_record_justification {
   colaborator_id Int 
   approver_id Int? @unique()
   project_id Int
-  time_record_id Int 
+  time_record_id Int
   status TimeRecordJustificationStatus
-  absense_documents absense_document[] 
   user_message        String?
-  updated_check_in_timestamp DateTime?
-  updated_check_out_timestamp DateTime?
+  manager_message     String?
+  justification_type JustificationType
+  timestamp DateTime
   updated_location String?
+  absense_document absense_document?
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) 
   colaborator user @relation(name: "time_record_justification_user_colaborator_fk", fields: [colaborator_id], references: [id])
   approver user? @relation(name: "time_record_justification_user_approver_fk", fields: [approver_id], references: [id])
   project project @relation(fields: [project_id], references: [id])
   time_record time_record @relation(fields: [time_record_id], references: [id])
-
   @@unique([approver_id, id])
   @@unique([time_record_id, id])
  }
