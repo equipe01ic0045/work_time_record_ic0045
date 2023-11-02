@@ -7,3 +7,4 @@ export default interface AuthorizedRequest extends Request {
 export interface AuthorizedFileRequest extends AuthorizedRequest {
   file: Express.Multer.File;
 }
+

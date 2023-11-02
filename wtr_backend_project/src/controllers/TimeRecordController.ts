@@ -3,6 +3,7 @@ import AuthorizedRequest from "../types/interfaces/AuthorizedRequest";
 import { NextFunction, Response } from "express";
 import { timeRecordService } from "../services";
 import {
+  DataRetrievedResponse,
   ResourceCreatedResponse,
   ResourceUpdatedResponse,
 } from "../types/responses";
@@ -50,48 +51,8 @@ export default class TimeRecordController extends BaseController {
     }
   }
 
-  async checkinJustificationRequest(
-    req: AuthorizedRequest,
-    res: Response,
-    next: NextFunction,
-  ) {
-    const {
-      project_id,
-    } = req.params;
 
-    const {
-      check_in_timestamp,
-      location,
-      user_message,
-      time_record_id,
-    } = req.body;
-
-    const fileType = req.file!.mimetype;
-    const fileSize = req.file!.size;
-    const fileBuffer = req.file!.buffer;
-    const fileName = req.file!.originalname;
-
-    try {
-      const data = await timeRecordService.checkinJustificationRequest(
-        +project_id,
-        +time_record_id,
-        req.user!.userId,
-        user_message,
-        fileName,
-        fileType,
-        fileSize,
-        fileBuffer,
-        check_in_timestamp,
-        location,
-      );
-
-      new ResourceCreatedResponse().send(res, data);
-    } catch (err) {
-      next(err);
-    }
-  }
-  
-  async checkoutJustificationRequest(
+  async createTimeRecordJustification(
     req: AuthorizedRequest,
     res: Response,
     next: NextFunction,
@@ -102,10 +63,11 @@ export default class TimeRecordController extends BaseController {
     } = req.params;
 
     const {
-      check_out_timestamp,
+      updated_timestamp,
       location,
       user_message,
       time_record_id,
+      justification_type,
     } = req.body;
 
     const fileType = req.file!.mimetype;
@@ -114,7 +76,7 @@ export default class TimeRecordController extends BaseController {
     const fileName = req.file!.originalname;
 
     try {
-      const data = await timeRecordService.checkoutJustificationRequest(
+      const data = await timeRecordService.createTimeRecordJustification(
         +project_id,
         +time_record_id,
         req.user!.userId,
@@ -123,7 +85,8 @@ export default class TimeRecordController extends BaseController {
         fileType,
         fileSize,
         fileBuffer,
-        check_out_timestamp,
+        justification_type,
+        updated_timestamp,
         location,
       );
 
@@ -134,12 +97,69 @@ export default class TimeRecordController extends BaseController {
   }
 
   // TODO FINISH LISTING JUSTIFICATIONS
-  async listTimeRecordsJustificationRequests(
+  async getProjectTimeRecordsJustifications(
     req: AuthorizedRequest,
     res: Response,
     next: NextFunction,
   ) {
-    
+    const statusQueryString  = req.query.status?.toString();
+    const status = statusQueryString?.split(',');
+    const { project_id } = req.params;
+    try {
+      const foundProjectTimeRecords =  await timeRecordService.getProjectTimeRecordsJustifications(
+        req.user!.userId,
+        +project_id,
+        status
+      );
+      new DataRetrievedResponse().send(
+        res,
+        foundProjectTimeRecords,
+      )
+    } catch (err) {
+      next(err);
+    }
+  }
 
+  async getProjectTimeRecordJustification(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ){
+    try {
+      const userId = req.user!.userId;
+      const projectId = +req.params!.project_id;
+      const timeRecordJustificationId =  +req.params!.time_record_justification_id;
+      const foundTimeRecordRequest =  await timeRecordService.getProjectTimeRecordJustification(
+        userId,
+        projectId,
+        timeRecordJustificationId,
+      );
+      new DataRetrievedResponse().send(
+        res,
+        foundTimeRecordRequest
+      );
+    } catch (err) {
+      next(err)
+    }
+  }
+  
+  async assessTimeRecordJustification(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { status }  = req.body;
+      const { project_id, time_record_justification_id } = req.params;
+      const updatedTimeRecordJustification =  await timeRecordService.assessProjectTimeRecordJustification(
+        +project_id,
+        req.user!.userId,
+        +time_record_justification_id,
+        status,
+      );
+      new ResourceUpdatedResponse().send(res, updatedTimeRecordJustification);
+    } catch (err) {
+      next(err);
+    }
   }
 }

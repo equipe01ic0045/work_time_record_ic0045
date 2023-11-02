@@ -1,6 +1,6 @@
 import TimeRecordsRepository from "../prisma/repositories/TimeRecordsRepository";
 import ProjectRepository from "../prisma/repositories/ProjectRepository";
-import { time_record } from "@prisma/client";
+import { JustificationType, TimeRecordJustificationStatus, time_record } from "@prisma/client";
 import {
   AuthorizationError,
   ConflictError,
@@ -11,13 +11,26 @@ import {
 export default class TimeRecordService {
   private readonly timeRecordsRepository: TimeRecordsRepository;
   private readonly projectsRepository: ProjectRepository;
-  private readonly allowedMimeTypes: Array<String>;
+  private readonly allowedMimeTypes: Array<string>;
 
   constructor() {
     this.timeRecordsRepository = new TimeRecordsRepository();
     this.projectsRepository = new ProjectRepository();
     this.allowedMimeTypes =  ["application/pdf"];
   }
+
+  private isValidJustificationStatus(
+    status?: string[]
+  ) {
+
+    if(!status?.length) { return true; }
+
+    return status?.every((status: string) => Object
+      .keys(TimeRecordJustificationStatus)
+      .includes(status)
+    );
+  }
+
 
   async checkInTimeRecord(
     userId: number,
@@ -26,6 +39,7 @@ export default class TimeRecordService {
     userMessage?: string,
     location?: string
   ): Promise<time_record> {
+    
     const foundUserProjectRole =
       await this.projectsRepository.findUserProjectRole(userId, projectId);
     if (!foundUserProjectRole) {
@@ -58,10 +72,11 @@ export default class TimeRecordService {
     if (!foundUserProjectRole) {
       throw new AuthorizationError();
     }
+
     const existingCheckIn = await this.timeRecordsRepository.findOpenCheckinTimeRecord(
-        userId,
-        projectId
-      );
+      userId,
+      projectId
+    );
     
     if (!existingCheckIn) {
       throw new NotFoundError("open check-in");
@@ -73,7 +88,7 @@ export default class TimeRecordService {
     );
   }
   // TODO: Adiciona serviço de notifcação por email
-  async checkoutJustificationRequest(
+  async createTimeRecordJustification(
     projectId: number,
     timeRecordId: number,
     userId: number,
@@ -82,7 +97,8 @@ export default class TimeRecordService {
     fileType: string,
     fileSize: number, // TODO: definir valor máximo do arquivo
     documentFile: Buffer,
-    updatedCheckOutTimestamp: Date,
+    justificationType: JustificationType,
+    updatedTimeStamp: Date,
     updatedLocation?: string,
   ) {
 
@@ -102,14 +118,15 @@ export default class TimeRecordService {
     }
 
     try {
-      const createdTimeRecordJustificationRequest =  await this.timeRecordsRepository.createCheckoutJustification(
+      const createdTimeRecordJustificationRequest = await this.timeRecordsRepository.createTimeRecordJustification(
         projectId,
         userId,
         timeRecordId,
         userMessage,
         documentFile,
         fileName,
-        updatedCheckOutTimestamp,      
+        justificationType,
+        updatedTimeStamp,      
         updatedLocation,
       );
       
@@ -119,56 +136,72 @@ export default class TimeRecordService {
       throw err;
     }
   }
-  async checkinJustificationRequest(
+  
+  async getProjectTimeRecordsJustifications (
+    managerId: number,
     projectId: number,
-    timeRecordId: number,
-    userId: number,
-    userMessage: string,
-    fileName: string,
-    fileType: string,
-    fileSize: number, // TODO: definir valor máximo do arquivo
-    documentFile: Buffer,
-    updatedCheckInTimestamp: Date,
-    updatedLocation?: string,
+    status?: string[],
   ) {
-
-    
-    if (!this.allowedMimeTypes.includes(fileType)) {
-      throw new ValidationError(`Formato de arquivo inválido os unicos formatos aceitos são: ${this.allowedMimeTypes.join(",")}` )
+    if (!this.isValidJustificationStatus(status)) {
+      throw new ValidationError("status no formato inválido");
+    }
+    const foundManagerUserProjectRole = await this.projectsRepository.findUserProjectRole(managerId, projectId, ["ADMIN", "MANAGER"]);
+    if (!foundManagerUserProjectRole) {
+      throw new AuthorizationError();
     }
 
-    const foundUserProjectRole = await this.projectsRepository.findUserProjectRole(userId, projectId);
+    const foundTimeRecordJustificationRequests = await this.timeRecordsRepository
+      .findTimeRecordJustificationsByProjectId(projectId, status)
+    return foundTimeRecordJustificationRequests;
+  }
+
+  async getProjectTimeRecordJustification (
+    userId: number,
+    timeRecordId: number,
+    projectId: number,
+  ) {
+    const foundManagerProjectRole = await this.projectsRepository.findUserProjectRole(
+      userId,
+      projectId,  
+      ["MANAGER", "ADMIN"]
+    );
+    
+    const foundtimeRecordJustification = await this.timeRecordsRepository
+      .findTimeRecordJustificationsById(timeRecordId);
+    
+    
+    if (!foundManagerProjectRole) {
+      throw new AuthorizationError();
+    }
+    if (!foundtimeRecordJustification) {
+      throw new NotFoundError("Justificativa não encontrada");
+    }
+    return foundtimeRecordJustification;
+  }
+
+  async assessProjectTimeRecordJustification(
+    projectId: number,
+    approverId: number,
+    timeRecordJustificationId: number,
+    status: TimeRecordJustificationStatus,
+  ){
+    const foundUserProjectRole = await this.projectsRepository.findUserProjectRole(approverId, projectId, ["MANAGER", "ADMIN"]);
+    
     if (!foundUserProjectRole) {
       throw new AuthorizationError();
     }
-    const foundTimeRecord = await this.timeRecordsRepository.findTimeRecordById(timeRecordId);
+    const foundtimeRecordJustification = await this.timeRecordsRepository.findTimeRecordJustificationsById(timeRecordJustificationId);
     
-    if (!foundTimeRecord) {
-      throw new NotFoundError("time record");
+    if (!foundtimeRecordJustification) {
+      throw new NotFoundError("Jusitificativa não encontrada com esse id");
     }
 
-    try {
-      const createdTimeRecordJustificationRequest =  await this.timeRecordsRepository.createCheckinJustification(
-        projectId,
-        userId,
-        timeRecordId,
-        userMessage,
-        documentFile,
-        fileName,
-        updatedCheckInTimestamp,      
-        updatedLocation,
-      );
-      
-      return createdTimeRecordJustificationRequest;
-
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async approveTimeRecordJustification (
-
-  ) {
-
+    const updatedTimeJustification =  await this.timeRecordsRepository.assessTimeRecordJustiticationById(
+      timeRecordJustificationId,
+      approverId,
+      status,
+    );
+    
+    return updatedTimeJustification;
   }
 }
