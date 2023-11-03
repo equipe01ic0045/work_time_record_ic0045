@@ -35,7 +35,7 @@ export default function TimeRecordRow({
           size={"lg"}
           mr={3}
           aria-label="Download"
-          bg="blueviolet"
+          bg="#4D47C3"
           colorScheme="blackAlpha"
           icon={<Icon boxSize="1.5rem" color="white" as={FaRegFileLines} />}
           onClick={(e) => router.push(`info/${record.time_record_id}/justify`)}

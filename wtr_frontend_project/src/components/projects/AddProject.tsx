@@ -17,7 +17,7 @@ export default function AddProjectBox() {
 
       <Box display={"flex"} flexDirection={"column"} gap={"1em"}>
         <Input placeholder="Nome do Projeto" type="projeto" name="projeto" />
-        <Button background={"blueviolet"} textColor={"white"}>
+        <Button background={"#4D47C3"} textColor={"white"}>
           Adicionar Projeto
         </Button>
         <Box display={"flex"} flexDirection={"row"} gap={"1em"}></Box>
