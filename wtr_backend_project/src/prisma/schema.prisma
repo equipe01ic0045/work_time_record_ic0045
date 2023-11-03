@@ -16,15 +16,26 @@ model user {
   updated_at         DateTime            @default(now())
   user_project_roles user_project_role[]
   time_records       time_record[]
+  projects           project[]
 }
 
 model project {
-  project_id         Int                 @id @default(autoincrement())
-  project_name       String
-  created_at         DateTime            @default(now())
-  updated_at         DateTime            @default(now())
-  user_project_roles user_project_role[]
-  time_records       time_record[]
+  project_id               Int                 @id @default(autoincrement())
+  project_name             String              @unique
+  project_description      String              @default("")
+  owner_id                 Int
+  location_required        Boolean
+  location                 String?
+  timezone                 String
+  commercial_time_required Boolean
+  commercial_time_start    Int?
+  commercial_time_end      Int?
+  users_count              Int                 @default(0)
+  created_at               DateTime            @default(now())
+  updated_at               DateTime            @default(now())
+  owner                    user                @relation(fields: [owner_id], references: [user_id])
+  user_project_roles       user_project_role[]
+  time_records             time_record[]
 }
 
 enum UserRole {
@@ -39,6 +50,9 @@ model user_project_role {
   project_id           Int
   role                 UserRole
   hours_per_week       Int
+  created_at           DateTime @default(now())
+  updated_at           DateTime @default(now())
+  open_check_in        Boolean  @default(false)
   user                 user     @relation(fields: [user_id], references: [user_id])
   project              project  @relation(fields: [project_id], references: [project_id])
 
@@ -54,6 +68,7 @@ model time_record {
   user_message        String?
   location            String?
   created_at          DateTime           @default(now())
+  updated_at          DateTime           @default(now())
   user                user               @relation(fields: [user_id], references: [user_id])
   project             project            @relation(fields: [project_id], references: [project_id])
   absense_documents   absense_document[]

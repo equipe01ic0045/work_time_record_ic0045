@@ -1,30 +1,71 @@
-import AuthorizedRequest from "../interfaces/AuthorizedRequest";
-import { Response } from "express";
-import { timeRecordService } from "../prisma/services";
+import BaseController from "./abstract/BaseController";
+import AuthorizedRequest from "../types/interfaces/AuthorizedRequest";
+import { NextFunction, Response } from "express";
+import { timeRecordService } from "../services";
+import {
+  DataRetrievedResponse,
+  ResourceCreatedResponse,
+  ResourceUpdatedResponse,
+} from "../types/responses";
 
-export default class TimeRecordController {
-  async checkInTimeRecord(req: AuthorizedRequest, res: Response) {
+export default class TimeRecordController extends BaseController {
+  async checkInTimeRecord(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     const { project_id } = req.params;
-    const { user_message, location } = req.body;
-
-    await timeRecordService.checkInTimeRecord(
-      req.user!.userId,
-      parseInt(project_id),
-      user_message,
-      location
-    );
-
-    res.status(201).json({ message: "Check-in feito com sucesso." });
+    const { user_message, location, check_in_timestamp } = req.body;
+    try {
+      let checkInTimestamp: Date = new Date(check_in_timestamp);
+      await timeRecordService.checkInTimeRecord(
+        req.user!.userId,
+        parseInt(project_id),
+        checkInTimestamp,
+        user_message,
+        location
+      );
+      new ResourceCreatedResponse().send(res);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async checkOutTimeRecord(req: AuthorizedRequest, res: Response) {
+  async checkOutTimeRecord(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const { project_id } = req.params;
+    const { check_out_timestamp } = req.body;
+    try {
+      let checkOutTimestamp: Date = new Date(check_out_timestamp);
+      await timeRecordService.checkOutTimeRecord(
+        req.user!.userId,
+        parseInt(project_id),
+        checkOutTimestamp
+      );
+      new ResourceUpdatedResponse().send(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getUserTimeRecordsInProject(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
     const { project_id } = req.params;
 
-    await timeRecordService.checkOutTimeRecord(
-      req.user!.userId,
-      parseInt(project_id)
-    );
-
-    res.status(201).json({ message: "Check-out feito com sucesso." });
+    try {
+      const timeRecords = await timeRecordService.getUserTimeRecordsInProject(
+        req.user!.userId,
+        parseInt(project_id)
+      );
+      new DataRetrievedResponse().send(res, timeRecords);
+    } catch (error) {
+      next(error);
+    }
   }
 }

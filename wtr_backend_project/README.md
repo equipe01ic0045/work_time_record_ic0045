@@ -12,10 +12,18 @@
 
 ## carregue as tabelas usando o prisma 
 
+- npx prisma generate --schema=./src/prisma/schema.prisma
+
 - npx prisma migrate deploy --schema=./src/prisma/schema.prisma
 
 ## rode
 
 - npm run dev
 
+## se tiver problemas com o prisma, tente:
 
+- npx prisma db push --schema=./src/prisma/schema.prisma
+
+## rota do swagger:
+
+[http://localhost:5000/swagger/docs/](http://localhost:5000/swagger/docs/)
