@@ -67,7 +67,7 @@ export default function Page({
   return (
     <VStack w={"100%"} spacing="3rem">
       <HeaderBox
-        title={`Justificativa / Projeto ${params.projectId} / Registro ${params.timeRecordId}`}
+        title={`Registro ${params.timeRecordId} / Justificativa`}
       />
 
       <form onSubmit={onSubmit}>

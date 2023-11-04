@@ -2,10 +2,12 @@
 
 import HeaderBox from "@/components/global/HeaderBox";
 import JustificationStatusIcon from "@/components/time-records/JustificationStatusIcon";
+import ProjectService from "@/services/ProjectService";
 import TimeRecordService from "@/services/TimeRecordService";
+import ProjectInfo from "@/types/ProjectInfo";
 import TimeRecord, { Justification } from "@/types/TimeRecord";
 import { DownloadIcon } from "@chakra-ui/icons";
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Card, CardBody, CardFooter, CardHeader, Divider, HStack, Heading, SimpleGrid, Text, Tooltip, VStack, useToast } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Card, CardBody, CardFooter, CardHeader, Divider, HStack, Heading, Link, SimpleGrid, Text, Tooltip, VStack, useToast } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import duration from 'dayjs/plugin/duration';
 import { useEffect, useState } from "react";
@@ -54,6 +56,14 @@ export default function Page(props: TimeRecordInfoPageProps) {
   const [checkInDate, setCheckInDate] = useState<dayjs.Dayjs>();
   const [checkOutDate, setCheckOutDate] = useState<dayjs.Dayjs>(dayjs());
 
+  const projectService = new ProjectService();
+  const [project, setProject] = useState<ProjectInfo>();
+
+  useEffect(() => {
+    projectService.getProjectInfo(props.params.projectId)
+      .then(setProject);
+  }, [props.params.projectId]);
+
   useEffect(() => {
     new TimeRecordService().getTimeRecord(props.params.timeRecordId)
       .then((timeRecord) => {
@@ -79,7 +89,15 @@ export default function Page(props: TimeRecordInfoPageProps) {
 
   return (
     <Box w="100%">
-      <HeaderBox title={`Registro ${props.params.timeRecordId}`} />
+      <HeaderBox
+        title={<>
+          <Link href={`/main/time-records`}>Registros</Link> / {' '}
+          {project
+            ? <Link href={'/main/time-records/project/' + props.params.projectId.toString() + '/info/'}>{project.project_name}</Link>
+            : "...loading"} / {' '}
+          Registro {props.params.timeRecordId}
+        </>}
+      />
 
       <VStack w="2xl" mx="auto" gap={10} my={10}>
         <Box w="100%">
@@ -99,7 +117,7 @@ export default function Page(props: TimeRecordInfoPageProps) {
             </CardBody>
             <CardFooter>
               <Box>
-                <Text fontWeight="bold">Descrição:</Text>
+                <Text fontWeight="bold">Mensagem do usuário:</Text>
                 <Text>{timeRecord?.user_message}</Text>
               </Box>
             </CardFooter>
@@ -107,7 +125,7 @@ export default function Page(props: TimeRecordInfoPageProps) {
         </Box>
 
         <Box w="100%">
-          <Heading mb={3} color="lavanda.300">Justificativas</Heading>
+          <Heading mb={3} color="lavanda.300">Histórico de justificativas</Heading>
           <Accordion mx="auto" allowToggle>
             {timeRecord?.justifications && (
               timeRecord.justifications.map((justification, i) => (

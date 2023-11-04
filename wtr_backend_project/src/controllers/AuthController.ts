@@ -23,7 +23,7 @@ export default class AuthController extends BaseController {
       const token = await authService.authenticateUser(email, password);
       res.cookie("token", token, {
         httpOnly: false,
-        maxAge: 3600000,
+        maxAge: 3.6e+6, // 1 hour
         sameSite: "strict",
       });
 

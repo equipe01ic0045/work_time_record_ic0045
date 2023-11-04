@@ -1,4 +1,4 @@
-import TimeRecordData from "@/types/TimeRecordData";
+import TimeRecordData, { JustificationData } from "@/types/TimeRecordData";
 import axios from "./axios";
 import PaginationData from "@/types/PaginationData";
 import TimeRecord from "@/types/TimeRecord";
@@ -85,5 +85,22 @@ export default class TimeRecordService {
     const { data } = await axios.get(`/time-records/${recordId}`);
 
     return data.data;
+  }
+
+  async justify(justificationData: JustificationData) {
+    const formData = new FormData();
+
+    if (justificationData.document) {
+      formData.append("justification_file", justificationData.document);
+    }
+
+    formData.append("user_message", justificationData.description || "");
+    formData.append("location", "Salvador, Bahia");
+    formData.append("time_record_id", justificationData.timeRecordId.toString());
+
+    const { data } = await axios.post(
+      `/projects/time-records/${justificationData.projectId}/justify`,
+      formData,
+    );
   }
 }

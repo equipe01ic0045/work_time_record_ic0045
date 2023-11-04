@@ -60,7 +60,7 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
   return (
     <Tr key={projectData.project.project_id} borderBottom="2px" borderColor="gray.300">
       <Td>{projectData.project.project_name}</Td>
-      <Td>{projectData.project.owner.email}</Td>
+      <Td>{projectData.project.owner.full_name}</Td>
       <Td>--</Td>
       <Td>
         <HStack gap={2}>
@@ -69,7 +69,7 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
               aria-label="Fazer registro"
               icon={<Icon boxSize="2em" as={FiClock} />}
               p={3}
-              color={hasOpenCheckIn ? "orange" : "black"}
+              color={hasOpenCheckIn ? "orange" : "lavanda.300"}
               onClick={() => quickRecord(projectData.project.project_id)}
             />
           </Tooltip>
@@ -83,6 +83,7 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
               <IconButton
                 aria-label="Fazer registro"
                 icon={<Icon boxSize="2em" as={FiEdit} />}
+                color="lavanda.300"
                 p={3}
               />
             </Tooltip>
@@ -96,6 +97,7 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
           <IconButton
             aria-label="Ver registros"
             icon={<Icon boxSize="2em" as={FiFileText} />}
+            color="lavanda.300"
             p={3}
           />
         </Link>
