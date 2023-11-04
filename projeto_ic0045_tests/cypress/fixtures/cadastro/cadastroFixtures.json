@@ -1,4 +1,5 @@
 {
+    "nome": "Usuário de teste",
     "email": "test@test.com.br", 
-    "senha": "admin"
+    "senha": "admin123"
 }

@@ -1,0 +1,10 @@
+{
+    "nome": "",
+    "Localizacao": "",
+    "Localizacao_requerida": true,
+    "time_zone": "America/Bahia",
+    "horario_comercial": true, 
+    "hr_inicio": "00:00",
+    "hr_fim": "05:00",
+    "descricao": "apenas um teste de descrição"
+}

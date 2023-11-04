@@ -1,5 +1,5 @@
 const loginElements = {
-    EMAIL: '[placeholder="email"]',
-    SENHA: '[placeholder="senha"]',
+    EMAIL: 'input[name="email"]',
+    SENHA: 'input[name="password"]',
 }
 export default loginElements;
