@@ -11,11 +11,11 @@ describe('Login', () => {
                 cy.login(dados.email, dados.senha)
             })
 
-            cy.fixture('projeto/editarFixtures.json').then(dados => {
+            cy.fixture('projeto/criarFixtures.json').then(dados => {
                 cy.criarProjeto(
                     dados.nome,
-                    dados.Localizacao,
-                    dados.Localizacao_requerida,
+                    dados.localizacao,
+                    dados.localizacao_requerida,
                     dados.time_zone,
                     dados.horario_comercial,
                     dados.hr_inicio,
@@ -23,6 +23,8 @@ describe('Login', () => {
                     dados.descricao
                 )
                 //validação
+                //Validar mensagem de sucesso
+                cy.get('#toast-1', {timeout:3000}).should('be.visible').invoke('text').should('contains', 'Projeto criado com sucesso!')
             })
         })
     
@@ -32,7 +34,7 @@ describe('Login', () => {
                 cy.login(dados.email, dados.senha)
 
                 //Selecionar projeto
-                cy.get('').click()
+                
             })
         })
     })
