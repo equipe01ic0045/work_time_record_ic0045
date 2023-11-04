@@ -34,7 +34,7 @@ export default function DocumentRow(
       <Button
         aria-label="Attach file"
         rightIcon={<AttachmentIcon />}
-        background={"blueviolet"}
+        background={"#4D47C3"}
         colorScheme="blackAlpha"
         name="attach-file"
         onClick={(e) => hiddenFileInput.current?.click()}
@@ -45,7 +45,7 @@ export default function DocumentRow(
       <Input ref={hiddenFileInput} hidden type="file" onChange={onSelectFile} />
       <IconButton
         aria-label="Remove"
-        background={"blueviolet"}
+        background={"#4D47C3"}
         colorScheme="blackAlpha"
         icon={<CloseIcon />}
         onClick={props.handleRemove}

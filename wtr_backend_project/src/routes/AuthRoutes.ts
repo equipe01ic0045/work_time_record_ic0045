@@ -24,7 +24,7 @@
  *                 type: string
  *             example:
  *                 email: "teste@email.com"
- *                 password: "12345"
+ *                 password: "12345678"
  *     responses:
  *       '200':
  *         description: Successfully logged in.
@@ -56,7 +56,7 @@
  *             example:
  *                 full_name: "Pedro Chaves de Carvalho"
  *                 email: "teste@email.com"
- *                 password: "12345"
+ *                 password: "12345678"
  *     responses:
  *       '201':
  *         description: Successfully registered a new user.
