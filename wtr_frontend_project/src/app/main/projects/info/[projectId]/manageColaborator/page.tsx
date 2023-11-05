@@ -12,7 +12,7 @@ import HeaderBox from '@/components/global/HeaderBox';
 import ProjectInfo from '@/types/ProjectInfo';
 
 export default function GerenciarColaborador({params}:any) {
-
+  
   const projectService = new ProjectService();
 
   const [users, setUsers] = useState<ProjectUsers[]>([]);
@@ -141,20 +141,22 @@ export default function GerenciarColaborador({params}:any) {
             bg="white" 
             marginLeft="5vh" 
             zIndex={0} 
-            width="100%"
+            width="80%"
           >   
               <Box my={8} style={{ justifyContent: 'flex-start' }}>
                 <Button 
                   gap={"10px"} 
-                  textColor={"#4D47C3"}
+                  //textColor={"#4D47C3"}
                   fontSize={"2em"}
+                  textColor={"#FFFFFF"}
+                  colorScheme="purple" bgColor="#4D47C3"
                   onClick={()=>toggleModal(false)}>{svgCreate} NOVO COLABORADOR
                 </Button>       
               </Box>
 
               {/* Tabela */}
           
-              <Box maxW="800px" width="100%" borderWidth="1px" bg="#F0EFFF">
+              <Box maxW="1000px" width="100%" borderWidth="1px" bg="#F0EFFF">
                   <Table variant="simple" >
                       <Thead>
                       <Tr>
@@ -194,12 +196,17 @@ export default function GerenciarColaborador({params}:any) {
                         {/* Linhas da tabela */}
                         {users.map((user: ProjectUsers) => {
                           return (
-                            <Tr key={user.user.user_id}>
+                            <Tr key={user.user.user_id} borderBottom="2px" borderColor="gray.300">
                               <Td>
-                                  <Link 
+                                  {/* <Link 
                                       width={"30%"} 
                                       href={`/main/projects/info/${project.id}/manageColaborator/reportColaborator`}>
                                           {user.user.full_name}
+                                  </Link> */}
+                                  <Link href={`/main/projects/info/${project.id}/manageColaborator/reportColaborator`}>
+                                    <Button size="sm" ml={2} colorScheme="purple" bgColor="#4D47C3">
+                                      {user.user.full_name}
+                                      </Button>
                                   </Link>
                               </Td>
                               <Td>{user.user.email}</Td>

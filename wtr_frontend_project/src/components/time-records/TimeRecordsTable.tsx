@@ -58,7 +58,7 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
   }
 
   return (
-    <Tr key={projectData.project.project_id}>
+    <Tr key={projectData.project.project_id} borderBottom="2px" borderColor="gray.300">
       <Td>{projectData.project.project_name}</Td>
       <Td>{projectData.project.owner.email}</Td>
       <Td>--</Td>

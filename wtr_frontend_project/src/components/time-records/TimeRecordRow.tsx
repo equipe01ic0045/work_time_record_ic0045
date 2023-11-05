@@ -54,7 +54,7 @@ export default function TimeRecordRow({
     ?.find((justification) => justification.type === 'check-out');
 
   return (
-    <Tr background={"#F0EFFF"}>
+    <Tr background={"#F0EFFF"} borderBottom="2px" borderColor="gray.300">
       <Td>{record.time_record_id}</Td>
       <Td>
         <HStack gap={3}>

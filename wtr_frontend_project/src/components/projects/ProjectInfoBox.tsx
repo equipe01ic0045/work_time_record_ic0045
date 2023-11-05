@@ -210,6 +210,7 @@ export default function ProjectInfoBox({ project }: any) {
                   paddingX={'30%'}
                   textColor={"white"}
                   background={"#4D47C3"}
+                  colorScheme="purple" bgColor="#4D47C3"
                 >
                   {svgReports}Relatorios
                 </Button>
@@ -222,12 +223,13 @@ export default function ProjectInfoBox({ project }: any) {
                 gap={"0.5em"}
                 paddingX={'30%'}
                 background={"#4D47C3"}
+                colorScheme="purple" bgColor="#4D47C3"
               >
                 {svgCollab}Colaboradores
               </Button>
             </Link>
-            <Button background={"#4D47C3"}  onClick={()=> router.push('/main/projects/update/'+project.project_id)}>{svgEdits}</Button>
-            <Button background={"#4D47C3"} onClick={(ev) => deleteProject(ev)}>{svgTrash}</Button>
+            <Button colorScheme="purple" bgColor="#4D47C3"  onClick={()=> router.push('/main/projects/update/'+project.project_id)}>{svgEdits}</Button>
+            <Button textColor={"#FFFFFF"} colorScheme="purple" bgColor="#4D47C3" onClick={(ev) => deleteProject(ev)}>{svgTrash}</Button>
           </Box>
           <Box
             background={"#4D47C3"}
