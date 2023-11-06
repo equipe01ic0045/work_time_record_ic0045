@@ -43,9 +43,16 @@ export default class AuthService {
           "email and password do not match any existing account."
         );
       }
-      return jwt.sign({ userId: foundUser.user_id }, JWT_SECRET, {
-        expiresIn: "1d",
-      });
+      return jwt.sign(
+            { 
+                userId: foundUser.user_id,
+                picture_url: foundUser.picture_url,
+                full_name : foundUser.full_name,
+                email : foundUser.email,
+            }, 
+            JWT_SECRET, 
+            { expiresIn: "1d"}
+       );
     } else {
       throw new NotFoundError("user");
     }
