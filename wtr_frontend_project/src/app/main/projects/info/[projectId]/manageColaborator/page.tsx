@@ -22,7 +22,7 @@ export default function GerenciarColaborador({params}:any) {
   const [fullName, setFullName] = useState('');
   const [usersSearch, setUsersSearch] = useState<any[]>([]);
   const [pageSearch, setPageSearch] = useState<number>(0);
-  const MAX_USERS_PER_PAGE = 2;
+  const MAX_USERS_PER_PAGE = 5;
 
   const updateSearch = (
     full_name: string
