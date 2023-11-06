@@ -134,4 +134,15 @@ export default class ProjectService {
       throw new AuthorizationError();
     }
   }
+
+  async deleteUser(admin_id: number, project_id: number, user_id: number) {
+    const foundUserProjectRole =  await this.projectRepository.findUserProjectRole(admin_id, project_id, ["ADMIN"]);
+    const userToBeDeletedRole =  await this.projectRepository.findUserProjectRole(user_id, project_id, ["USER", "MANAGER"]); // ADMINS cannot delete users from other projects nor other admins
+    if (!foundUserProjectRole || !userToBeDeletedRole) {
+      throw new AuthorizationError();
+    }
+    const deletedUser = await this.userRepository.deleteUserById(user_id);
+    return deletedUser;
+  }
+
 }

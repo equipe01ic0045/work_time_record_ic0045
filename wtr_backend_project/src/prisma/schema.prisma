@@ -65,7 +65,7 @@ model user_project_role {
   hours_per_week       Int
   created_at           DateTime @default(now())
   updated_at           DateTime @default(now())
-  user                 user     @relation(fields: [user_id], references: [id])
+  user                 user     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   project              project  @relation(fields: [project_id], references: [id])
 
   @@unique([user_id, project_id]) // A single user record per project
@@ -80,9 +80,9 @@ model time_record {
   location            String?
   created_at          DateTime           @default(now())
   updated_at          DateTime           @default(now())
-  user                user               @relation(fields: [user_id], references: [id])
+  user                user               @relation(fields: [user_id], references: [id], onDelete: Cascade)
   project             project            @relation(fields: [project_id], references: [id])
-  time_records_justifications time_record_justification[]
+  absense_documents   absense_document[]
 }
 
 model absense_document {

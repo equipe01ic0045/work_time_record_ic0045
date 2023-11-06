@@ -1,10 +1,15 @@
-"use client";
+'use client';
 
-import { Button, Box, Text, useToast } from "@chakra-ui/react";
-import Clock from "./Clock";
+import { Button, Box, Text, useToast, Card } from "@chakra-ui/react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Clock from "./Clock";
+import TimeRecordData from "@/types/TimeRecordData";
+import TimeRecordService from "@/services/TimeRecordService";
 
-export default function RecordCard() {
+export default function RecordCard(props: { projectId: number }) {
+  const router = useRouter();
+
   const iconUser = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -17,49 +22,99 @@ export default function RecordCard() {
   );
   const toast = useToast();
 
-  const [newRecord, setRecord] = useState<any>({
-    time: "",
-    date: "",
+  const [newRecord, setRecord] = useState<TimeRecordData>({
+    date: new Date(),
+    documents: [],
+    description: '',
+    projectId: props.projectId,
   });
-  function newRecordHandler() {
-    setRecord({
-      time: new Date().toLocaleTimeString(),
-      date: new Date().toLocaleDateString(),
+
+  async function getLocation() {
+    const coordinates = await new Promise<GeolocationCoordinates>((resolve, reject) => {
+
+      const onSuccess = (position: GeolocationPosition) => {
+        resolve(position.coords);
+      };
+
+      const onError = (error: GeolocationPositionError) => {
+        toast({
+          title: 'Erro ao capturar localização',
+          description: "Verifique a permissão para detectar sua localização.",
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        })
+        reject(error);
+      };
+
+      navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+        enableHighAccuracy: true,
+      });
     });
-    toast({
-      title: "registro de horario efetuado",
-      description: "",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-      position: "top-right",
-    });
+
+    const { latitude, longitude } = coordinates;
+    return { latitude, longitude };
+  }
+
+  async function newRecordHandler() {
+    const location = await getLocation();
+
+    const record = { ...newRecord, date: new Date(), location };
+    setRecord(record);
+
+    try {
+      await (new TimeRecordService()).checkIn(record);
+
+      toast({
+        title: 'Registro de horario efetuado',
+        description: "Você será redirecionado para a página anterior.",
+        status: 'success',
+        duration: 1500,
+        isClosable: true,
+        position: "top-right",
+        onCloseComplete: () => router.back()
+      });
+    } catch (e) {
+      toast({
+        title: 'Erro ao efetuar registro de horario.',
+        description: e instanceof Error
+          ? e.message
+          : "Verifique os dados preenchidos e tente novamente.",
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      })
+    }
   }
 
   return (
-    <Box
+    <Card
       display={"flex"}
       flexDirection={"column"}
       alignItems={"center"}
       justifyContent={"center"}
-      width={"30%"}
-      height={"50%"}
       borderRadius={"1em"}
+      padding={20}
+      margin={10}
       gap={"2em"}
+      variant={"filled"}
     >
       {iconUser}
+      <Text fontSize={"md"}>
+        {newRecord.date.toLocaleDateString()}
+      </Text>
       <Clock />
       <Button
         onClick={newRecordHandler}
         minHeight={"50px"}
         background={"blueviolet"}
         color={"white"}
+        colorScheme="blackAlpha"
       >
-        Registro de Tempo
+        Efetuar registro de Tempo
       </Button>
-      <Text fontSize={"md"}>
-        {newRecord.time ? newRecord.time + "  " + newRecord.date : ""}
-      </Text>
-    </Box>
+    </Card>
   );
 }
