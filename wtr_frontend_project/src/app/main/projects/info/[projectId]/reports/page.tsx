@@ -1,9 +1,10 @@
 "use client";
 import HeaderBox from "@/components/global/HeaderBox";
 import ReportsTableRow from "@/components/projects/ReportsTableRow";
-import timeRecordsProvider, {
-  TimeRecord,
-} from "@/providers/TimeRecordsProvider";
+import ProjectService from "@/services/ProjectService";
+import TimeRecordService from "@/services/TimeRecordService";
+import ProjectInfo from "@/types/ProjectInfo";
+import TimeRecord from "@/types/TimeRecord";
 import { CalendarIcon, Search2Icon } from "@chakra-ui/icons";
 import {
   Box,
@@ -27,6 +28,7 @@ import { useEffect, useState } from "react";
 import  {BsFileEarmarkArrowUpFill} from "react-icons/bs"
 
 export default function Page({ params }: any) {
+  const timeRecordService = new TimeRecordService();
   const [timeRecords, setTimeRecords] = useState<TimeRecord[]>([]);
   const [fromDate, setFromDate] = useState<string>(
     dayjs().startOf("month").format("YYYY-MM-DD")
@@ -36,28 +38,42 @@ export default function Page({ params }: any) {
   );
   const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await timeRecordsProvider.getTimeRecords(params.projectUuid);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const data = await timeRecordService.getTimeRecords(params.projectUuid);
 
-      setTimeRecords(data.results);
-    };
+  //     setTimeRecords(data.results);
+  //   };
 
-    fetchData();
-  }, [params.projectUuid]);
+  //   fetchData();
+  // }, [params.projectUuid]);
 
   const filterByDate = async () => {
     setIsLoadingSearch(true);
 
-    const data = await timeRecordsProvider.getTimeRecords(
-      params.projectUuid,
-      fromDate,
-      toDate
-    );
+    // const data = await timeRecordService.getTimeRecords(
+    //   params.projectUuid,
+    //   // fromDate,
+    //   // toDate
+    // );
 
-    setTimeRecords(data.results);
+    // setTimeRecords(data.results);
     setIsLoadingSearch(false);
   };
+
+  const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
+
+    const projectService = new ProjectService();
+    async function getProjectInfo() {
+        const projectInfoData = await projectService.getProjectInfo(
+        params.projectId
+        );
+        setProjectInfo(projectInfoData);
+    }
+
+    useEffect(() => {
+        getProjectInfo();
+    }, []);
 
   return (
     <Box
@@ -67,14 +83,10 @@ export default function Page({ params }: any) {
       width={"100%"}
       gap={"5em"}
     >
-      <HeaderBox title="Projetos / {projeto} / Relatórios" />
+      <HeaderBox title={`Projetos / ${projectInfo? projectInfo.project_name : "...loading"} / Relatórios`} />
 
       <TableContainer>
         <Flex marginY="30px" minWidth="fit-content" alignItems="center" gap="2">
-          <HStack>
-            <CalendarIcon boxSize={8} />
-            <Heading as="h2">Lista de Relatórios</Heading>
-          </HStack>
           <Spacer />
           <HStack spacing={4}>
             <HStack bg="#F0EFFF" rounded="md" padding={3} spacing={1}>

@@ -4,12 +4,17 @@ import { FormControl, FormHelperText, FormLabel, Input } from "@chakra-ui/react"
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 
-export default function Clock(props: { onDateChange: (date: Date) => void }) {
-  const [date, setDate] = useState(new Date());
+export default function Clock(props: {
+  onDateChange: (date: Date) => void,
+  defaultValue?: Date,
+}) {
+  const [date, setDate] = useState(props.defaultValue || new Date());
 
   let interval = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    if (props.defaultValue) return;
+
     interval.current = setInterval(() => {
       const newDate = new Date();
 
@@ -25,7 +30,7 @@ export default function Clock(props: { onDateChange: (date: Date) => void }) {
     return () => {
       if (interval.current) clearInterval(interval.current);
     };
-  }, []);
+  }, [props.defaultValue]);
 
   const onInputChange = (inputDate: Date | null) => {
     if (!inputDate) return;

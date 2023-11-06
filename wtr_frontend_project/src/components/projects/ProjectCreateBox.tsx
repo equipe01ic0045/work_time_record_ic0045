@@ -2,6 +2,7 @@
 import { Link, Text, Box, Button, Input, Textarea, Checkbox, useToast, border } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 
 export default function ProjectCreateBox({ project }: any) {
   const borderRadiusValue = "5px";
@@ -12,24 +13,8 @@ export default function ProjectCreateBox({ project }: any) {
   const gap = "10px";
   const padding = "20px";
 
-
-  const svgTrash = (
-    <svg
-      width="24"
-      height="24"
-      xmlns="http://www.w3.org/2000/svg"
-      fillRule="evenodd"
-      clipRule="evenodd"
-    >
-      <path
-        d="M19 24h-14c-1.104 0-2-.896-2-2v-16h18v16c0 1.104-.896 2-2 2m-9-14c0-.552-.448-1-1-1s-1 .448-1 1v9c0 .552.448 1 1 1s1-.448 1-1v-9zm6 0c0-.552-.448-1-1-1s-1 .448-1 1v9c0 .552.448 1 1 1s1-.448 1-1v-9zm6-5h-20v-2h6v-1.5c0-.827.673-1.5 1.5-1.5h5c.825 0 1.5.671 1.5 1.5v1.5h6v2zm-12-2h4v-1h-4v1z"
-        fill="white"
-      />
-    </svg>
-  );
-
-
   const [newUser, setNewUser] = useState(project);
+  const [newUserError, setNewUserError] = useState(new Map());
 
   function inputHandler(event: any) {
     const { name, value, type, checked } = event.target;
@@ -43,7 +28,7 @@ export default function ProjectCreateBox({ project }: any) {
     ['commercial_time_start', 'commercial_time_end'].forEach(key => data[key] = data[key].split(":").map((n : string) => parseInt(n)).reduce((p: number, c: number) => c + p*60))
     console.log(data);
     fetch('http://localhost:5000/projects',{
-        method: "POST",
+        method: project.edit ? "PUT" : "POST",
         headers: {
             "Content-Type": "application/json",
         },
@@ -52,24 +37,30 @@ export default function ProjectCreateBox({ project }: any) {
     })
     .then(response => response.json())
     .then(response => {
-        if(!response.success)
+        if(!response.success){
+            const erros = new Map();
+            if(response.data.errors)
+              response.data.errors.forEach((error : any)=> erros.set(error.path, error.msg));
+            setNewUserError(erros);
+
             throw new Error(response.message);
+        }
         
         console.log(response);
         toast({
-            title: 'Projeto criado com sucesso!',
+            title: 'Sucesso!',
             description: "",
             status: 'success',
             duration: 3000,
             isClosable: true,
             position: "top-right"
           })
-          router.push('/main/projects')
+          router.push(project.edit ? '/main/projects/info/'+project.project_id : '/main/projects')
     })
     .catch((error)=>{
         console.log(error.status)
         toast({
-            title: 'Falha na criação de projeto!\n'+error,
+            title: 'Erro!\n'+error,
             description: "",
             status: 'error',
             duration: 3000,
@@ -119,8 +110,8 @@ export default function ProjectCreateBox({ project }: any) {
               return { label: n[0], value: n[1], type: n[2] };
             })
             .map((item, i) => {
-              return (
-                <Box key={"item_" + i} style={{ display: "flex"}}>
+              let normalBox = (
+                <Box key={"item_" + i} style={{ display: "flex" }}>
                   <Box
                     background={"#4D47C3"}
                     textColor={"white"}
@@ -167,6 +158,19 @@ export default function ProjectCreateBox({ project }: any) {
                   
                 </Box>
               );
+              if(newUserError.has(item.value)){
+                return [(
+                  <Box key={"item_error_" + i} style={{ display: "flex" }}>
+                    <Box
+                      background={"red"}
+                      textColor={"white"}
+                      style={{ flex: 1, padding: gap, textAlign: "center" }}
+                    >
+                      {newUserError.get(item.value)}
+                    </Box>
+                  </Box>), normalBox];
+              }
+              return normalBox;
             })}
         </Box>
 
@@ -185,8 +189,7 @@ export default function ProjectCreateBox({ project }: any) {
             justifyContent={"space-between"}
              gap={gap}
           >
-            <Button background={"#4D47C3"} color={white} flex={1} onClick={(ev)=>createProject(ev)}>Create</Button>
-            <Button background={"#4D47C3"} onClick={()=>router.push('/main/projects')}>{svgTrash}</Button>
+            <Button background={"blueviolet"} color={white} flex={1} onClick={(ev)=>createProject(ev)}>{project.edit ? 'Editar' : 'Criar'}</Button>
           </Box>
           <Box
             background={"#4D47C3"}

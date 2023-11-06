@@ -41,6 +41,60 @@ export default class ProjectController extends BaseController {
       next(error);
     }
   }
+  
+
+  async updateProject(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const {
+      project_id,
+      project_name,
+      project_description,
+      location_required,
+      commercial_time_required,
+      timezone,
+      location,
+      commercial_time_start,
+      commercial_time_end,
+    } = req.body;
+    try {
+      await projectService.updateProject(
+        project_id,
+        project_name,
+        project_description,
+        location_required,
+        commercial_time_required,
+        timezone,
+        location,
+        commercial_time_start,
+        commercial_time_end
+      );
+      new ResourceCreatedResponse().send(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+
+  async deleteProject(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const {
+      project_id,
+    } = req.body;
+    try {
+      await projectService.deleteProject(
+        project_id,
+      );
+      new ResourceCreatedResponse().send(res);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   async addUserToProject(
     req: AuthorizedRequest,
