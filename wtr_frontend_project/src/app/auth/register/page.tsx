@@ -12,6 +12,7 @@ export default function RegistrationComponent() {
   const [newUser, setNewUser] = useState({
     full_name: "",
     email: "",
+    cpf: "",
     password: "",
     confirmEmail: "",
     confirmPassword: "",
@@ -86,6 +87,7 @@ export default function RegistrationComponent() {
             bgColor="Lavender" 
             color="blueviolet"
           />
+        <Input placeholder="cpf" type="text" name="cpf" value={newUser.cpf} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
         <Input placeholder="email" type="email" name="email" value={newUser.email} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
         <Input placeholder="confirme o email" type="email" name="confirmEmail" value={newUser.confirmEmail} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
 

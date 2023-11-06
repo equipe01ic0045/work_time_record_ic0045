@@ -13,6 +13,7 @@ model user {
   full_name          String
   password           String
   email              String              @unique
+  cpf                String              @unique
   created_at         DateTime            @default(now())
   updated_at         DateTime            @default(now())
   user_project_roles user_project_role[]

@@ -20,7 +20,8 @@ export default class AuthService {
   async createUser(
     fullName: string,
     email: string,
-    password: string
+    password: string,
+    cpf: string
   ): Promise<user> {
     const foundUser = await this.userRepository.findUserByEmail(email);
     if (!!foundUser) {
@@ -28,7 +29,7 @@ export default class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(password, JWT_DEFAULT_SALT_ROUNDS);
-    return this.userRepository.createUser(fullName, email, hashedPassword);
+    return this.userRepository.createUser(fullName, email, hashedPassword, cpf);
   }
 
   async authenticateUser(email: string, password: string): Promise<string> {

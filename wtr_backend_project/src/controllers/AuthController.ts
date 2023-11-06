@@ -8,9 +8,9 @@ import {
 
 export default class AuthController extends BaseController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
-    const { full_name, password, email } = req.body;
+    const { full_name, password, email, cpf } = req.body;
     try {
-      await authService.createUser(full_name, email, password);
+      await authService.createUser(full_name, email, password, cpf);
       new ResourceCreatedResponse().send(res);
     } catch (error) {
       next(error);

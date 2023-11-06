@@ -5,13 +5,15 @@ export default class UserRepository extends BaseRepository {
   async createUser(
     full_name: string,
     email: string,
-    password: string
+    password: string,
+    cpf: string
   ): Promise<user> {
     return this.client.user.create({
       data: {
         email,
         password,
         full_name,
+        cpf,
       },
     });
   }
@@ -30,5 +32,10 @@ export default class UserRepository extends BaseRepository {
         user_id,
       },
     });
+  }
+
+  
+  async findUsersByName(full_name: string): Promise<user[]> {
+    return this.client.user.findMany({ where: { full_name: {contains: full_name, mode: 'insensitive'} } });
   }
 }

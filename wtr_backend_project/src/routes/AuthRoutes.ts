@@ -89,6 +89,10 @@ export default class AuthRoutes extends BaseRoutes {
         body("password")
           .isLength({ min: 8 })
           .withMessage("Senha deve ter pelo menos 8 caracteres."),
+        body("cpf")
+            .isNumeric()
+            .isLength({ min: 11, max: 11 })
+            .withMessage("CPF deve ter exatamente 11 caracteres."),
       ],
       this.validate,
       this.controller.registerUser
