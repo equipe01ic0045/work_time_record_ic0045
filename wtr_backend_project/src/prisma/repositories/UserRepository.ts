@@ -27,7 +27,7 @@ export default class UserRepository extends BaseRepository {
   async findUserByUserId(user_id: number): Promise<user | null> {
     return this.client.user.findUnique({
       where: {
-        user_id,
+        id: user_id,
       },
     });
   }

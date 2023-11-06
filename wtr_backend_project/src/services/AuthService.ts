@@ -23,7 +23,7 @@ export default class AuthService {
     password: string
   ): Promise<user> {
     const foundUser = await this.userRepository.findUserByEmail(email);
-    if (!!foundUser) {
+    if (foundUser) {
       throw new ConflictError("email");
     }
 
@@ -36,14 +36,14 @@ export default class AuthService {
       email
     );
 
-    if (!!foundUser) {
+    if (foundUser) {
       const isValidLogin = await this.validateLogin(password, foundUser);
       if (!isValidLogin) {
         throw new ValidationError(
           "email and password do not match any existing account."
         );
       }
-      return jwt.sign({ userId: foundUser.user_id }, JWT_SECRET, {
+      return jwt.sign({ userId: foundUser.id }, JWT_SECRET, {
         expiresIn: "1d",
       });
     } else {
