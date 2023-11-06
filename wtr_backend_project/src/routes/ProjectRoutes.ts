@@ -170,9 +170,37 @@
  *         description: Unauthorized. User is not authenticated.
  */
 
+/**
+ * @swagger
+ * /projects/{project_id}/{user_id}:
+ *   delete:
+ *     summary: Deletes an user
+ *     tags: [Projects]
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: project_id
+ *         required: true
+ *         description: The ID of the project.
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         description: The ID of the user to be removed.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Successfully deleted the user.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
 import ProjectController from "../controllers/ProjectController";
 import ProjectRelatedRoutes from "./abstract/ProjectRelatedRoutes";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import { UserRole } from "@prisma/client";
 import { Router } from "express";
 
@@ -233,6 +261,20 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
       this.validate,
       this.controller.updateUserRole
     );
+    
+    
+    this._router.delete("/:project_id/:user_id",
+      [
+        ...this.projectIdValidation,
+        param("user_id")
+          .toInt()
+          .notEmpty()
+          .withMessage("Id do usuário a ser removido em branco"),
+      ],
+      this.validate,
+      this.controller.deleteUser
+    );
+
 
     return this._router;
   }

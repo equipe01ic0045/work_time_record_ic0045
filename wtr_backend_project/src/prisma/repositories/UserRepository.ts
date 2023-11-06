@@ -31,4 +31,30 @@ export default class UserRepository extends BaseRepository {
       },
     });
   }
+
+  async deleteUserById(user_id: number): Promise<Omit<user, "password"> | null> {
+    return this.client.user.delete({
+      where: {
+        user_id,
+      },
+      select: {
+        user_id: true,
+        full_name: true,
+        email: true,
+        created_at: true,
+        updated_at: true,
+        user_project_roles: {
+          select: {
+            project: {
+              select: {
+                project_name: true,
+                project_id: true,
+              }
+            },
+            role: true,
+          }
+        }
+      }
+    });
+  }
 }

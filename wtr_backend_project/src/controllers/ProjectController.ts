@@ -114,4 +114,15 @@ export default class ProjectController extends BaseController {
       next(error);
     }
   }
+
+  async deleteUser(req: AuthorizedRequest, res: Response, next: NextFunction) {
+    try {
+      const admin_id = req.user!.userId;
+      const { user_id, project_id } = req.params;
+      const deletedUser =  await projectService.deleteUser(admin_id, +project_id, +user_id);
+      new ResourceUpdatedResponse().send(res, deletedUser, "Usuário deletado com sucesso");
+    } catch(error){
+      next(error);
+    }
+  }
 }
