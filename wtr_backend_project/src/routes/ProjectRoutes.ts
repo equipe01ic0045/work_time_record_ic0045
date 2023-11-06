@@ -37,8 +37,26 @@
  *             properties:
  *               project_name:
  *                 type: string
+ *               location_required:
+ *                 type: boolean
+ *               commercial_time_required:
+ *                 type: boolean
+ *               timezone:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               commercial_time_start:
+ *                 type: integer
+ *               commercial_time_end: 
+ *                 type: integer
  *             example:
  *               project_name: projeto-legal
+ *               location_required: true
+ *               commercial_time_required: true
+ *               timezone: America/Bahia
+ *               location: Salvador, Bahia
+ *               commercial_time_start: 480
+ *               commercial_time_end: 1080
  *     responses:
  *       '201':
  *         description: Successfully created a new project.
@@ -135,14 +153,14 @@
  *             properties:
  *               user_id:
  *                 type: integer
- *               new_role:
+ *               user_role:
  *                 type: string
- *               new_hours_per_week:
+ *               user_hours_per_week:
  *                 type: integer
  *             example:
  *               user_id: 12345
- *               new_role: "ADMIN"
- *               new_hours_per_week: 20
+ *               user_role: "ADMIN"
+ *               user_hours_per_week: 20
  *     responses:
  *       '200':
  *         description: Successfully updated the user's role in the project.
@@ -152,9 +170,37 @@
  *         description: Unauthorized. User is not authenticated.
  */
 
+/**
+ * @swagger
+ * /projects/{project_id}/{user_id}:
+ *   delete:
+ *     summary: Deletes an user
+ *     tags: [Projects]
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: project_id
+ *         required: true
+ *         description: The ID of the project.
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         description: The ID of the user to be removed.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Successfully deleted the user.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
 import ProjectController from "../controllers/ProjectController";
 import ProjectRelatedRoutes from "./abstract/ProjectRelatedRoutes";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import { UserRole } from "@prisma/client";
 import { Router } from "express";
 
@@ -215,7 +261,21 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
       this.validate,
       this.controller.updateUserRole
     );
+    
+    
+    this._router.delete("/:project_id/:user_id",
+      [
+        ...this.projectIdValidation,
+        param("user_id")
+          .toInt()
+          .notEmpty()
+          .withMessage("Id do usuário a ser removido em branco"),
+      ],
+      this.validate,
+      this.controller.deleteUser
+    );
 
-    return this._router
+
+    return this._router;
   }
 }

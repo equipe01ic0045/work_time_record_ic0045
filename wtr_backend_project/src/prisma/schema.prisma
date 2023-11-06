@@ -19,15 +19,18 @@ model user {
 }
 
 model project {
-  project_id         Int                 @id @default(autoincrement())
-  project_name       String              @unique
-  // location_required  Boolean
-  // location           String?
-  // commercial_time    
-  created_at         DateTime            @default(now())
-  updated_at         DateTime            @default(now())
-  user_project_roles user_project_role[]
-  time_records       time_record[]
+  project_id               Int                 @id @default(autoincrement())
+  project_name             String              @unique
+  location_required        Boolean
+  location                 String?
+  timezone                 String
+  commercial_time_required Boolean
+  commercial_time_start    Int?
+  commercial_time_end      Int?
+  created_at               DateTime            @default(now())
+  updated_at               DateTime            @default(now())
+  user_project_roles       user_project_role[]
+  time_records             time_record[]
 }
 
 enum UserRole {
@@ -44,7 +47,7 @@ model user_project_role {
   hours_per_week       Int
   created_at           DateTime @default(now())
   updated_at           DateTime @default(now())
-  user                 user     @relation(fields: [user_id], references: [user_id])
+  user                 user     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   project              project  @relation(fields: [project_id], references: [project_id])
 
   @@unique([user_id, project_id]) // a single user record per project
@@ -59,7 +62,7 @@ model time_record {
   user_message        String?
   location            String?
   created_at          DateTime           @default(now())
-  user                user               @relation(fields: [user_id], references: [user_id])
+  user                user               @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   project             project            @relation(fields: [project_id], references: [project_id])
   absense_documents   absense_document[]
 }
