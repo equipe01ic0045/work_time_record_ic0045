@@ -13,6 +13,7 @@ export default function RegistrationComponent() {
     password: "",
     confirmEmail: "",
     confirmPassword: "",
+    cpf: "",
   });
 
   const userService = new UserService();
@@ -81,6 +82,7 @@ export default function RegistrationComponent() {
 
       <Box display={"flex"} flexDirection={"column"} gap={"1em"}>
         <Input
+<<<<<<< Updated upstream
           placeholder="email"
           type="email"
           name="email"
@@ -114,6 +116,52 @@ export default function RegistrationComponent() {
           onClick={registerHandler}
         >
           registrar
+=======
+            placeholder="nome completo"
+            type="text"
+            name="full_name"
+            value={newUser.full_name}
+            onChange={inputHandler}
+            bgColor="Lavender" 
+            color="blueviolet"
+          />
+        <Input placeholder="CPF" type="text" name="cpf" value={newUser.cpf} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
+        <Input placeholder="email" type="email" name="email" value={newUser.email} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
+        <Input placeholder="confirme o email" type="email" name="confirmEmail" value={newUser.confirmEmail} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
+
+        <Box position="relative">
+          <Input
+            placeholder="senha"
+            type={showPassword ? 'text' : 'password'}
+            name="password"
+            value={newUser.password}
+            onChange={inputHandler}
+            bgColor="Lavender"
+            color="blueviolet"
+          />
+          <Box position="absolute" right="10px" top="50%" transform="translateY(-50%)" cursor="pointer" onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </Box>
+        </Box>
+
+        <Box position="relative">
+          <Input
+            placeholder="confirme a senha"
+            type={showConfirmPassword ? 'text' : 'password'}
+            name="confirmPassword"
+            value={newUser.confirmPassword}
+            onChange={inputHandler}
+            bgColor="Lavender"
+            color="blueviolet"
+          />
+          <Box position="absolute" right="10px" top="50%" transform="translateY(-50%)" cursor="pointer" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+          </Box>
+        </Box>
+
+        <Button bg="blueviolet" color="white" onClick={registerHandler}>
+          Registrar
+>>>>>>> Stashed changes
         </Button>
         <Box display={"flex"} flexDirection={"row"} gap={"1em"}>
           <Text>já tem registro ?</Text>

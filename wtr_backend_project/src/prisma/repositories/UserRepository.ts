@@ -5,13 +5,15 @@ export default class UserRepository extends BaseRepository {
   async createUser(
     full_name: string,
     email: string,
-    password: string
+    password: string,
+    cpf: string
   ): Promise<user> {
     return this.client.user.create({
       data: {
         email,
         password,
         full_name,
+        cpf
       },
     });
   }
@@ -31,6 +33,7 @@ export default class UserRepository extends BaseRepository {
       },
     });
   }
+<<<<<<< Updated upstream
 
   async deleteUserById(user_id: number): Promise<Omit<user, "password"> | null> {
     return this.client.user.delete({
@@ -56,5 +59,9 @@ export default class UserRepository extends BaseRepository {
         }
       }
     });
+=======
+  async findUsersByName(full_name: string): Promise<user[]> {
+    return this.client.user.findMany({ where: { full_name: {contains: full_name, mode: 'insensitive'} } });
+>>>>>>> Stashed changes
   }
 }

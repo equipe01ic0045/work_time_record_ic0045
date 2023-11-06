@@ -53,10 +53,13 @@
  *                 type: string
  *               password:
  *                 type: string
+ *               cpf:
+ *                 type: string
  *             example:
  *                 full_name: "Pedro Chaves de Carvalho"
  *                 email: "teste@email.com"
  *                 password: "12345678"
+ *                 cpf: "12345678912"
  *     responses:
  *       '201':
  *         description: Successfully registered a new user.
@@ -89,6 +92,10 @@ export default class AuthRoutes extends BaseRoutes {
         body("password")
           .isLength({ min: 8 })
           .withMessage("Senha deve ter pelo menos 8 caracteres."),
+        body("cpf")
+          .isNumeric()
+          .isLength({ min: 11, max: 11 })
+          .withMessage("CPF deve ter exatamente 11 caracteres."),
       ],
       this.validate,
       this.controller.registerUser
