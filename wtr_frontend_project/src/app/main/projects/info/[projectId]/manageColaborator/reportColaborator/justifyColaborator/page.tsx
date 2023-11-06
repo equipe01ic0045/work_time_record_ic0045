@@ -80,7 +80,7 @@ export default function Page({ params }: any) {
         </Card>
 
         <Box textAlign="center" w="100%">
-          <Button bg="blueviolet" color="white" colorScheme="blackAlpha" size="lg" onClick={handleSubmit}>
+          <Button bg="#4D47C3" color="white" colorScheme="blackAlpha" size="lg" onClick={handleSubmit}>
             Aceitar justificativa
           </Button>
         </Box>

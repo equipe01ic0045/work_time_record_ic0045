@@ -1,10 +1,11 @@
 "use client";
-import { Link, Text, Box, Button, Input, Textarea, Checkbox, useToast } from "@chakra-ui/react";
+import { Link, Text, Box, Button, Input, Textarea, Checkbox, useToast, border } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 
 export default function ProjectCreateBox({ project }: any) {
+  const borderRadiusValue = "5px";
   const router = useRouter();
   const toast = useToast();
 
@@ -75,13 +76,14 @@ export default function ProjectCreateBox({ project }: any) {
 
   return (
     <Box
-      background={"purple.200"}
+      background={"#F0EFFF"}
       style={{
         width: "100%",
         display: "flex",
         flexDirection: "column",
         padding: padding,
         gap: padding,
+
       }}
     >
       <Box
@@ -111,9 +113,9 @@ export default function ProjectCreateBox({ project }: any) {
               let normalBox = (
                 <Box key={"item_" + i} style={{ display: "flex" }}>
                   <Box
-                    background={"blueviolet"}
+                    background={"#4D47C3"}
                     textColor={"white"}
-                    style={{ flex: 1, padding: gap, textAlign: "center" }}
+                    style={{ flex: 1, padding: gap, textAlign: "center", borderTopLeftRadius: borderRadiusValue, borderBottomLeftRadius: borderRadiusValue}}
                   >
                     {item.label}
                   </Box>
@@ -127,8 +129,10 @@ export default function ProjectCreateBox({ project }: any) {
                         flex: 1,
                         padding: gap,
                         backgroundColor: white,
-                        borderRadius: 0,
                         height: '100%',
+                        textAlign: "center",
+                        borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
+                        borderTopRightRadius: borderRadiusValue, borderBottomRightRadius: borderRadiusValue,
                       }}
                       />
                     : <Box
@@ -136,11 +140,11 @@ export default function ProjectCreateBox({ project }: any) {
                         flex: 1,
                         padding: gap,
                         backgroundColor: white,
-                        borderRadius: 0,
                         height: '100%',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
+                        borderTopRightRadius: borderRadiusValue, borderBottomRightRadius: borderRadiusValue,
                       }}>
                       <Checkbox
                       name={item.value}
@@ -188,9 +192,9 @@ export default function ProjectCreateBox({ project }: any) {
             <Button background={"blueviolet"} color={white} flex={1} onClick={(ev)=>createProject(ev)}>{project.edit ? 'Editar' : 'Criar'}</Button>
           </Box>
           <Box
-            background={"blueviolet"}
+            background={"#4D47C3"}
             textColor={"white"}
-            style={{ padding: gap, textAlign: "center" }}
+            style={{ padding: gap, textAlign: "center", borderRadius: borderRadiusValue}}
           >
             DESCRIÇÃO DO PROJETO
           </Box>
@@ -202,7 +206,7 @@ export default function ProjectCreateBox({ project }: any) {
               flex: 1,
               padding: gap,
               textAlign: "justify",
-              borderRadius: 0,
+              borderRadius: borderRadiusValue,
               width: '100%'
             }}
             value={newUser.project_description}
