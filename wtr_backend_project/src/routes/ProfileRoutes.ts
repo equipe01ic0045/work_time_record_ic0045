@@ -199,6 +199,50 @@ export default class ProfileRoutes extends BaseRoutes {
       }
     );
 
+    /**
+     * @swagger
+     * /profiles/allByName:
+     *   post:
+     *     summary: Edit a user profile
+     *     tags: [Profiles]
+     *     security:
+     *       - CookieAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               full_name:
+     *                  type: string
+     *             example:
+     *                 full_name: "Pedro Chaves de Carvalho"
+     *     responses:
+     *       '201':
+     *         description: Successfully registered a new user.
+     *       '400':
+     *         description: Bad request. Invalid input data.
+     *       '409':
+     *         description: Conflict. User with the same email already exists.
+     */
+    this._router.post(
+      "/allByName",
+      async (req : AuthorizedRequest, res, next) => {
+        try{
+            let success = true;
+
+            let { full_name } = req.body;
+            const profiles = await (new UserRepository().findUsersByName(full_name));
+
+            res.json({profiles, success});
+        }catch(e){
+            next(e);
+        }
+      }
+    );
+    
     return this._router
   }
+  
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Button, Center, ChakraProvider, Table, Tbody, Td, Th, Thead, Tr, VStack, Text, Link} from '@chakra-ui/react';
+import { Box, Button, Center, ChakraProvider, Table, Tbody, Td, Th, Thead, Tr, VStack, Text, Link, useToast, Img} from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faClock, faProjectDiagram, faBriefcase  } from '@fortawesome/free-solid-svg-icons';
 //import Modal from "@/components/modalAddUser/modalAddUser"
@@ -16,8 +16,49 @@ export default function GerenciarColaborador({params}:any) {
   const projectService = new ProjectService();
 
   const [users, setUsers] = useState<ProjectUsers[]>([]);
-  const [editModal, setEditModal] = useState(false)
+  const toast = useToast();
+  const [editModal, setEditModal] = useState(false);
+  
+  const [fullName, setFullName] = useState('');
+  const [usersSearch, setUsersSearch] = useState<any[]>([]);
+  const [pageSearch, setPageSearch] = useState<number>(0);
+  const MAX_USERS_PER_PAGE = 2;
 
+  const updateSearch = (
+    full_name: string
+  ) => {
+    setFullName(full_name);
+
+    fetch('http://localhost:5000/profiles/allByName',{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: 'include',
+        body: JSON.stringify({full_name})
+    })
+    .then(response => response.json())
+    .then(response => {
+        if(!response.success){
+            throw new Error(response.message);
+        }
+        // if(fullName == full_name){
+        setUsersSearch(response.profiles);
+        setPageSearch(0);
+        // }
+    })
+    .catch((error)=>{
+        console.log(error.status)
+        toast({
+            title: 'Erro!\n'+error,
+            description: "",
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+            position: "top-right"
+        })
+    });
+  };
   async function getUsers() {
     const usersData = await projectService.getProjectUsers(params.projectId);
     setUsers(usersData);
@@ -25,6 +66,7 @@ export default function GerenciarColaborador({params}:any) {
 
   useEffect(() => {
     getUsers();
+    updateSearch("");
   }, []);
 
   const project = 
@@ -228,9 +270,9 @@ export default function GerenciarColaborador({params}:any) {
         </Box>
       </ChakraProvider>
 
-      <Modal isOpen={isOpen} onClose={toggleModal}>
+      <Modal isOpen={isOpen} onClose={() => toggleModal(true)}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent maxW="1300px">
           {/* <ModalHeader>Criar Novo Usuário</ModalHeader> */}
           <ModalCloseButton />
           <ModalBody>
@@ -261,7 +303,7 @@ export default function GerenciarColaborador({params}:any) {
                     />
                   </Td>
                 </Tr>
-                <Tr>
+                {/* <Tr>
                   <Td>Email:</Td>
                   <Td>
                     <Input
@@ -270,6 +312,48 @@ export default function GerenciarColaborador({params}:any) {
                       value={formData.email}
                       onChange={handleChange}
                     />
+                  </Td>
+                </Tr> */}<Tr>
+                  <Td>Nome:</Td>
+                  <Td>
+                    <Input
+                      type="full_name"
+                      name="full_name"
+                      value={fullName}
+                      onChange={(e) => updateSearch(e.target.value)}
+                    />
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Td colSpan={2}><Box marginBottom="10px">Selecionar Colaborador</Box>
+                    {(usersSearch.length > 0) ? (
+                    [(<Table margin="0" padding="0" variant="simple" key="page1">
+                      <Thead><Tr bg="#4D47C3"><Th color="white"></Th><Th color="white">Nome</Th><Th color="white">EMAIL</Th><Th color="white">CPF</Th><Th color="white">SELECIONAR</Th></Tr></Thead>
+                      <Tbody>
+                        {usersSearch.slice(pageSearch*MAX_USERS_PER_PAGE, pageSearch*MAX_USERS_PER_PAGE+MAX_USERS_PER_PAGE).map((user, index) => {
+                          return (<Tr key={"usersearch_"+index} bg={user.email == formData.email ? "#bbedbb" : "#F0EFFF"}>
+                            <Td><Img backgroundColor="white" width="50px" height="50px" borderRadius={"50%"} border="1px solid #000" src={user.picture_url ?? 'https://icons.veryicon.com/png/o/miscellaneous/wizhion/person-20.png'} /></Td>
+                            <Td>{user.full_name}</Td>
+                            <Td>{user.email}</Td>
+                            <Td>{user.cpf.slice(0,3)}.{user.cpf.slice(3,6)}.{user.cpf.slice(6,9)}-{user.cpf.slice(9)}</Td>
+                            <Td>
+                              <Button minW="110px" size="sm" ml={2} colorScheme={user.email == formData.email ? "red" : "green"} onClick={() => {
+                              setFormData({
+                                ...formData,
+                                email: user.email == formData.email ? '' : user.email,
+                              });}}>
+                                  <FontAwesomeIcon icon={faEdit} style={{ marginRight: '4px', color: '#F0EFFF' }} />
+                                  {user.email == formData.email ? "Excluir" : "Selecionar"}
+                              </Button>
+                              </Td>
+                          </Tr>)}
+                        )}
+                      </Tbody>
+                    </Table>), (usersSearch.length <= MAX_USERS_PER_PAGE) ? '' : (<Box display="flex" marginTop="10px">
+                      <Button onClick={() => setPageSearch(Math.max(0, pageSearch-1))} visibility={pageSearch<=0?  'hidden' : 'unset'}>Pagina Anterior</Button>
+                      <Box flex="1" textAlign={"center"} display={'flex'} flexDirection={'column'} justifyContent={'center'}>Página {pageSearch+1} / {Math.ceil(usersSearch.length/MAX_USERS_PER_PAGE)}</Box>
+                      <Button onClick={() => setPageSearch(Math.min(Math.ceil(usersSearch.length/MAX_USERS_PER_PAGE)-1, pageSearch+1))}  visibility={pageSearch>=Math.ceil(usersSearch.length/MAX_USERS_PER_PAGE)-1? 'hidden' : 'unset'}>Proxima Pagina</Button>
+                    </Box>)]) : 'Nenhum usuário encontrado'}
                   </Td>
                 </Tr>
               </Tbody>

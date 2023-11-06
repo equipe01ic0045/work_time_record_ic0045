@@ -132,14 +132,17 @@ useEffect(() => {
   const TEXT = "text";
   const BOOL = "checkbox";
   
-  const keys = [
-    // ["URL DA FOTO", 'picture_url'],
+  let keys = [
     ["NOME COMPLETO", 'full_name', 'false'],
     ["EMAIL", 'email', 'false'],
-    ["SENHA", 'password', 'false'],
-    ["CRIADO EM", 'created_at', 'true'],
-    ["ULTMO UPDATE", 'updated_at', 'true'],
+    ["CPF", 'cpf', 'false'],
+    // ["CRIADO EM", 'created_at', 'true'],
+    // ["ULTMO UPDATE", 'updated_at', 'true'],
   ];
+  if(newUser.edit)
+    keys = [...keys,
+      ["SENHA", 'password', 'false']
+    ]
   
   return (
     <Box
