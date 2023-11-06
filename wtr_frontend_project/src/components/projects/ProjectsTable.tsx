@@ -25,7 +25,7 @@ export default function ProjectsTable({
       viewBox="0 -960 960 960"
       width="36"
     >
-      <path fill="#4D47C3" d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z" />
+      <path fill="#FFFFFF" d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z" />
     </svg>
   );
 
@@ -66,12 +66,12 @@ export default function ProjectsTable({
             }
 
             return (
-              <Tr key={projectData.project.project_id}>
+              <Tr key={projectData.project.project_id} borderBottom="2px" borderColor="gray.300">
                 <Td>
                   <Link
                     href={`/main/projects/info/${projectData.project.project_id}`}
                   >
-                    <Button color={"#4D47C3"}>{projectData.project.project_name}</Button>
+                    <Button colorScheme="purple" bgColor="#4D47C3">{projectData.project.project_name}</Button>
                   </Link>
                 </Td>
                 <Td>{projectData.project.owner.full_name}</Td>
@@ -87,7 +87,8 @@ export default function ProjectsTable({
                       flexDirection={"row"}
                       alignItems={"center"}
                       justifyContent={"space-around"}
-                      color={"#4D47C3"}
+                      color={"#FFFFFF"}
+                      colorScheme="purple" bgColor="#4D47C3"
                     >
                       {iconUser}
                       {projectData.project.users_count}

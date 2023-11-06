@@ -53,7 +53,7 @@ export default function Projects() {
   );
 
   return (
-    <Box display={"flex"} flexDirection={"column"} width={"100%"}>
+    <Box display={"flex"} flexDirection={"column"} width={['100%']}>
       <HeaderBox title={<Link href={`/main/projects`}>Projetos</Link>} />
       <Box
         display={"flex"}
@@ -64,9 +64,10 @@ export default function Projects() {
         alignItems={"start"}
         my={4}
       >
-        <Button 
+        <Button colorScheme="purple" bgColor="#4D47C3"
           gap={"10px"} 
-          textColor={"#4D47C3"}
+          //textColor={"#4D47C3"}
+          textColor={"#FFFFFF"}
           fontSize={"2em"}
           onClick={()=>router.push("/main/projects/create")}
         >

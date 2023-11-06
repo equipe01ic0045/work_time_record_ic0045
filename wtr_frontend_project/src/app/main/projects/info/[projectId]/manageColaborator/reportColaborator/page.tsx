@@ -73,7 +73,7 @@ export default function RelatorioColaborador({ params }: any) {
                       </Thead>
                       <Tbody>
                       {/* Linhas da tabela */}
-                      <Tr>
+                      <Tr borderBottom="2px" borderColor="gray.300">
                           <Td>27/08/2023</Td>
                           <Td>08:00 HOURS</Td>
                           <Td>
@@ -93,7 +93,7 @@ export default function RelatorioColaborador({ params }: any) {
                               </Link>
                           </Td>   
                       </Tr>
-                      <Tr>
+                      <Tr borderBottom="2px" borderColor="gray.300">
                           <Td>20/08/2023</Td>
                           <Td>07:50 HOURS</Td>
                           <Td>YES</Td>
@@ -103,7 +103,7 @@ export default function RelatorioColaborador({ params }: any) {
                               </Button>
                           </Td>
                       </Tr>
-                      <Tr>
+                      <Tr borderBottom="2px" borderColor="gray.300">
                           <Td>30/08/2023 Luiz</Td>
                           <Td>09:22 HOURS</Td>
                           <Td>NO</Td>
@@ -113,7 +113,7 @@ export default function RelatorioColaborador({ params }: any) {
                               </Button>
                           </Td>
                       </Tr>
-                      <Tr>
+                      <Tr borderBottom="2px" borderColor="gray.300">
                           <Td>01/07/2023</Td>
                           <Td>08:05 HOURS</Td>
                           <Td>Correct</Td>
@@ -123,7 +123,7 @@ export default function RelatorioColaborador({ params }: any) {
                               </Button>   
                           </Td>
                       </Tr>
-                      <Tr>
+                      <Tr borderBottom="2px" borderColor="gray.300">
                           <Td>01/07/2023</Td>
                           <Td>08:05 HOURS</Td>
                           <Td>Correct</Td>
@@ -133,7 +133,7 @@ export default function RelatorioColaborador({ params }: any) {
                               </Button>   
                           </Td>
                       </Tr>
-                      <Tr>
+                      <Tr borderBottom="2px" borderColor="gray.300">
                           <Td>01/07/2023</Td>
                           <Td>08:05 HOURS</Td>
                           <Td>Correct</Td>

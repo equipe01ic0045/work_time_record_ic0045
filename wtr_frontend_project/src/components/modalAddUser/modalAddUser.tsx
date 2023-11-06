@@ -78,8 +78,8 @@ function AddUser({isOpen, handleChange, handleConfirm, toggleModal, handleSelect
                       value={formData.role}
                       onChange={handleSelectChange}
                     >
-                      <option value="Admin">Admin</option>
-                      <option value="Colaborator">Colaborator</option>
+                      <option value="Admin">Administrador</option>
+                      <option value="Colaborator">Colaborador</option>
                     </Select>
                   </Td>
                 </Tr>
