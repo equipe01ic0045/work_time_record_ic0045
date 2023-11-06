@@ -27,14 +27,11 @@
  *           schema:
  *             type: object
  *             properties:
- *               user_message:
- *                 type: string
  *               location:
  *                 type: string
  *               check_in_timestamp:
  *                 type: string
  *             example:
- *                user_message: "fiz o check-in de 1 hora atrás, mal 🫡"
  *                location: "Salvador, Bahia, Brazil"
  *                check_in_timestamp: "2023-08-22 13:57:40"
  *     responses:
@@ -110,19 +107,23 @@
  *                 type: string
  *               justification_type:
  *                 type: string
- *                 enum: ["check-in", "check-out"]
+ *                 enum: ["CHECKIN", "CHECKOUT"]
  *               justification_file:
  *                 type: string
  *                 format: binary
  *             example:
  *                user_message: "fiz o check-in de 1 hora atrás, mal 🫡"
  *                location: "Salvador, Bahia, Brazil"
- *                check_out_timestamp: "2023-08-22 13:57:40"
+ *                updated_timestamp: "2023-08-22 13:57:40"
+ *                time_record_id: 1
+ *                justification_type: CHECKIN
  *     responses:
- *       '200':
- *         description: Successfully checked in a time record.
+ *       '201':
+ *         description: Successfully created a time record justification.
  *       '401':
  *         description: Unauthorized. User is not authenticated.
+ *       '404':
+ *         description: NotFound. Time record not found
  */
 
 /**
@@ -148,7 +149,9 @@
  *           type: string
  *     responses:
  *       '200':
- *         description: Successfully checked in a time record.
+ *         description: Successfully received a list containing the time record jusitification associated with the project
+ *       '401':
+ *         description: User does not have permission to list
  *      
  */
 
@@ -156,7 +159,7 @@
  * @swagger
  * /projects/time-records/{project_id}/justification/{time_record_justification_id}:
  *   get:
- *     summary: Gets a list of justitification request to be approved by an admin or project manager
+ *     summary: Gets a  time record justitification request to be approved by an admin or project manager
  *     tags: [Time Records]
  *     security:
  *       - CookieAuth: []
@@ -176,6 +179,8 @@
  *     responses:
  *      '200':
  *        description: Successfully checked in a time record.
+ *      '401':
+ *        description: Unauthorized. User not logged or doesn't have administrative level required to view the justitication
  */
 
 /**
@@ -237,13 +242,6 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
       "/:project_id/check-in",
       [
         ...this.projectIdValidation,
-        body("user_message")
-          .isString()
-          .withMessage("mensagem invalida")
-          .isLength({ max: 500 })
-          .withMessage(
-            "mensagem de check-in ultrapassou o limite de 500 caracteres"
-          ),
         body("location").isString().withMessage("localizacao invalida"), // change that later, validate geophaphic location
         body("check_in_timestamp")
           .isISO8601()
