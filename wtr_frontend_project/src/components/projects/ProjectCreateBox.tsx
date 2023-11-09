@@ -189,7 +189,7 @@ export default function ProjectCreateBox({ project }: any) {
             justifyContent={"space-between"}
              gap={gap}
           >
-            <Button background={"blueviolet"} color={white} flex={1} onClick={(ev)=>createProject(ev)}>{project.edit ? 'Editar' : 'Criar'}</Button>
+            <Button background={"#4D47C3"} color={white} flex={1} onClick={(ev)=>createProject(ev)}>{project.edit ? 'Editar' : 'Criar'}</Button>
           </Box>
           <Box
             background={"#4D47C3"}
