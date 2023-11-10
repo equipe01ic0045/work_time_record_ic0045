@@ -1,4 +1,7 @@
-import { JustificationType, TimeRecordJustificationStatus } from "@prisma/client";
+import {
+  JustificationType,
+  TimeRecordJustificationStatus,
+} from "@prisma/client";
 import BaseRepository from "./abstract/BaseRepository";
 
 export default class TimeRecordsRepository extends BaseRepository {
@@ -32,7 +35,7 @@ export default class TimeRecordsRepository extends BaseRepository {
   async checkoutTimeRecord(timeRecordId: number, checkoutTimeStamp: Date) {
     return this.client.time_record.update({
       where: {
-        id: timeRecordId,
+        time_record_id: timeRecordId,
         check_out_timestamp: null,
       },
       data: {
@@ -44,9 +47,9 @@ export default class TimeRecordsRepository extends BaseRepository {
   async findTimeRecordById(timeRecordId: number) {
     return this.client.time_record.findUnique({
       where: {
-        id: timeRecordId
-      }
-    })
+        time_record_id: timeRecordId,
+      },
+    });
   }
 
   async createTimeRecordJustification(
@@ -58,7 +61,7 @@ export default class TimeRecordsRepository extends BaseRepository {
     fileName: string,
     justificationType: JustificationType,
     updatedTimeStamp: Date,
-    updatedLocation?: string,
+    updatedLocation?: string
   ) {
     return this.client.time_record_justification.create({
       data: {
@@ -69,35 +72,38 @@ export default class TimeRecordsRepository extends BaseRepository {
         status: TimeRecordJustificationStatus.PENDING,
         time_record: {
           connect: {
-            id: timeRecordId
+            time_record_id: timeRecordId,
           },
         },
         project: {
           connect: {
-            id: projectId,
-          }
+            project_id: projectId,
+          },
         },
         colaborator: {
           connect: {
-            id: userId
-          }
+            user_id: userId,
+          },
         },
         absense_document: {
           create: {
             document_file: documentFile,
             file_name: fileName,
-          }
-        }
-      }
-    })
+          },
+        },
+      },
+    });
   }
   // TODO FINISH LISTING JUSTIFICATIONS
-  async findTimeRecordJustificationsByProjectId(projectId: number, status: string[] = [...Object.values(TimeRecordJustificationStatus)]) {
+  async findTimeRecordJustificationsByProjectId(
+    projectId: number,
+    status: string[] = [...Object.values(TimeRecordJustificationStatus)]
+  ) {
     return this.client.time_record_justification.findMany({
       include: {
         colaborator: {
           select: {
-            id: true,
+            user_id: true,
             email: true,
             full_name: true,
             user_project_roles: {
@@ -107,27 +113,26 @@ export default class TimeRecordsRepository extends BaseRepository {
               },
               where: {
                 project_id: projectId,
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       },
       where: {
         project_id: projectId,
         status: {
-          in: status as TimeRecordJustificationStatus[]
-        }
-      }
-    }
-    )
+          in: status as TimeRecordJustificationStatus[],
+        },
+      },
+    });
   }
 
-  async findTimeRecordJustificationsById(timeRecordJustificationId: number) {
+  async findTimeRecordJustificationsById(justificationId: number) {
     return this.client.time_record_justification.findMany({
       include: {
         colaborator: {
           select: {
-            id: true,
+            user_id: true,
             email: true,
             full_name: true,
             user_project_roles: {
@@ -135,48 +140,53 @@ export default class TimeRecordsRepository extends BaseRepository {
                 hours_per_week: true,
                 role: true,
               },
-            }
-          }
+            },
+          },
         },
         project: {
           select: {
-            id: true,
-          }
+            project_id: true,
+          },
         },
-        approver: {
+        reviewer: {
           select: {
-            id: true,
+            user_id: true,
             email: true,
             full_name: true,
             user_project_roles: {
               select: {
-                role: true
-              }
-            }
+                role: true,
+              },
+            },
           },
-        }
+        },
       },
       where: {
-        time_record_id: timeRecordJustificationId,
-      }
-    }
-    )
+        justification_id: justificationId,
+      },
+    });
   }
 
-  async assessTimeRecordJustiticationById(timeRecordJustificatioId: number, approverId: number, status: TimeRecordJustificationStatus) {
+  async assessTimeRecordJustiticationById(
+    justificationId: number,
+    reviewerId: number,
+    status: TimeRecordJustificationStatus,
+    manager_message: string
+  ) {
     return this.client.time_record_justification.update({
       where: {
-        id: timeRecordJustificatioId,
+        justification_id: justificationId,
       },
       data: {
-        approver: {
+        reviewer: {
           connect: {
-            id: approverId,
-          }
+            user_id: reviewerId,
+          },
         },
         status,
-        updated_at: new Date()
-      }
+        manager_message,
+        updated_at: new Date(),
+      },
     });
   }
 }

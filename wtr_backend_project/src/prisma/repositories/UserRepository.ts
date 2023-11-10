@@ -5,13 +5,15 @@ export default class UserRepository extends BaseRepository {
   async createUser(
     full_name: string,
     email: string,
-    password: string
+    password: string,
+    cpf: number
   ): Promise<user> {
     return this.client.user.create({
       data: {
+        cpf,
         email,
-        password,
         full_name,
+        password,
       },
     });
   }
@@ -27,12 +29,14 @@ export default class UserRepository extends BaseRepository {
   async findUserByUserId(user_id: number): Promise<user | null> {
     return this.client.user.findUnique({
       where: {
-        id: user_id,
+        user_id: user_id,
       },
     });
   }
 
-  async deleteUserById(user_id: number): Promise<Omit<user, "password"> | null> {
+  async deleteUserById(
+    user_id: number
+  ): Promise<Omit<user, "password"> | null> {
     return this.client.user.delete({
       where: {
         user_id,
@@ -40,6 +44,7 @@ export default class UserRepository extends BaseRepository {
       select: {
         user_id: true,
         full_name: true,
+        cpf: true,
         email: true,
         created_at: true,
         updated_at: true,
@@ -49,12 +54,12 @@ export default class UserRepository extends BaseRepository {
               select: {
                 project_name: true,
                 project_id: true,
-              }
+              },
             },
             role: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
   }
 }

@@ -20,7 +20,8 @@ export default class AuthService {
   async createUser(
     fullName: string,
     email: string,
-    password: string
+    password: string,
+    cpf: number
   ): Promise<user> {
     const foundUser = await this.userRepository.findUserByEmail(email);
     if (foundUser) {
@@ -28,7 +29,7 @@ export default class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(password, JWT_DEFAULT_SALT_ROUNDS);
-    return this.userRepository.createUser(fullName, email, hashedPassword);
+    return this.userRepository.createUser(fullName, email, hashedPassword, cpf);
   }
 
   async authenticateUser(email: string, password: string): Promise<string> {
@@ -43,7 +44,7 @@ export default class AuthService {
           "email and password do not match any existing account."
         );
       }
-      return jwt.sign({ userId: foundUser.id }, JWT_SECRET, {
+      return jwt.sign({ userId: foundUser.user_id }, JWT_SECRET, {
         expiresIn: "1d",
       });
     } else {

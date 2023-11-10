@@ -49,12 +49,15 @@
  *             properties:
  *               full_name:
  *                  type: string
+ *               cpf:
+ *                  type: number
  *               email:
  *                 type: string
  *               password:
  *                 type: string
  *             example:
  *                 full_name: "Pedro Chaves de Carvalho"
+ *                 cpf: 01234567890
  *                 email: "teste@email.com"
  *                 password: "12345678"
  *     responses:

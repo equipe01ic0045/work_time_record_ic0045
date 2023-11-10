@@ -157,7 +157,7 @@
 
 /**
  * @swagger
- * /projects/time-records/{project_id}/justification/{time_record_justification_id}:
+ * /projects/time-records/{project_id}/justification/{justification_id}:
  *   get:
  *     summary: Gets a  time record justitification request to be approved by an admin or project manager
  *     tags: [Time Records]
@@ -171,7 +171,7 @@
  *         schema:
  *           type: string
  *       - in: path
- *         name: time_record_justification_id
+ *         name: justification_id
  *         required: true
  *         description: The ID of the justification.
  *         schema:
@@ -185,7 +185,7 @@
 
 /**
  * @swagger
- * /projects/time-records/{project_id}/justification/{time_record_justification_id}/assess:
+ * /projects/time-records/{project_id}/justification/{justification_id}/assess:
  *   patch:
  *     summary: Assesses a time record justification request
  *     tags: [Time Records]
@@ -199,9 +199,9 @@
  *         schema:
  *           type: string
  *       - in: path
- *         name: time_record_justification_id
+ *         name: justification_id
  *         required: true
- *         description: The ID of the time record.
+ *         description: The ID of the justification.
  *         schema:
  *           type: string
  *     requestBody:
@@ -303,7 +303,7 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
     );
 
     this._router.get(
-      "/:project_id/justification/:time_record_justification_id",
+      "/:project_id/justification/:justification_id",
       [
         ...this.projectIdValidation,
         query('status')
@@ -317,7 +317,7 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
     
 
     this._router.patch(
-      "/:project_id/justification/:time_record_justification_id/assess",
+      "/:project_id/justification/:justification_id/assess",
       [
         ...this.projectIdValidation,
         body("status")
