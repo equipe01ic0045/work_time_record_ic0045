@@ -32,4 +32,15 @@ export default class AuthController extends BaseController {
       next(error);
     }
   }
+
+  async cookieUser(request: Request, response: Response, next: NextFunction) {
+
+    try {
+      return response.status(201).json({ message: 'Authorized User' })
+    }
+    catch (error) {
+      next(error)
+    }
+
+  }
 }

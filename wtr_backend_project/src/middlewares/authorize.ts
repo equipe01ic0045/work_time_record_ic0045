@@ -9,6 +9,7 @@ export default function authorize(
   res: Response,
   next: NextFunction
 ) {
+  console.log('passing here')
   // Retrieve the JWT token from the 'token' cookie
   const token = req.cookies.token;
 
