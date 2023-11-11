@@ -13,7 +13,7 @@ enum UserRole {
   USER
 }
 
-enum TimeRecordJustificationStatus {
+enum JustificationReviewStatus {
   APPROVED
   PENDING
   DENIED
@@ -103,7 +103,7 @@ model time_record_justification {
   reviewer_id        Int?                          @unique()
   project_id         Int
   time_record_id     Int
-  status             TimeRecordJustificationStatus
+  status             JustificationReviewStatus
   user_message       String?
   manager_message    String?
   justification_type JustificationType
