@@ -21,10 +21,10 @@ export default class AuthService {
     fullName: string,
     email: string,
     password: string,
-    cpf: string
+    cpf: number
   ): Promise<user> {
     const foundUser = await this.userRepository.findUserByEmail(email);
-    if (!!foundUser) {
+    if (foundUser) {
       throw new ConflictError("email");
     }
 
@@ -37,7 +37,7 @@ export default class AuthService {
       email
     );
 
-    if (!!foundUser) {
+    if (foundUser) {
       const isValidLogin = await this.validateLogin(password, foundUser);
       if (!isValidLogin) {
         throw new ValidationError(
@@ -47,7 +47,6 @@ export default class AuthService {
       return jwt.sign(
             { 
                 userId: foundUser.user_id,
-                picture_url: foundUser.picture_url,
                 full_name : foundUser.full_name,
                 email : foundUser.email,
             }, 

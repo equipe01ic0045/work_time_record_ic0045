@@ -16,7 +16,9 @@
 
 - npx prisma migrate deploy --schema=./src/prisma/schema.prisma
 
-- npx prisma db push --schema=./src/prisma/schema.prisma
+*caso tenha problemas, tente resetar o banco de dados utilizando os comandos:*
+1. npx prisma migrate reset --schema=./src/prisma/schema.prisma
+2. npx prisma migrate dev --schema=./src/prisma/schema.prisma
 
 ## rode
 
