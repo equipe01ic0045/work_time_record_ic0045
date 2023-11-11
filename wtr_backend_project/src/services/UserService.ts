@@ -7,7 +7,7 @@ import NotFoundError from "../types/errors/NotFoundError";
 import { JWT_SECRET, JWT_DEFAULT_SALT_ROUNDS } from "../config";
 import UserRepository from "../prisma/repositories/UserRepository";
 
-export default class AuthService {
+export default class UserService {
   private userRepository: UserRepository;
   constructor() {
     this.userRepository = new UserRepository();
@@ -21,7 +21,7 @@ export default class AuthService {
     fullName: string,
     email: string,
     password: string,
-    cpf: number
+    cpf: string
   ): Promise<user> {
     const foundUser = await this.userRepository.findUserByEmail(email);
     if (foundUser) {
@@ -45,16 +45,40 @@ export default class AuthService {
         );
       }
       return jwt.sign(
-            { 
-                userId: foundUser.user_id,
-                full_name : foundUser.full_name,
-                email : foundUser.email,
-            }, 
-            JWT_SECRET, 
-            { expiresIn: "1d"}
-       );
+        {
+          userId: foundUser.user_id,
+          full_name: foundUser.full_name,
+          email: foundUser.email,
+        },
+        JWT_SECRET,
+        { expiresIn: "1d" }
+      );
     } else {
       throw new NotFoundError("user");
     }
+  }
+
+  async getUser(userId: number): Promise<Omit<user, "password">> {
+    const foundUser = await this.userRepository.findUserByUserId(userId);
+    if (!foundUser) {
+      throw new NotFoundError("user");
+    }
+
+    return foundUser;
+  }
+
+  async updateUser(
+    userId: number,
+    fullName: string,
+    email: string,
+    password: string
+  ) {
+    const foundUser = await this.userRepository.findUserByUserId(userId);
+    if (!foundUser) {
+      throw new NotFoundError("user");
+    }
+
+    await this.userRepository.updateUser(userId, fullName, password, email);
+    return this.authenticateUser(email, password);
   }
 }

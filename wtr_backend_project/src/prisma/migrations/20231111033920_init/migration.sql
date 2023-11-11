@@ -2,7 +2,7 @@
 CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'MANAGER', 'USER');
 
 -- CreateEnum
-CREATE TYPE "TimeRecordJustificationStatus" AS ENUM ('APPROVED', 'PENDING', 'DENIED', 'CANCELLED');
+CREATE TYPE "JustificationReviewStatus" AS ENUM ('APPROVED', 'PENDING', 'DENIED', 'CANCELLED');
 
 -- CreateEnum
 CREATE TYPE "JustificationType" AS ENUM ('CHECKIN', 'CHECKOUT');
@@ -10,9 +10,10 @@ CREATE TYPE "JustificationType" AS ENUM ('CHECKIN', 'CHECKOUT');
 -- CreateTable
 CREATE TABLE "user" (
     "user_id" SERIAL NOT NULL,
+    "cpf" INTEGER NOT NULL,
+    "email" TEXT NOT NULL,
     "full_name" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -23,6 +24,8 @@ CREATE TABLE "user" (
 CREATE TABLE "project" (
     "project_id" SERIAL NOT NULL,
     "project_name" TEXT NOT NULL,
+    "project_description" TEXT NOT NULL DEFAULT '',
+    "owner_id" INTEGER NOT NULL,
     "location_required" BOOLEAN NOT NULL,
     "location" TEXT,
     "timezone" TEXT NOT NULL,
@@ -44,6 +47,7 @@ CREATE TABLE "user_project_role" (
     "hours_per_week" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "open_check_in" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "user_project_role_pkey" PRIMARY KEY ("user_project_role_id")
 );
@@ -63,26 +67,25 @@ CREATE TABLE "time_record" (
 );
 
 -- CreateTable
-CREATE TABLE "absense_document" (
-    "absense_document_id" SERIAL NOT NULL,
+CREATE TABLE "justification_document" (
+    "justification_document_id" SERIAL NOT NULL,
     "document_file" BYTEA NOT NULL,
     "file_name" TEXT NOT NULL,
-    "time_record_justification_id" INTEGER NOT NULL,
+    "justification_id" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "time_record_id" INTEGER,
 
-    CONSTRAINT "absense_document_pkey" PRIMARY KEY ("absense_document_id")
+    CONSTRAINT "justification_document_pkey" PRIMARY KEY ("justification_document_id")
 );
 
 -- CreateTable
 CREATE TABLE "time_record_justification" (
-    "time_record_justification_id" SERIAL NOT NULL,
+    "justification_id" SERIAL NOT NULL,
     "colaborator_id" INTEGER NOT NULL,
-    "approver_id" INTEGER,
+    "reviewer_id" INTEGER,
     "project_id" INTEGER NOT NULL,
     "time_record_id" INTEGER NOT NULL,
-    "status" "TimeRecordJustificationStatus" NOT NULL,
+    "status" "JustificationReviewStatus" NOT NULL,
     "user_message" TEXT,
     "manager_message" TEXT,
     "justification_type" "JustificationType" NOT NULL,
@@ -91,8 +94,11 @@ CREATE TABLE "time_record_justification" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "time_record_justification_pkey" PRIMARY KEY ("time_record_justification_id")
+    CONSTRAINT "time_record_justification_pkey" PRIMARY KEY ("justification_id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "user_cpf_key" ON "user"("cpf");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
@@ -104,22 +110,22 @@ CREATE UNIQUE INDEX "project_project_name_key" ON "project"("project_name");
 CREATE UNIQUE INDEX "user_project_role_user_id_project_id_key" ON "user_project_role"("user_id", "project_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "absense_document_time_record_justification_id_key" ON "absense_document"("time_record_justification_id");
+CREATE UNIQUE INDEX "justification_document_justification_id_key" ON "justification_document"("justification_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "time_record_justification_approver_id_key" ON "time_record_justification"("approver_id");
+CREATE UNIQUE INDEX "time_record_justification_reviewer_id_key" ON "time_record_justification"("reviewer_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "time_record_justification_time_record_justification_id_appr_key" ON "time_record_justification"("time_record_justification_id", "approver_id");
+CREATE UNIQUE INDEX "time_record_justification_justification_id_reviewer_id_key" ON "time_record_justification"("justification_id", "reviewer_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "time_record_justification_time_record_justification_id_time_key" ON "time_record_justification"("time_record_justification_id", "time_record_id");
+CREATE UNIQUE INDEX "time_record_justification_justification_id_time_record_id_key" ON "time_record_justification"("justification_id", "time_record_id");
 
 -- AddForeignKey
 ALTER TABLE "user_project_role" ADD CONSTRAINT "user_project_role_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_project_role" ADD CONSTRAINT "user_project_role_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "project"("project_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_project_role" ADD CONSTRAINT "user_project_role_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "project"("project_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "time_record" ADD CONSTRAINT "time_record_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -128,16 +134,13 @@ ALTER TABLE "time_record" ADD CONSTRAINT "time_record_user_id_fkey" FOREIGN KEY 
 ALTER TABLE "time_record" ADD CONSTRAINT "time_record_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "project"("project_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "absense_document" ADD CONSTRAINT "absense_document_time_record_id_fkey" FOREIGN KEY ("time_record_id") REFERENCES "time_record"("time_record_id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "absense_document" ADD CONSTRAINT "absense_document_time_record_justification_id_fkey" FOREIGN KEY ("time_record_justification_id") REFERENCES "time_record_justification"("time_record_justification_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "justification_document" ADD CONSTRAINT "justification_document_justification_id_fkey" FOREIGN KEY ("justification_id") REFERENCES "time_record_justification"("justification_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "time_record_justification" ADD CONSTRAINT "time_record_justification_colaborator_id_fkey" FOREIGN KEY ("colaborator_id") REFERENCES "user"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "time_record_justification" ADD CONSTRAINT "time_record_justification_approver_id_fkey" FOREIGN KEY ("approver_id") REFERENCES "user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "time_record_justification" ADD CONSTRAINT "time_record_justification_reviewer_id_fkey" FOREIGN KEY ("reviewer_id") REFERENCES "user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "time_record_justification" ADD CONSTRAINT "time_record_justification_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "project"("project_id") ON DELETE RESTRICT ON UPDATE CASCADE;
