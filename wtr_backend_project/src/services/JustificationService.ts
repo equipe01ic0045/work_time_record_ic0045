@@ -171,4 +171,42 @@ export default class JustificationService {
 
     return updatedTimeJustification;
   }
+
+  async getJustificationDocument(
+    projectId: number,
+    userId: number,
+    justificationId: number
+  ) {
+    const fileRecord =
+      await this.justificationRepository.findJustificationDocument(
+        justificationId
+      );
+
+    if (!fileRecord) {
+      throw new NotFoundError("file");
+    }
+
+    const justificationRecord =
+      await this.justificationRepository.findJustificationById(
+        fileRecord.justification_id
+      );
+
+    if (!justificationRecord) {
+      throw new NotFoundError("Justificativa não encontrada");
+    }
+
+    if (justificationRecord.colaborator_id !== userId) {
+      const foundManagerProjectRole =
+        await this.projectsRepository.findUserProjectRole(userId, projectId, [
+          "MANAGER",
+          "ADMIN",
+        ]);
+
+      if (!foundManagerProjectRole) {
+        throw new AuthorizationError();
+      }
+    }
+
+    return fileRecord;
+  }
 }

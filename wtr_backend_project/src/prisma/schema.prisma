@@ -80,42 +80,38 @@ model time_record {
   updated_at                DateTime                    @default(now())
   user                      user                        @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   project                   project                     @relation(fields: [project_id], references: [project_id])
-  absense_documents         absense_document[]
   time_record_justification time_record_justification[]
 }
 
-model absense_document {
-  absense_document_id Int      @id @default(autoincrement())
-  document_file       Bytes
-  file_name           String
-  justification_id    Int      @unique()
-  created_at          DateTime @default(now())
-  updated_at          DateTime @default(now())
-  time_record_id      Int?
-
-  time_record               time_record?              @relation(fields: [time_record_id], references: [time_record_id])
+model justification_document {
+  justification_document_id Int      @id @default(autoincrement())
+  document_file             Bytes
+  file_name                 String
+  justification_id          Int      @unique()
+  created_at                DateTime @default(now())
+  updated_at                DateTime @default(now())
   time_record_justification time_record_justification @relation(fields: [justification_id], references: [justification_id])
 }
 
 model time_record_justification {
-  justification_id   Int                           @id @default(autoincrement())
-  colaborator_id     Int
-  reviewer_id        Int?                          @unique()
-  project_id         Int
-  time_record_id     Int
-  status             JustificationReviewStatus
-  user_message       String?
-  manager_message    String?
-  justification_type JustificationType
-  timestamp          DateTime
-  updated_location   String?
-  absense_document   absense_document?
-  created_at         DateTime                      @default(now())
-  updated_at         DateTime                      @default(now())
-  colaborator        user                          @relation(name: "time_record_justification_user_colaborator_fk", fields: [colaborator_id], references: [user_id])
-  reviewer           user?                         @relation(name: "time_record_justification_user_reviewer_fk", fields: [reviewer_id], references: [user_id])
-  project            project                       @relation(fields: [project_id], references: [project_id])
-  time_record        time_record                   @relation(fields: [time_record_id], references: [time_record_id])
+  justification_id       Int                       @id @default(autoincrement())
+  colaborator_id         Int
+  reviewer_id            Int?                      @unique()
+  project_id             Int
+  time_record_id         Int
+  status                 JustificationReviewStatus
+  user_message           String?
+  manager_message        String?
+  justification_type     JustificationType
+  timestamp              DateTime
+  updated_location       String?
+  justification_document justification_document?
+  created_at             DateTime                  @default(now())
+  updated_at             DateTime                  @default(now())
+  colaborator            user                      @relation(name: "time_record_justification_user_colaborator_fk", fields: [colaborator_id], references: [user_id])
+  reviewer               user?                     @relation(name: "time_record_justification_user_reviewer_fk", fields: [reviewer_id], references: [user_id])
+  project                project                   @relation(fields: [project_id], references: [project_id])
+  time_record            time_record               @relation(fields: [time_record_id], references: [time_record_id])
 
   @@unique([justification_id, reviewer_id])
   @@unique([justification_id, time_record_id])

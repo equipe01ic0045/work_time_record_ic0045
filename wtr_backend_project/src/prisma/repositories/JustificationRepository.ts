@@ -35,7 +35,7 @@ export default class JustificationRepository extends BaseRepository {
             user_id: userId,
           },
         },
-        absense_document: {
+        justification_document: {
           create: {
             document_file: documentFile,
             file_name: fileName,
@@ -138,5 +138,11 @@ export default class JustificationRepository extends BaseRepository {
         updated_at: new Date(),
       },
     });
+  }
+
+  async findJustificationDocument(justificationId: number) {
+    return this.client.justification_document.findUnique({
+      where: { justification_id: justificationId}
+    })
   }
 }

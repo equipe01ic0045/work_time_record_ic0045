@@ -9,7 +9,7 @@
  * @swagger
  * /projects/justification/{project_id}:
  *   post:
- *     summary: Creates a checkout justitification request to be approved by an admin or project manager
+ *     summary: Creates a checkout justification request to be approved by an admin or project manager
  *     tags: [Justifications]
  *     security:
  *       - CookieAuth: []
@@ -49,7 +49,7 @@
  *                justification_type: CHECKIN
  *     responses:
  *       '201':
- *         description: Successfully created a time record justification.
+ *         description: Successfully created a justification.
  *       '401':
  *         description: Unauthorized. User is not authenticated.
  *       '404':
@@ -60,7 +60,7 @@
  * @swagger
  * /projects/justification/{project_id}:
  *   get:
- *     summary: Gets a list of justitifications request to be approved by an admin or project manager
+ *     summary: Gets a list of justifications request to be approved by an admin or project manager
  *     tags: [Justifications]
  *     security:
  *       - CookieAuth: []
@@ -89,7 +89,7 @@
  * @swagger
  * /projects/justification/{project_id}/record/{justification_id}:
  *   get:
- *     summary: Gets a  time record justitification request to be approved by an admin or project manager
+ *     summary: Gets a  justification request to be approved by an admin or project manager
  *     tags: [Justifications]
  *     security:
  *       - CookieAuth: []
@@ -117,7 +117,7 @@
  * @swagger
  * /projects/justification/{project_id}/record/{justification_id}/review:
  *   patch:
- *     summary: reviewes a time record justification request
+ *     summary: reviewes a justification request
  *     tags: [Justifications]
  *     security:
  *       - CookieAuth: []
@@ -148,8 +148,36 @@
  *                type: string
  *     responses:
  *      '200':
- *         description: Successfully reviewed the time record justification
+ *         description: Successfully reviewed the justification
  *
+ */
+
+/**
+ * @swagger
+ * /projects/justification/{project_id}/record/{justification_id}/document:
+ *   get:
+ *     summary: Gets a justification document file
+ *     tags: [Justifications]
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: project_id
+ *         required: true
+ *         description: The ID of the project.
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: justification_id
+ *         required: true
+ *         description: The ID of the justification.
+ *         schema:
+ *           type: string
+ *     responses:
+ *      '200':
+ *        description: Successfully fetched the file.
+ *      '401':
+ *        description: Unauthorized. User not logged or doesn't have administrative level required to view the justitication document
  */
 
 import { Router } from "express";
@@ -226,6 +254,13 @@ export default class JustificationRoutes extends ProjectRelatedRoutes {
       ],
       this.validate,
       this.controller.reviewJustification
+    );
+
+    this._router.get(
+      "/:project_id/record/:justification_id/document",
+      [...this.projectIdValidation],
+      this.validate,
+      this.controller.getJustificationDocument
     );
 
     return this._router;

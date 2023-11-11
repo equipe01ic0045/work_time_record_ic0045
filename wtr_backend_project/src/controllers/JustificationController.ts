@@ -56,9 +56,9 @@ export default class JustificationController extends BaseController {
     res: Response,
     next: NextFunction
   ) {
+    const { project_id } = req.params;
     const statusQueryString = req.query.status?.toString();
     const status = statusQueryString?.split(",");
-    const { project_id } = req.params;
     try {
       const foundJustifications =
         await justificationService.getProjectJustifications(
@@ -99,8 +99,8 @@ export default class JustificationController extends BaseController {
     next: NextFunction
   ) {
     try {
-      const { status, manager_message } = req.body;
       const { project_id, justification_id } = req.params;
+      const { status, manager_message } = req.body;
       const updatedTimeRecordJustification =
         await justificationService.reviewJustification(
           +project_id,
@@ -110,6 +110,31 @@ export default class JustificationController extends BaseController {
           manager_message
         );
       new ResourceUpdatedResponse().send(res, updatedTimeRecordJustification);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getJustificationDocument(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { project_id, justification_id } = req.params;
+      const justificationDocument =
+        await justificationService.getJustificationDocument(
+          +project_id,
+          req.user!.userId,
+          +justification_id
+        );
+
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=${justificationDocument.file_name}`
+      );
+      res.setHeader("Content-Type", "application/octet-stream");
+      res.send(justificationDocument.document_file);
     } catch (err) {
       next(err);
     }
