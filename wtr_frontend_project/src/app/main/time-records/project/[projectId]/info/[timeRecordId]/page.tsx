@@ -99,42 +99,16 @@ export default function Page(props: TimeRecordInfoPageProps) {
         </>}
       />
 
-      <VStack w="2xl" mx="auto" gap={10} my={10}>
-        <Box w="100%">
-          <Heading mb={3} color="lavanda.300">Informações</Heading>
-          <Card>
-            <CardBody>
-              <SimpleGrid w="xs" columns={2} spacing={2}>
-                <Text fontWeight="bold">Data de início:</Text>
-                <Text>{checkInDate?.format('DD/MM/YYYY HH:mm')}</Text>
-                <Text fontWeight="bold">Data de fim:</Text>
-                <Text>{checkOutDate?.format('DD/MM/YYYY HH:mm')}</Text>
-                <Text fontWeight="bold">Duração:</Text>
-                <Text>{dayjs
-                  .duration(checkOutDate.diff(checkInDate))
-                  .format('HH[h] mm[min]')}</Text>
-              </SimpleGrid>
-            </CardBody>
-            <CardFooter>
-              <Box>
-                <Text fontWeight="bold">Mensagem do usuário:</Text>
-                <Text>{timeRecord?.user_message}</Text>
-              </Box>
-            </CardFooter>
-          </Card>
-        </Box>
-
-        <Box w="100%">
-          <Heading mb={3} color="lavanda.300">Histórico de justificativas</Heading>
-          <Accordion mx="auto" allowToggle>
-            {timeRecord?.justifications && (
-              timeRecord.justifications.map((justification, i) => (
-                <JustificationItem key={i} justification={justification} />
-              ))
-            )}
-          </Accordion>
-        </Box>
-      </VStack>
+      <Box w="2xl" mx="auto" my="5rem">
+        <Heading mb={3} color="lavanda.300">Histórico de justificativas</Heading>
+        <Accordion mx="auto" allowToggle>
+          {timeRecord?.justifications && (
+            timeRecord.justifications.map((justification, i) => (
+              <JustificationItem key={i} justification={justification} />
+            ))
+          )}
+        </Accordion>
+      </Box>
     </Box>
   )
 }

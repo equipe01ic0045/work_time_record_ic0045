@@ -1,7 +1,7 @@
 import { Justification } from "@/types/TimeRecordData";
 import { AttachmentIcon } from "@chakra-ui/icons";
-import { Input, Stack, FormControl, FormLabel, Textarea, FormHelperText, ButtonGroup, Button, IconButton } from "@chakra-ui/react";
-import { useRef } from "react";
+import { Input, Stack, FormControl, FormLabel, Textarea, FormHelperText, ButtonGroup, Button, IconButton, FormErrorMessage } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 
 interface JustifyCardBodyProps<T> {
   requireDescription: boolean;
@@ -15,10 +15,11 @@ export default function JustifyCardBody({
   setRecord,
 }: JustifyCardBodyProps<Justification>) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [errors, setErrors] = useState({ description: '' });
 
   return (
     <Stack gap={"2em"}>
-      <FormControl isRequired={requireDescription}>
+      <FormControl isRequired={requireDescription} isInvalid={!!errors.description}>
         <FormLabel>Descrição</FormLabel>
         <Textarea
           variant="filled"
@@ -26,8 +27,17 @@ export default function JustifyCardBody({
           _hover={{ bg: "white" }}
           minHeight={100}
           value={record.description}
-          onChange={(e) => setRecord({ ...record, description: e.target.value })}
+          onChange={(e) => {
+            if (e.target.value === '') {
+              setErrors({ description: 'Descrição é obrigatória' });
+            } else {
+              setErrors({ description: '' });
+            }
+
+            setRecord({ ...record, description: e.target.value });
+          }}
         />
+        <FormErrorMessage>{errors.description}</FormErrorMessage>
       </FormControl>
 
       <FormControl>
@@ -47,6 +57,7 @@ export default function JustifyCardBody({
         <Input
           ref={fileInputRef}
           type="file"
+          accept=".pdf"
           hidden
           onChange={e => setRecord({ ...record, document: e.target.files?.[0] })}
         />

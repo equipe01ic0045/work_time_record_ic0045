@@ -62,6 +62,7 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
       <Td>{projectData.project.project_name}</Td>
       <Td>{projectData.project.owner.full_name}</Td>
       <Td>--</Td>
+      <Td>--</Td>
       <Td>
         <HStack gap={2}>
           <Tooltip label={`${recordNextAction} rápido`}>
@@ -118,7 +119,8 @@ export default function TimeRecordsTable({
           <Tr>
             <Th textColor={"white"}>NOME DO PROJETO</Th>
             <Th textColor={"white"}>PROPRIETÁRIO</Th>
-            <Th textColor={"white"}>ÚLTIMO REGISTRO</Th>
+            <Th textColor={"white"}>ÚLTIMO CHECK-IN</Th>
+            <Th textColor={"white"}>ÚLTIMO CHECK-OUT</Th>
             <Th textColor={"white"}>REGISTRAR</Th>
             <Th textColor={"white"}>REGISTROS FEITOS</Th>
           </Tr>

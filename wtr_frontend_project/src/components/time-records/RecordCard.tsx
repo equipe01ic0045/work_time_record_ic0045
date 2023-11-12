@@ -11,6 +11,7 @@ type RecordCardProps<T> = {
   record: T,
   setRecord: (record: T) => void,
   requireDescription?: boolean,
+  accordionExpanded?: boolean,
 };
 
 export default function RecordCard(
@@ -35,12 +36,12 @@ export default function RecordCard(
           </Alert>
         </Collapse>
 
-        <Accordion w={"100%"} allowToggle variant={"outline"}>
+        <Accordion w={"100%"} allowToggle variant={"outline"} defaultIndex={props.accordionExpanded ? 0 : undefined}>
           <AccordionItem>
             <h2>
               <AccordionButton>
                 <Box as="span" flex='1' textAlign='left'>
-                  Descrição / Justificativa
+                  Justificativa
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
