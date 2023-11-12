@@ -50,7 +50,6 @@ export default class JustificationController extends BaseController {
     }
   }
 
-  // TODO FINISH LISTING JUSTIFICATIONS
   async getProjectJustifications(
     req: AuthorizedRequest,
     res: Response,

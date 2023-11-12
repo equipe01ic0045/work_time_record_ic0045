@@ -51,7 +51,7 @@ model project {
   commercial_time_required    Boolean
   commercial_time_start       Int?
   commercial_time_end         Int?
-  users_count                 Int                         @default(1)
+  users_count                 Int                         @default(0)
   created_at                  DateTime                    @default(now())
   updated_at                  DateTime                    @default(now())
   owner                       user                        @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)

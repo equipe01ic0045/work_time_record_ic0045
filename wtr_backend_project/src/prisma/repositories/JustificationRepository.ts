@@ -44,10 +44,11 @@ export default class JustificationRepository extends BaseRepository {
       },
     });
   }
-  // TODO FINISH LISTING JUSTIFICATIONS
+
   async findJustificationsByProjectId(
-    projectId: number,
-    status: string[] = [...Object.values(JustificationReviewStatus)]
+    project_id: number,
+    status: string[] = [...Object.values(JustificationReviewStatus)],
+    user_id: number | undefined = undefined
   ) {
     return this.client.time_record_justification.findMany({
       include: {
@@ -62,14 +63,15 @@ export default class JustificationRepository extends BaseRepository {
                 role: true,
               },
               where: {
-                project_id: projectId,
+                project_id,
               },
             },
           },
         },
       },
       where: {
-        project_id: projectId,
+        project_id,
+        colaborator_id: user_id,
         status: {
           in: status as JustificationReviewStatus[],
         },
@@ -142,7 +144,7 @@ export default class JustificationRepository extends BaseRepository {
 
   async findJustificationDocument(justificationId: number) {
     return this.client.justification_document.findUnique({
-      where: { justification_id: justificationId}
-    })
+      where: { justification_id: justificationId },
+    });
   }
 }

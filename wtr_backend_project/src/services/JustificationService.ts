@@ -1,7 +1,11 @@
 import TimeRecordsRepository from "../prisma/repositories/TimeRecordsRepository";
 import ProjectRepository from "../prisma/repositories/ProjectRepository";
 import JustificationRepository from "../prisma/repositories/JustificationRepository";
-import { JustificationType, JustificationReviewStatus } from "@prisma/client";
+import {
+  JustificationType,
+  JustificationReviewStatus,
+  UserRole,
+} from "@prisma/client";
 import {
   AuthorizationError,
   NotFoundError,
@@ -87,28 +91,39 @@ export default class JustificationService {
   }
 
   async getProjectJustifications(
-    managerId: number,
+    userId: number,
     projectId: number,
     status?: string[]
   ) {
     if (!this.isValidJustificationStatus(status)) {
       throw new ValidationError("status no formato inválido");
     }
-    const foundManagerUserProjectRole =
-      await this.projectsRepository.findUserProjectRole(managerId, projectId, [
-        "ADMIN",
-        "MANAGER",
-      ]);
-    if (!foundManagerUserProjectRole) {
+    const foundUserProjectRole =
+      await this.projectsRepository.findUserProjectRole(userId, projectId);
+    if (!foundUserProjectRole) {
       throw new AuthorizationError();
     }
 
-    const foundTimeRecordJustificationRequests =
-      await this.justificationRepository.findJustificationsByProjectId(
-        projectId,
-        status
-      );
-    return foundTimeRecordJustificationRequests;
+    let justificationList;
+    if (
+      foundUserProjectRole.role == UserRole.ADMIN ||
+      foundUserProjectRole.role == UserRole.MANAGER
+    ) {
+      justificationList =
+        await this.justificationRepository.findJustificationsByProjectId(
+          projectId,
+          status
+        );
+    } else {
+      justificationList =
+        await this.justificationRepository.findJustificationsByProjectId(
+          projectId,
+          status,
+          userId
+        );
+    }
+
+    return justificationList;
   }
 
   async getProjectJustification(

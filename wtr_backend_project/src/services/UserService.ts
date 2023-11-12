@@ -23,11 +23,16 @@ export default class UserService {
     password: string,
     cpf: string
   ): Promise<user> {
-    const foundUser = await this.userRepository.findUserByEmail(email);
-    if (foundUser) {
+    const emailUser = await this.userRepository.findUserByEmail(email);
+    if (emailUser) {
       throw new ConflictError("email");
     }
 
+    const cpfUser = await this.userRepository.findUserByCPF(cpf);
+    if (cpfUser) {
+      throw new ConflictError("cpf");
+    }
+    
     const hashedPassword = await bcrypt.hash(password, JWT_DEFAULT_SALT_ROUNDS);
     return this.userRepository.createUser(fullName, email, hashedPassword, cpf);
   }
@@ -78,7 +83,9 @@ export default class UserService {
       throw new NotFoundError("user");
     }
 
-    await this.userRepository.updateUser(userId, fullName, password, email);
-    return this.authenticateUser(email, password);
+    const hashedPassword = await bcrypt.hash(password, JWT_DEFAULT_SALT_ROUNDS);
+    await this.userRepository.updateUser(userId, fullName, hashedPassword, email);
+
+    return await this.authenticateUser(email, password);
   }
 }

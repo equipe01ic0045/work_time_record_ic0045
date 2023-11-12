@@ -50,9 +50,13 @@ export default class UserRepository extends BaseRepository {
     });
   }
 
-  async findUsersBySubstring(
-    substring: string
-  ): Promise<Omit<user, "password">[]> {
+  async findUserByCPF(cpf: string): Promise<user | null> {
+    return this.client.user.findUnique({
+      where: { cpf },
+    });
+  }
+
+  async findUsersBySubstring(substring: string) {
     return this.client.user.findMany({
       where: {
         OR: [
@@ -68,7 +72,11 @@ export default class UserRepository extends BaseRepository {
           },
         ],
       },
-      select: this.findUserFields,
+      select: {
+        full_name: true,
+        cpf: true,
+        email: true
+      },
     });
   }
 
@@ -78,13 +86,14 @@ export default class UserRepository extends BaseRepository {
     password: string,
     email: string
   ) {
-    this.client.user.update({
+    return this.client.user.update({
       where: { user_id },
       data: {
         full_name,
         password,
-        email
+        email,
       },
+      select: this.findUserFields,
     });
   }
 }
