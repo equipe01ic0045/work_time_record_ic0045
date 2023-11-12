@@ -19,7 +19,7 @@ export default class AuthRoutes extends BaseRoutes {
   get router(): Router {
     /**
      * @swagger
-     * /user/register:
+     * /register:
      *   post:
      *     summary: Register a new user
      *     tags: [User]
@@ -74,7 +74,7 @@ export default class AuthRoutes extends BaseRoutes {
 
     /**
      * @swagger
-     * /user/login:
+     * /login:
      *   post:
      *     summary: Log in as a user
      *     tags: [User]
@@ -110,9 +110,21 @@ export default class AuthRoutes extends BaseRoutes {
       this.controller.loginUser
     );
 
-    this._router.post(
+
+    /**
+     * @swagger
+     * /cookie:
+     *   get:
+     *     summary: checks if user cookie is valid
+     *     tags: [User]
+     *     responses:
+     *       '201':
+     *         description: Cookie works.
+     */
+    this._router.get(
       "/cookie",
       [],
+      this.validate,
       authorize,
       this.controller.cookieUser
     );

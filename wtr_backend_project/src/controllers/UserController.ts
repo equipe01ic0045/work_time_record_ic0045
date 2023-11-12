@@ -36,6 +36,14 @@ export default class UserController extends BaseController {
     }
   }
 
+  async cookieUser(req: AuthorizedRequest, res: Response, next: NextFunction) {
+    try {
+      return res.status(201).json({ message: "Authorized User" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getUser(req: Request, res: Response, next: NextFunction) {
     const { user_id } = req.params;
     try {
