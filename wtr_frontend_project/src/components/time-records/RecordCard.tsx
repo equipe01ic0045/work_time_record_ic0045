@@ -1,120 +1,71 @@
 'use client';
 
-import { Button, Box, Text, useToast, Card } from "@chakra-ui/react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Card, CardBody, Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Alert, AlertIcon, Box, Button, Text, Collapse } from "@chakra-ui/react";
 import Clock from "./Clock";
-import TimeRecordData from "@/types/TimeRecordData";
-import TimeRecordService from "@/services/TimeRecordService";
+import JustifyCardBody from "./JustifyCardBody";
+import { useState } from "react";
+import { Justification } from "@/types/TimeRecordData";
 
-export default function RecordCard(props: { projectId: number }) {
-  const router = useRouter();
+type RecordCardProps<T> = {
+  projectId: number,
+  record: T,
+  setRecord: (record: T) => void,
+  requireDescription?: boolean,
+};
 
-  const iconUser = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="150"
-      viewBox="0 -960 960 960"
-      width="150"
-    >
-      <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z" />
-    </svg>
-  );
-  const toast = useToast();
+export default function RecordCard(
+  props: RecordCardProps<Justification>
+) {
+  const [requireDescription, setRequireDescription] = useState(props.requireDescription || false);
 
-  const [newRecord, setRecord] = useState<TimeRecordData>({
-    date: new Date(),
-    documents: [],
-    description: '',
-    projectId: props.projectId,
-  });
-
-  async function getLocation() {
-    const coordinates = await new Promise<GeolocationCoordinates>((resolve, reject) => {
-
-      const onSuccess = (position: GeolocationPosition) => {
-        resolve(position.coords);
-      };
-
-      const onError = (error: GeolocationPositionError) => {
-        toast({
-          title: 'Erro ao capturar localização',
-          description: "Verifique a permissão para detectar sua localização.",
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-          position: "top-right",
-        })
-        reject(error);
-      };
-
-      navigator.geolocation.getCurrentPosition(onSuccess, onError, {
-        enableHighAccuracy: true,
-      });
-    });
-
-    const { latitude, longitude } = coordinates;
-    return { latitude, longitude };
-  }
-
-  async function newRecordHandler() {
-    const location = await getLocation();
-
-    const record = { ...newRecord, date: new Date(), location };
-    setRecord(record);
-
-    try {
-      await (new TimeRecordService()).checkIn(record);
-
-      toast({
-        title: 'Registro de horario efetuado',
-        description: "Você será redirecionado para a página anterior.",
-        status: 'success',
-        duration: 1500,
-        isClosable: true,
-        position: "top-right",
-        onCloseComplete: () => router.back()
-      });
-    } catch (e) {
-      toast({
-        title: 'Erro ao efetuar registro de horario.',
-        description: e instanceof Error
-          ? e.message
-          : "Verifique os dados preenchidos e tente novamente.",
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: "top-right",
-      })
-    }
-  }
+  const onDateChange = () => setRequireDescription(true);
 
   return (
-    <Card
-      display={"flex"}
-      flexDirection={"column"}
-      alignItems={"center"}
-      justifyContent={"center"}
-      borderRadius={"1em"}
-      padding={20}
-      margin={10}
-      gap={"2em"}
-      variant={"filled"}
-    >
-      {iconUser}
-      <Text fontSize={"md"}>
-        {newRecord.date.toLocaleDateString()}
-      </Text>
-      <Clock />
-      <Button
-        onClick={newRecordHandler}
-        minHeight={"50px"}
-        background={"blueviolet"}
-        color={"white"}
-        colorScheme="blackAlpha"
-      >
-        Efetuar registro de Tempo
-      </Button>
+    <Card variant={"filled"} size="lg" w="500px">
+      <CardBody display="flex" gap="2em" flexDir="column" alignItems="center">
+        {/* <Icon as={PiUserFocusFill} boxSize="3xs" /> */}
+
+        <Clock onDateChange={onDateChange} defaultValue={props.record.date} />
+
+        <Collapse in={requireDescription} transition={{ enter: { duration: 0.3 } }}>
+          <Alert status='warning'>
+            <AlertIcon />
+            <Text>Ao alterar o horário do registro,
+              você <strong>deve</strong> descrever sua justificativa.</Text>
+          </Alert>
+        </Collapse>
+
+        <Accordion w={"100%"} allowToggle variant={"outline"}>
+          <AccordionItem>
+            <h2>
+              <AccordionButton>
+                <Box as="span" flex='1' textAlign='left'>
+                  Descrição / Justificativa
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel>
+              <JustifyCardBody
+                requireDescription={requireDescription}
+                record={props.record}
+                setRecord={props.setRecord}
+              />
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+
+        <Button
+          type="submit"
+          minHeight={"50px"}
+          bg="lavanda.300"
+          color={"white"}
+          colorScheme="blackAlpha"
+          size={"lg"}
+        >
+          Enviar
+        </Button>
+      </CardBody>
     </Card>
   );
 }

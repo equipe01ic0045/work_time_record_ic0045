@@ -6,7 +6,7 @@ interface HeaderBoxProps {
   title: string;
 }
 
-export default function HeaderBox({ title }: HeaderBoxProps) {
+export default function HeaderBox({ title }: any) {
   return (
     <Box
       backgroundColor="#F0EFFF"

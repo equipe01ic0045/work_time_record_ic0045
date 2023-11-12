@@ -37,6 +37,8 @@
  *             properties:
  *               project_name:
  *                 type: string
+ *               project_description:
+ *                 type: string
  *               location_required:
  *                 type: boolean
  *               commercial_time_required:
@@ -47,10 +49,11 @@
  *                 type: string
  *               commercial_time_start:
  *                 type: integer
- *               commercial_time_end: 
+ *               commercial_time_end:
  *                 type: integer
  *             example:
  *               project_name: projeto-legal
+ *               project_description: esta e uma descricao do projeto
  *               location_required: true
  *               commercial_time_required: true
  *               timezone: America/Bahia
@@ -60,6 +63,86 @@
  *     responses:
  *       '201':
  *         description: Successfully created a new project.
+ *       '400':
+ *         description: Bad request. Invalid input data.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
+/**
+ * @swagger
+ * /projects:
+ *   put:
+ *     summary: Update a project
+ *     tags: [Projects]
+ *     security:
+ *       - CookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               project_id:
+ *                 type: integer
+ *               project_name:
+ *                 type: string
+ *               project_description:
+ *                 type: string
+ *               location_required:
+ *                 type: boolean
+ *               commercial_time_required:
+ *                 type: boolean
+ *               timezone:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               commercial_time_start:
+ *                 type: integer
+ *               commercial_time_end:
+ *                 type: integer
+ *             example:
+ *               project_id: 1
+ *               project_name: projeto-legal
+ *               project_description: esta e uma descricao do projeto
+ *               location_required: true
+ *               commercial_time_required: true
+ *               timezone: America/Bahia
+ *               location: Salvador, Bahia
+ *               commercial_time_start: 480
+ *               commercial_time_end: 1080
+ *     responses:
+ *       '201':
+ *         description: Successfully updated a project.
+ *       '400':
+ *         description: Bad request. Invalid input data.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
+/**
+ * @swagger
+ * /projects:
+ *   delete:
+ *     summary: Delete a project
+ *     tags: [Projects]
+ *     security:
+ *       - CookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               project_id:
+ *                 type: integer
+ *             example:
+ *               project_id: 1
+ *     responses:
+ *       '201':
+ *         description: Successfully deleted a project.
  *       '400':
  *         description: Bad request. Invalid input data.
  *       '401':
@@ -88,14 +171,14 @@
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
- *                 type: integer
+ *               user_email:
+ *                 type: string
  *               user_role:
  *                 type: string
  *               user_hours_per_week:
  *                 type: integer
  *             example:
- *               user_id: 2
+ *               user_email: "teste@email.com"
  *               user_role: "MANAGER"
  *               user_hours_per_week: 40
  *     responses:
@@ -151,14 +234,14 @@
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
- *                 type: integer
+ *               user_email:
+ *                 type: string
  *               user_role:
  *                 type: string
  *               user_hours_per_week:
  *                 type: integer
  *             example:
- *               user_id: 12345
+ *               user_email: "teste@email.com"
  *               user_role: "ADMIN"
  *               user_hours_per_week: 20
  *     responses:
@@ -221,11 +304,59 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
           .withMessage("Nome do projeto requerido")
           .custom((value: string) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
           .withMessage(
-            'Nome do projeto inválido. Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen, examplo: "examplo-nome-de-projeto-32"'
+            'Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen'
           ),
+        body("project_description")
+          .isString()
+          .withMessage("Descricao do projeto requerida"),
+        body("location")
+          .isString()
+          .custom((value: string) => /^[a-zA-z ]+$/.test(value))
+          .withMessage("Localização deve conter apenas letras maiúsculas, minúsculas e espaço."),
+        body('commercial_time_end')
+          .custom((value, {req}) => parseInt(value) > req.body.commercial_time_start)
+          .withMessage("O horario fim deve ser maior que o horario começo."),
       ],
       this.validate,
       this.controller.createNewProject
+    );
+    this._router.put(
+      "/",
+      [
+        body("project_name")
+          .notEmpty()
+          .withMessage("Nome do projeto requerido")
+          .custom((value: string) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
+          .withMessage(
+            'Nome do projeto inválido. Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen, examplo: "examplo-nome-de-projeto-32"'
+          ),
+          body("project_description")
+            .isString()
+            .withMessage("Descricao do projeto requerida")
+      ],
+      this.validate,
+      this.controller.updateProject
+    );
+
+    this._router.delete(
+      "/",
+      [
+        body("project_id")
+          .notEmpty()
+          .custom((value: string) => /^[0-9]+$/.test(value))
+          .withMessage(
+            'ID do projeto inválido'
+          ),
+      ],
+      this.validate,
+      this.controller.deleteProject
+    );
+
+    this._router.get(
+      "/:project_id",
+      ...this.projectIdValidation,
+      this.validate,
+      this.controller.getProjectInfo
     );
 
     this._router.get(
@@ -237,7 +368,7 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
 
     const userProjectRoleValidation = [
       ...this.projectIdValidation,
-      body("user_id").isInt().withMessage("ID do usuario deve ser um inteiro"),
+      body("user_email").isEmail().withMessage("Email do usuario inválido"),
       body("user_role")
         .custom((value: string) =>
           Object.values(UserRole).includes(value as UserRole)

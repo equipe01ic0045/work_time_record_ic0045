@@ -1,7 +1,11 @@
 "use client";
-import { Link, Text, Box, Button } from "@chakra-ui/react";
+import { Link, Text, Box, Button, useToast } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 
 export default function ProjectInfoBox({ project }: any) {
+  const router = useRouter();
+  const toast = useToast();
+
   const white = "#fff";
   const gap = "10px";
   const padding = "20px";
@@ -66,9 +70,63 @@ export default function ProjectInfoBox({ project }: any) {
     </svg>
   );
 
+  function formatToTwoDigits(num: number): string {
+    let integerStr = num.toString();
+    while (integerStr.length < 2) {
+      integerStr = "0" + integerStr;
+    }
+    return integerStr;
+  }
+
+  function getFormattedCommercialTime(commercialTime: number): string {
+    const hour = Math.floor(commercialTime / 60); // result without floor is float
+    const minute = commercialTime % 60;
+    return `${formatToTwoDigits(hour)}:${formatToTwoDigits(minute)}`;
+  }
+
+  function deleteProject(event: any) {
+      fetch('http://localhost:5000/projects',{
+          method: "DELETE",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            project_id : project.project_id,
+          })
+      })
+      .then(response => response.json())
+      .then(response => {
+          if(!response.success)
+              throw new Error(response.message);
+          
+          console.log(response);
+          toast({
+              title: 'Projeto deletado com sucesso!',
+              description: "",
+              status: 'success',
+              duration: 3000,
+              isClosable: true,
+              position: "top-right"
+            })
+            router.push('/main/projects')
+      })
+      .catch((error)=>{
+          console.log(error.status)
+          toast({
+              title: 'Falha na deleção de projeto!\n'+error,
+              description: "",
+              status: 'error',
+              duration: 3000,
+              isClosable: true,
+              position: "top-right"
+          })
+      });
+    }
+
   return (
     <Box
-      background={"purple.200"}
+      background={"#F0EFFF"}
       style={{
         width: "100%",
         display: "flex",
@@ -89,10 +147,15 @@ export default function ProjectInfoBox({ project }: any) {
           }}
         >
           {[
-            ["NOME DO PROJETO", project.projectName],
-            ["PROPRIETÁRIO", project.owner],
+            ["NOME DO PROJETO", project.project_name],
+            ["PROPRIETÁRIO", project.owner.email],
             ["LOCALIZAÇÃO", project.location],
-            ["HORÁRIO COMERCIAL", project.commercial_time],
+            ["LOCALIZAÇÃO REQUERIDA", project.location_required? "Sim" : "Nao"],
+            ["TIMEZONE", project.timezone],
+            ["HORÁRIO COMERCIAL (INÍCIO)", getFormattedCommercialTime(project.commercial_time_start)],
+            ["HORÁRIO COMERCIAL (FIM)", getFormattedCommercialTime(project.commercial_time_end)],
+            ["HORÁRIO COMERCIAL REQUERIDO", project.commercial_time_required? "Sim" : "Nao"],
+            ["DATA DE CRIAÇÃO", project.created_at],
           ]
             .map((n) => {
               return { label: n[0], value: n[1] };
@@ -101,7 +164,7 @@ export default function ProjectInfoBox({ project }: any) {
               return (
                 <Box key={"item_" + i} style={{ display: "flex" }}>
                   <Box
-                    background={"blueviolet"}
+                    background={"#4D47C3"}
                     textColor={"white"}
                     style={{ flex: 1, padding: gap, textAlign: "center" }}
                   >
@@ -113,6 +176,9 @@ export default function ProjectInfoBox({ project }: any) {
                       padding: gap,
                       backgroundColor: white,
                       textAlign: "center",
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
                     }}
                   >
                     {item.value}
@@ -143,28 +209,30 @@ export default function ProjectInfoBox({ project }: any) {
                   gap={"0.5em"} 
                   paddingX={'30%'}
                   textColor={"white"}
-                  background={"blueviolet"}
+                  background={"#4D47C3"}
+                  colorScheme="purple" bgColor="#4D47C3"
                 >
                   {svgReports}Relatorios
                 </Button>
             </Link>
             <Link 
               width={"30%"} 
-              href={`/main/projects/info/${project.id}/manageColaborator`}>
+              href={`/main/projects/info/${project.project_id}/manageColaborator`}>
               <Button
                 textColor={"white"}
                 gap={"0.5em"}
                 paddingX={'30%'}
-                background={"blueviolet"}
+                background={"#4D47C3"}
+                colorScheme="purple" bgColor="#4D47C3"
               >
                 {svgCollab}Colaboradores
               </Button>
             </Link>
-            <Button background={"blueviolet"}>{svgEdits}</Button>
-            <Button background={"blueviolet"}>{svgTrash}</Button>
+            <Button colorScheme="purple" bgColor="#4D47C3"  onClick={()=> router.push('/main/projects/update/'+project.project_id)}>{svgEdits}</Button>
+            <Button textColor={"#FFFFFF"} colorScheme="purple" bgColor="#4D47C3" onClick={(ev) => deleteProject(ev)}>{svgTrash}</Button>
           </Box>
           <Box
-            background={"blueviolet"}
+            background={"#4D47C3"}
             textColor={"white"}
             style={{ padding: gap, textAlign: "center" }}
           >
@@ -176,25 +244,10 @@ export default function ProjectInfoBox({ project }: any) {
               flex: 1,
               padding: gap,
               textAlign: "justify",
+              width: '100%'
             }}
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque porttitor turpis nec leo efficitur, vitae consectetur
-            leo hendrerit. Aliquam ut lectus risus. Sed ante velit, tempus at
-            ullamcorper non, cursus non purus. Sed ac metus enim. Curabitur at
-            arcu in arcu tincidunt dapibus. Proin dictum efficitur velit ac
-            molestie. Pellentesque habitant morbi tristique senectus et netus et
-            malesuada fames ac turpis egestas. Duis ornare dolor felis, nec
-            elementum risus faucibus a. Suspendisse potenti. Nulla sit amet
-            tincidunt sapien. Maecenas sit amet posuere erat. Aenean ac mattis
-            augue. Nam at dignissim ante. Ut blandit posuere sapien, quis
-            elementum diam euismod a. Praesent non gravida ante. Nam diam erat,
-            euismod mattis aliquet sit amet, blandit a ex. Cras luctus bibendum
-            ipsum a malesuada. Donec fermentum sapien eget libero scelerisque,
-            eu mollis dolor maximus. Integer dictum dictum sapien, et lacinia
-            eros lacinia vel. Aliquam vestibulum tortor elit, nec tincidunt orci
-            rutrum vitae. Mauris non semper arcu. Ut id porta metus. Integer
-            viverra porttitor neque quis commodo.
+            {project.project_description}
           </Box>
         </Box>
       </Box>

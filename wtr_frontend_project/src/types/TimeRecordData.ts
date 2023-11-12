@@ -1,11 +1,19 @@
-import RecordDocument from "./RecordDocument";
+export type Justification = {
+  description?: string;
+  document?: File|null;
+  date?: Date;
+};
 
-type TimeRecordData = {
+export type JustificationData = Justification & {
   date: Date;
-  documents: RecordDocument[];
-  description: string;
   projectId: number;
-  location?: { latitude: number, longitude: number };
+  timeRecordId: number;
 }
+
+type TimeRecordData = Justification & {
+  date: Date;
+  projectId: number;
+  location?: string;
+};
 
 export default TimeRecordData;

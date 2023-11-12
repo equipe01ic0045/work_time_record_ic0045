@@ -19,6 +19,7 @@ export default class ProjectService {
   async createProject(
     userId: number,
     projectName: string,
+    projectDescription: string,
     locationRequired: boolean,
     commercialTimeRequired: boolean,
     timezone: string,
@@ -34,6 +35,7 @@ export default class ProjectService {
       const newProject = await this.projectRepository.createProject(
         userId,
         projectName,
+        projectDescription,
         locationRequired,
         commercialTimeRequired,
         timezone,
@@ -47,10 +49,44 @@ export default class ProjectService {
     }
   }
 
+  async updateProject(
+    projectId : number,
+    projectName: string,
+    projectDescription: string,
+    locationRequired: boolean,
+    commercialTimeRequired: boolean,
+    timezone: string,
+    location?: string,
+    commercialTimeStart?: number,
+    commercialTimeEnd?: number
+  ): Promise<project> {
+
+    const newProject = await this.projectRepository.updateProject(
+      projectId,
+      projectName,
+      projectDescription,
+      locationRequired,
+      commercialTimeRequired,
+      timezone,
+      location,
+      commercialTimeStart,
+      commercialTimeEnd
+    );
+    return newProject;
+  }
+
+  async deleteProject(
+    projectId : number,
+  ): Promise<boolean> {
+      await this.projectRepository.deleteProject(projectId);
+      return true;
+  }
+
+
   async addUserToProject(
     adminUserId: number,
     projectId: number,
-    contributorId: number,
+    contributorEmail: string,
     contributorRole: UserRole,
     contributorHoursPerWeek: number
   ): Promise<user_project_role> {
@@ -62,13 +98,18 @@ export default class ProjectService {
     if (!foundAdminRole) {
       throw new AuthorizationError();
     }
-    const foundUser = await this.userRepository.findUserByUserId(contributorId);
+
+    const foundUser = await this.userRepository.findUserByEmail(
+      contributorEmail
+    );
+
     if (!foundUser) {
       throw new NotFoundError("user");
     }
+    
     try {
       return this.projectRepository.addUserToProject(
-        contributorId,
+        foundUser.user_id,
         projectId,
         contributorHoursPerWeek,
         contributorRole
@@ -81,7 +122,7 @@ export default class ProjectService {
   async updateProjectUserRole(
     adminId: number,
     projectId: number,
-    contributorId: number,
+    contributorEmail: string,
     newContributorRole: UserRole,
     newHoursPerWeek: number
   ): Promise<user_project_role> {
@@ -94,20 +135,35 @@ export default class ProjectService {
       throw new AuthorizationError();
     }
 
-    const foundUser = await this.userRepository.findUserByUserId(contributorId);
+    const foundUser = await this.userRepository.findUserByEmail(
+      contributorEmail
+    );
     if (!foundUser) {
       throw new NotFoundError("user");
     }
 
     return this.projectRepository.updateUserProjectRole(
-      contributorId,
+      foundUser.user_id,
       projectId,
       newContributorRole,
       newHoursPerWeek
     );
   }
 
-  async getUserProjects(userId: number): Promise<project[]> {
+  async getProjectById(userId: number, projectId: number) {
+    const foundRole = await this.projectRepository.findUserProjectRole(
+      userId,
+      projectId
+    );
+
+    if (foundRole) {
+      return this.projectRepository.findProjectById(projectId);
+    } else {
+      throw new AuthorizationError();
+    }
+  }
+
+  async getUserProjects(userId: number) {
     const foundUser = await this.userRepository.findUserByUserId(userId);
     if (!foundUser) {
       throw new AuthorizationError();
@@ -116,10 +172,10 @@ export default class ProjectService {
     const userProjects = await this.projectRepository.findProjectsByUserId(
       userId
     );
-    return userProjects.map((userRole) => userRole.project);
+    return userProjects;
   }
 
-  async getProjectUsers(userId: number, projectId: number): Promise<any> {
+  async getProjectUsers(userId: number, projectId: number) {
     const foundUser = await this.projectRepository.findUserProjectRole(
       userId,
       projectId
