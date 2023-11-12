@@ -8,9 +8,9 @@ import { Box, Link } from "@chakra-ui/react";
 
 export default function ProjectInfo({ params }: any) {
   const loadingData = {
-    project_name: "Nome do Projeto",
-    project_description: "Descrição do Projeto",
-    location: "Localização",
+    project_name: "",
+    project_description: "",
+    location: "",
     commercial_time_start: "00:00",
     commercial_time_end: "05:00",
     timezone: "America/Bahia",

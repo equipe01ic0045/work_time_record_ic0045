@@ -1,17 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export default function middleware(
+export default async function middleware(
   request: NextRequest,
   response: NextResponse
 ) {
-  const cookies = request.cookies.get("token");
 
-  if (cookies) {
-    return NextResponse.next();
-  } else {
-    return NextResponse.redirect("http://localhost:4400/auth");
+
+  if (!request.cookies.get('token')?.value) {
+    return NextResponse.redirect('http://localhost:4400/auth/')
   }
+
+  const fetchParameters = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Cookie': `token=${request.cookies.get('token')?.value}`
+    },
+  }
+
+  fetch('http://localhost:5000/auth/cookie', fetchParameters)
+    .then((response) => {
+
+      if (response.status === 201) {
+        return NextResponse.next()
+      }
+      if (response.status === 401) {
+        return NextResponse.redirect('http://localhost:4400/auth/')
+      }
+      else {
+        return NextResponse.redirect('http://localhost:4400/auth/')
+      }
+    })
+    .catch((error) => {
+      return NextResponse.redirect('http://localhost:4400/auth/')
+    })
 }
+
+
 
 export const config = {
   matcher: ["/main/:path*"],

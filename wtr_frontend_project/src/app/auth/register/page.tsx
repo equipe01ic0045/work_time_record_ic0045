@@ -1,7 +1,15 @@
 "use client";
 import UserService from "@/services/UserService";
-import { Box, Button, Text, Input, useToast } from "@chakra-ui/react";
-import Link from "next/link";
+import {
+  Box,
+  Button,
+  Text,
+  Input,
+  useToast,
+  FormLabel,
+  InputGroup,
+  InputRightElement
+} from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -10,12 +18,14 @@ export default function RegistrationComponent() {
   const router = useRouter();
   const toast = useToast();
   const [newUser, setNewUser] = useState({
-    full_name: "",
-    email: "",
+
+    fullName: "",
     cpf: "",
-    password: "",
+    email: "",
     confirmEmail: "",
+    password: "",
     confirmPassword: "",
+
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -23,37 +33,73 @@ export default function RegistrationComponent() {
 
   const userService = new UserService();
 
+  function showPasswordHandler() {
+    setShowPassword(!showPassword)
+  }
+
+  function showConfirmPasswordHandler() {
+    setShowConfirmPassword(!showConfirmPassword)
+  }
+
   function inputHandler(event: any) {
     const { name, value } = event.target;
     setNewUser({ ...newUser, [name]: value });
   }
 
   function registerHandler() {
+    console.log(newUser)
     if (newUser.email === newUser.confirmEmail && newUser.password === newUser.confirmPassword) {
       userService
         .registerUser(newUser)
-        .then(() => {
-          toast({
-            title: "registro completo",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-            position: "top-right",
-          });
-          router.push("/");
+        .then((response) => {
+          if (response.status === 201) {
+            toast({
+              title: "Usuário Registrado",
+              status: "success",
+              duration: 3000,
+              isClosable: true,
+              position: "top-right",
+            });
+            router.push("/auth");
+          }
+
         })
-        .catch(() => {
-          toast({
-            title: "falha no registro",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-            position: "top-right",
-          });
+        .catch((error) => {
+          if (error.response.status === 409) {
+            toast({
+              title: "Email já Registrado",
+              status: "warning",
+              duration: 3000,
+              isClosable: true,
+              position: "top-right",
+            });
+
+          }
+          if (error.response.status === 400) {
+            toast({
+              title: "Senha com 8 caracteres mínimos",
+              status: "warning",
+              duration: 3000,
+              isClosable: true,
+              position: "top-right",
+            });
+
+          }
+          else {
+            toast({
+              title: "Falha no Registro",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+              position: "top-right",
+            });
+
+          }
+
         });
     } else {
       toast({
-        title: "dados inválidos",
+        title: "Dados Inválidos",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -63,7 +109,12 @@ export default function RegistrationComponent() {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="start" gap="0.5em" p="0.5em" w="100%">
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="start"
+      gap="0.5em" p="0.5em" w="100%">
       <Text fontSize="6xl" color="blueviolet">
         Ponto Certo
       </Text>
@@ -72,65 +123,118 @@ export default function RegistrationComponent() {
         <Text fontSize="2xl" color="blueviolet">
           Inscreva-se
         </Text>
-        <Text fontSize="sm" color="blueviolet">
-          Bem-vindo
-        </Text>
       </Box>
-
-      <Box display="flex" flexDirection="column" gap="1em" mt="1em">
-        <Input
-            placeholder="nome completo"
+      <Box
+        display="flex"
+        flexDirection="column"
+        gap="1em"
+      >
+        <InputGroup
+          display='flex'
+          flexDirection='column'
+          gap='0.5em'
+        >
+          <FormLabel>Nome Completo</FormLabel>
+          <Input
+            placeholder="Nome Completo"
             type="text"
-            name="full_name"
-            value={newUser.full_name}
+            name="fullName"
+            value={newUser.fullName}
             onChange={inputHandler}
-            bgColor="Lavender" 
+            bgColor="Lavender"
             color="blueviolet"
           />
-        <Input placeholder="cpf" type="text" name="cpf" value={newUser.cpf} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
-        <Input placeholder="email" type="email" name="email" value={newUser.email} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
-        <Input placeholder="confirme o email" type="email" name="confirmEmail" value={newUser.confirmEmail} onChange={inputHandler} bgColor="Lavender" color="blueviolet" />
-
-        <Box position="relative">
+        </InputGroup>
+        <InputGroup
+          display='flex'
+          flexDirection='column'
+          gap='0.5em'
+        >
+          <FormLabel>CPF</FormLabel>
           <Input
-            placeholder="senha"
-            type={showPassword ? 'text' : 'password'}
+            placeholder="cpf"
+            type="number"
+            name="cpf"
+            value={newUser.cpf}
+            onChange={inputHandler}
+            bgColor="Lavender"
+            color="blueviolet"
+          />
+        </InputGroup>
+        <InputGroup
+          display='flex'
+          flexDirection='column'
+          gap='0.5em'
+        >
+          <FormLabel >Email</FormLabel>
+          <Input
+            placeholder="email"
+            type="email"
+            name="email"
+            value={newUser.email}
+            onChange={inputHandler}
+            bgColor="Lavender"
+            color="blueviolet" />
+        </InputGroup>
+        <InputGroup
+          display='flex'
+          flexDirection='column'
+          gap='0.5em'
+        >
+          <FormLabel>Confirmar Email</FormLabel>
+          <Input
+            placeholder="Confirmar Email"
+            type="email"
+            name="confirmEmail"
+            value={newUser.confirmEmail}
+            onChange={inputHandler}
+            bgColor="Lavender"
+            color="blueviolet"
+          />
+        </InputGroup>
+        <FormLabel>Senha</FormLabel>
+        <InputGroup>
+          <Input
+            id="password"
             name="password"
-            value={newUser.password}
+            placeholder="Senha"
+            type={showPassword ? 'text' : 'password'}
             onChange={inputHandler}
             bgColor="Lavender"
             color="blueviolet"
           />
-          <Box position="absolute" right="10px" top="50%" transform="translateY(-50%)" cursor="pointer" onClick={() => setShowPassword(!showPassword)}>
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </Box>
-        </Box>
-
-        <Box position="relative">
+          <InputRightElement>
+            <Button onClick={showPasswordHandler}>
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
+            </Button>
+          </InputRightElement>
+        </InputGroup>
+        <FormLabel>Confirmar Senha</FormLabel>
+        <InputGroup>
           <Input
-            placeholder="confirme a senha"
-            type={showConfirmPassword ? 'text' : 'password'}
+            id="confirmPassword"
             name="confirmPassword"
-            value={newUser.confirmPassword}
+            placeholder="Confirmar Senha"
+            type={showConfirmPassword ? 'text' : 'password'}
             onChange={inputHandler}
             bgColor="Lavender"
             color="blueviolet"
           />
-          <Box position="absolute" right="10px" top="50%" transform="translateY(-50%)" cursor="pointer" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-          </Box>
-        </Box>
-
-        <Button bg="blueviolet" color="white" onClick={registerHandler}>
+          <InputRightElement>
+            <Button onClick={showConfirmPasswordHandler}>
+              {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+            </Button>
+          </InputRightElement>
+        </InputGroup>
+        <Button
+          mt={4}
+          colorScheme='blue'
+          isLoading={false}
+          type='submit'
+          onClick={registerHandler}
+        >
           Registrar
         </Button>
-        
-        <Box display="flex" flexDirection="column" gap="0.5em" alignItems="center">
-          <Text>já tem registro?</Text>
-          <Link href="/">
-            <Text color="blue">Login</Text>
-          </Link>
-        </Box>
       </Box>
     </Box>
   );
