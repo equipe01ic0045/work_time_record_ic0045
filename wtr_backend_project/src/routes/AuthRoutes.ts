@@ -9,6 +9,7 @@ import UserController from "../controllers/UserController";
 import BaseRoutes from "./abstract/BaseRoutes";
 import { body, param } from "express-validator";
 import { Router } from "express";
+import authorize from "../middlewares/authorize";
 
 export default class AuthRoutes extends BaseRoutes {
   constructor(protected controller: UserController = new UserController()) {
@@ -109,6 +110,14 @@ export default class AuthRoutes extends BaseRoutes {
       this.controller.loginUser
     );
 
-    return this._router;
+    this._router.post(
+      "/cookie",
+      [],
+      authorize,
+      this.controller.cookieUser
+    );
+
+    return this._router
   }
+
 }
