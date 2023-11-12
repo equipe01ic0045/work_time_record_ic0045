@@ -2,33 +2,15 @@
 import { Box, Button, Image } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { cookies } from 'next/headers';
+import { useRouter } from "next/navigation";
+import { FiLogOut } from "react-icons/fi";
 
 export default function SideMenu() {
 
-  function parseJwt (token : string) {
-      var base64Url = token.split('.')[1];
-      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-  
-      return JSON.parse(jsonPayload);
-  }
 
-
-  const [parsedJWT, setParsedJWT] = useState<{[key: string] : string}>({});
-  
-  useEffect(() => {
-    const splits = document.cookie.split('=');
-    if(splits.length > 1){
-      setParsedJWT(parseJwt(document.cookie.split("=")[1]))
-    }else{
-      window.location.href = '/auth';
-    }
-  }, []);
-
-
+  const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const iconCase = (
     <svg
@@ -52,31 +34,17 @@ export default function SideMenu() {
     </svg>
   );
 
-  const iconLogout = (<svg fill="#000000" height="36" width="36" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" 
-  viewBox="0 0 384.971 384.971" xmlSpace="preserve">
-<g>
- <g id="Sign_Out">
-   <path d="M180.455,360.91H24.061V24.061h156.394c6.641,0,12.03-5.39,12.03-12.03s-5.39-12.03-12.03-12.03H12.03
-     C5.39,0.001,0,5.39,0,12.031V372.94c0,6.641,5.39,12.03,12.03,12.03h168.424c6.641,0,12.03-5.39,12.03-12.03
-     C192.485,366.299,187.095,360.91,180.455,360.91z"/>
-   <path d="M381.481,184.088l-83.009-84.2c-4.704-4.752-12.319-4.74-17.011,0c-4.704,4.74-4.704,12.439,0,17.179l62.558,63.46H96.279
-     c-6.641,0-12.03,5.438-12.03,12.151c0,6.713,5.39,12.151,12.03,12.151h247.74l-62.558,63.46c-4.704,4.752-4.704,12.439,0,17.179
-     c4.704,4.752,12.319,4.752,17.011,0l82.997-84.2C386.113,196.588,386.161,188.756,381.481,184.088z"/>
- </g>
- <g>
- </g>
- <g>
- </g>
- <g>
- </g>
- <g>
- </g>
- <g>
- </g>
- <g>
- </g>
-</g>
-</svg>)
+  const iconLogout = (
+    <svg xmlns="http://www.w3.org/2000/svg" height="36" viewBox="0 -960 960 960" width="36">
+      <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
+    </svg>
+  );
+
+  const iconUser = (
+    <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
+      <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z" />
+    </svg>
+  )
 
   const pages = [
     {
@@ -96,86 +64,61 @@ export default function SideMenu() {
       name: "Logout",
       link: "/auth",
       icon: iconLogout,
-      onClick: () => document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/',
+      onClick: logoutHandler,
     },
   ];
 
-  function menuToggle(){
-    setIsMenuOpen(!isMenuOpen)
+  function logoutHandler() {
+    document.cookie = `token=; expires=${new Date()}; path=/;`
+    router.push('auth/')
+
   }
+
   return (
-    <>
-      {isMenuOpen ? 
-        (<Box
-        display={"flex"}
-        flexDirection={"column"}
-        alignItems={"center"}
-        justifyContent={"start"}
-        gap={"0.5em"}
-        bg={"#A7A3FF"}
-        padding={"0.5em"}
-        width={"15%"}
-        >
-          <Button
-          borderRadius={"50%"}
-          bg={"#4D47C3"}
-          display={"flex"}
-          flexDirection={"row"}
-          alignItems={"center"}
-          justifyContent={"start"}
-          width={"auto"}
-          marginTop={"10px"}
-          marginLeft={"20px"}
-          onClick={() => menuToggle()}
-          >
-            <ArrowForwardIcon color={"white"} fontSize={"25px"}/>
-          </Button>
-          <Box padding="0 80px 0 80px" >
-            <Image src={parsedJWT.picture_url ?? "https://icons.veryicon.com/png/o/miscellaneous/wizhion/person-20.png"} backgroundColor="white" alt="" border="1px solid #000" borderRadius="50%" boxSizing="content-box"/>
-          </Box>
-          {/* <Box>{parsedJWT.userId}</Box> */}
-          <Link href={'/main/profile/'+parsedJWT.userId+'/info'}>{parsedJWT.full_name}</Link>
-          <Box>{parsedJWT.email}</Box>
-          <Box height="1px" backgroundColor={"black"} width="100%" margin="10px 0 20px 0"></Box>
-        {pages.map((item) => {
-          return (
-            <Link key={item.id} href={`${item.link}`} onClick={item.onClick ?? (() => {})}>
+    <Box
+      display={"flex"}
+      flexDirection={"column"}
+      alignItems={"center"}
+      justifyContent={"start"}
+      gap={"0.5em"}
+      bg={"#A7A3FF"}
+      padding={"0.5em"}
+      width={"15%"}
+    >
+      <Box
+        background='white'
+        borderRadius='50%'
+        padding='0.5em'
+        _hover={{
+          cursor:'pointer',
+          background:'gray.200'
+        }}
+      >
+        {iconUser}
+      </Box>
+      <Box height="1px" backgroundColor={"black"} width="100%" margin="10px 0 20px 0"></Box>
+      {pages.map((item) => {
+        return (
+          <Link key={item.id} href={`${item.link}`} onClick={item.onClick ?? (() => { })}>
             <Button
-            bg={"white"}
-            borderRadius={"5px"}
-            padding={"1em"}
-            display={"flex"}
-            flexDirection={"row"}
-            alignItems={"center"}
-            justifyContent={"start"}
-            gap={"0.5em"}
-            width={"auto"}
-            minWidth={"175px"}
+              bg={"white"}
+              borderRadius={"5px"}
+              padding={"1em"}
+              display={"flex"}
+              flexDirection={"row"}
+              alignItems={"center"}
+              justifyContent={"start"}
+              gap={"0.5em"}
+              width={"auto"}
+              minWidth={"175px"}
             >
-            {item.icon}
-            {item.name}
+              {item.icon}
+              {item.name}
             </Button>
-            </Link>
-          );
-        })}
-        </Box>)
-        : (<Button
-          position={"fixed"}
-          borderRadius={"50%"}
-          bg={"#4D47C3"}
-          display={"flex"}
-          flexDirection={"row"}
-          alignItems={"center"}
-          justifyContent={"start"}
-          width={"auto"}
-          marginTop={"10px"}
-          marginLeft={"20px"}
-          onClick={() => menuToggle()}
-          >
-            <ArrowBackIcon color={"white"} fontSize={"25px"}/>
-          </Button>
-          )
-      }
-    </>
+          </Link>
+        );
+      })}
+    </Box>
+
   );
 }

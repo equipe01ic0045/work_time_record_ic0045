@@ -31,23 +31,33 @@ export default function LoginComponent() {
       })
       .catch((error) => {
         toast({
-          title: "login invalido",
+          title: "Login Invalido",
           description: "",
           status: "error",
           duration: 3000,
           isClosable: true,
           position: "top-right",
         });
+        return
       });
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" gap="0.5em" p="0.5em" w="100%">
-      <Text fontSize="6xl" color="blueviolet">Ponto Certo</Text>
-      <Box display="flex" flexDirection="column">
-        <Box alignItems="flex-start">
-          <Text fontSize="2xl" color="blueviolet">Entrar</Text>
-        </Box>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      gap="0.5em"
+      p="0.5em"
+      w="100%">
+      <Text
+        fontSize="6xl"
+        color="blueviolet">
+        Ponto Certo
+      </Text>
+      <Box
+        display="flex"
+        flexDirection="column">
         <Input
           placeholder="email"
           type="email"
@@ -69,18 +79,40 @@ export default function LoginComponent() {
             color="blueviolet"
             paddingRight="40px"
           />
-          <Box position="absolute" right="10px" top="50%" transform="translateY(-50%)" cursor="pointer" onClick={() => setShowPassword(!showPassword)}>
+          <Box
+            position="absolute"
+            right="10px"
+            top="50%"
+            transform="translateY(-50%)"
+            cursor="pointer"
+            onClick={() =>
+              setShowPassword(!showPassword)}>
             {showPassword ? <ViewOffIcon /> : <ViewIcon />}
           </Box>
         </Box>
-        <Box display="flex" justifyContent="flex-end" alignItems="flex-end" mt="1em">
-          <Link href=""><Text fontSize="sm">Perdeu a senha?</Text></Link>
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          alignItems="flex-end"
+          mt="1em">
+          <Link
+            href="auth/password-recovery">
+            <Text fontSize="sm">
+              Perdeu a senha?
+            </Text>
+          </Link>
         </Box>
-        <Button bg="blueviolet" color="white" onClick={loginHandler} w="100%" mt="1em">login</Button>
+        <Button
+          bg="blueviolet"
+          color="white"
+          onClick={loginHandler}
+          w="100%" mt="1em">
+          Entrar
+        </Button>
         <Box display="flex" flexDirection="column" gap="0.5em" alignItems="center" mt="1em">
           <Box display="flex" flexDirection="row" gap="1em">
             <Text fontSize="sm">Não é registrado?</Text>
-            <Link href="/auth/register"><Text fontSize="sm" color="blue">registre-se</Text></Link>
+            <Link href="auth/register"><Text fontSize="sm" color="blue">registre-se</Text></Link>
           </Box>
           <Text fontSize="sm">Ou continue com:</Text>
           <Box display="flex" flexDirection="row" gap="1em">

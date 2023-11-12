@@ -5,21 +5,36 @@ export interface loginData {
   password: string;
 }
 
-export interface registerData {
+export interface registerUser {
+  fullName: String,
+  cpf: String
   email: string;
-  password: string;
   confirmEmail: string;
+  password: string;
   confirmPassword: string;
 }
 
 export default class UserService {
-  public registerUser(data: registerData) {
-    return axios.post("auth/register", data);
+
+  public registerUser(registerUser: registerUser) {
+
+    const newUser = {
+      full_name: registerUser.fullName,
+      cpf: registerUser.cpf,
+      password: registerUser.password,
+      email: registerUser.email
+    } 
+
+    console.log(newUser)
+
+    return axios.post("auth/register", newUser);
   }
 
   public loginUser(data: loginData) {
-    return axios.post("auth/login", data, {
-      withCredentials: true,
-    });
+    return axios.post("auth/login", data);
+  }
+
+  public  passwordRecoveryUser(cpf: number){
+
   }
 }
