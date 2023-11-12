@@ -3,10 +3,13 @@ import { Box, Button, Image } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 import React, { useState } from "react";
+import { cookies } from 'next/headers';
+import { useRouter } from "next/navigation";
 
 export default function SideMenu() {
 
-
+  
+  const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const iconCase = (
     <svg
@@ -48,9 +51,15 @@ export default function SideMenu() {
       name: "Logout",
       link: "/auth",
       icon: '',
-      onClick: () => { },
+      onClick: logoutHandler,
     },
   ];
+
+  function logoutHandler() {
+    document.cookie = `token=; expires=${new Date()}; path=/;`
+    router.push('auth/')
+    
+  }
 
   return (
     <Box
