@@ -1,6 +1,6 @@
 import axios from "./axios";
 
-export interface loginData {
+export interface loginUser {
   email: string;
   password: string;
 }
@@ -23,18 +23,30 @@ export default class UserService {
       cpf: registerUser.cpf,
       password: registerUser.password,
       email: registerUser.email
-    } 
+    }
+    return axios.post("/register", newUser);
 
-    console.log(newUser)
-
-    return axios.post("register", newUser);
   }
 
-  public loginUser(data: loginData) {
-    return axios.post("login", data);
+  public loginUser(loginUser: loginUser) {
+    return axios.post("/login", loginUser);
   }
 
-  public  passwordRecoveryUser(cpf: number){
+  public passwordRecoveryUser(cpf: number) {
 
+  }
+
+  public getUser(userId: number) {
+    return axios.get(`/user/${userId}`)
+  }
+
+  public async getUserByEmail(userEmail: string) {
+    const result = await axios.post(
+      '/user',
+      { email: userEmail },
+      { withCredentials: true, }
+    )
+
+    return result.data.data
   }
 }

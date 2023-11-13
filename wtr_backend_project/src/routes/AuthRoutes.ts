@@ -3,7 +3,7 @@
  * tags:
  *   name: User
  *   description: User routes
-*/
+ */
 
 import UserController from "../controllers/UserController";
 import BaseRoutes from "./abstract/BaseRoutes";
@@ -110,26 +110,6 @@ export default class AuthRoutes extends BaseRoutes {
       this.controller.loginUser
     );
 
-
-    /**
-     * @swagger
-     * /cookie:
-     *   get:
-     *     summary: checks if user cookie is valid
-     *     tags: [User]
-     *     responses:
-     *       '201':
-     *         description: Cookie works.
-     */
-    this._router.get(
-      "/cookie",
-      [],
-      this.validate,
-      authorize,
-      this.controller.cookieUser
-    );
-
-    return this._router
+    return this._router;
   }
-
 }

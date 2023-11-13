@@ -71,14 +71,24 @@ export default function ProjectsTable({
                   <Link
                     href={`/main/projects/info/${projectData.project.project_id}`}
                   >
-                    <Button colorScheme="purple" bgColor="#4D47C3">{projectData.project.project_name}</Button>
+                    <Button 
+                    width='125px'
+                    colorScheme="purple" 
+                    bgColor="#4D47C3"
+                    overflow="hidden" 
+                    whiteSpace='nowrap'
+                    textOverflow="ellipsis"
+                    padding='1em'
+                    >
+                      {projectData.project.project_name}
+                      </Button>
                   </Link>
                 </Td>
                 <Td>{projectData.project.owner.full_name}</Td>
                 <Td>{commercialTimeFormat}</Td>
                 <Td>
                   <Link
-                    href={`/main/projects/info/${projectData.project.project_id}/manageColaborator`}
+                    href={`/main/projects/info/${projectData.project.project_id}/collaborators`}
                   >
                     <Button
                       width={"auto"}

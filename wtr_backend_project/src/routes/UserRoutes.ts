@@ -39,6 +39,16 @@ export default class UserRoutes extends BaseRoutes {
      *       '404':
      *         description: Not found. User with the specified username does not exist.
      */
+
+    this._router.post(
+      "/",
+      [
+        body("email").isEmail().withMessage("Email inválido"),
+      ],
+      this.validate,
+      this.controller.getUserByEmail
+    );
+
     this._router.get(
       "/:user_id",
       [

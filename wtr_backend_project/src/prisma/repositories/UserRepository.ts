@@ -44,6 +44,15 @@ export default class UserRepository extends BaseRepository {
     });
   }
 
+  async findUserByUserEmail(
+    email: string
+  ): Promise<Omit<user, "password"> | null> {
+    return this.client.user.findUnique({
+      where: { email },
+      select: this.findUserFields,
+    });
+  }
+
   async findUserByEmail(email: string): Promise<user | null> {
     return this.client.user.findUnique({
       where: { email },

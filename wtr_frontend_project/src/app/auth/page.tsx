@@ -94,11 +94,19 @@ export default function LoginComponent() {
           display="flex"
           justifyContent="flex-end"
           alignItems="flex-end"
-          mt="1em">
-          <Link
-            href="auth/password-recovery">
+          mt="1em"
+          gap='1em'
+          >
             <Text fontSize="sm">
               Perdeu a senha?
+            </Text>
+          <Link
+            href="auth/password-recovery">
+            <Text 
+            color='blue'
+            fontSize="sm"
+            >
+              Clique Aqui
             </Text>
           </Link>
         </Box>
@@ -111,8 +119,8 @@ export default function LoginComponent() {
         </Button>
         <Box display="flex" flexDirection="column" gap="0.5em" alignItems="center" mt="1em">
           <Box display="flex" flexDirection="row" gap="1em">
-            <Text fontSize="sm">Não é registrado?</Text>
-            <Link href="auth/register"><Text fontSize="sm" color="blue">registre-se</Text></Link>
+            <Text fontSize="sm">Não é registrado ?</Text>
+            <Link href="auth/register"><Text fontSize="sm" color="blue">Registre-se</Text></Link>
           </Box>
           <Text fontSize="sm">Ou continue com:</Text>
           <Box display="flex" flexDirection="row" gap="1em">
