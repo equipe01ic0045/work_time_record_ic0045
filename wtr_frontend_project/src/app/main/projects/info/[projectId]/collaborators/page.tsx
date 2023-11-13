@@ -44,7 +44,7 @@ export default function GerenciarColaborador({ params }: any) {
 
       })
 
-  }, []);
+  }, [collaboratorList]);
 
   const plusIcon = (
     <svg
@@ -101,7 +101,7 @@ export default function GerenciarColaborador({ params }: any) {
             </Button>
           </Link>
           <Box maxW="1000px" width="100%" borderWidth="1px" bg="#F0EFFF">
-            <CollaboratorsTable collaboratorList={collaboratorList} />
+            <CollaboratorsTable projectId={projectId} collaboratorList={collaboratorList} />
           </Box>
         </Box>
       </Box>

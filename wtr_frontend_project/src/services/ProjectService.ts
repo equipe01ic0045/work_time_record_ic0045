@@ -129,4 +129,11 @@ export default class ProjectService {
 
     );
   }
+
+  public deleteUserInProject(projectId: number, userId: number) {
+    return axios.delete(
+      `/projects/${projectId}/${userId}`,
+      { withCredentials: true },
+    );
+  }
 }
