@@ -83,7 +83,10 @@ export default function SideMenu() {
       gap={"0.5em"}
       bg={"#A7A3FF"}
       padding={"0.5em"}
+      minW={"fit-content"}
       width={"15%"}
+      flexWrap={"wrap"}
+      
     >
       <Box
         background='white'
@@ -96,7 +99,10 @@ export default function SideMenu() {
       >
         {iconUser}
       </Box>
-      <Box height="1px" backgroundColor={"black"} width="100%" margin="10px 0 20px 0"></Box>
+      <Box 
+      height="1px" 
+      backgroundColor={"black"} 
+      width="100%" margin="10px 0 20px 0"></Box>
       {pages.map((item) => {
         return (
           <Link key={item.id} href={`${item.link}`} onClick={item.onClick ?? (() => { })}>

@@ -16,9 +16,13 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import ProjectService from "@/services/ProjectService";
+import { useToast } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 
 export default function ProjectInfo({ params }: any) {
   const projectService = new ProjectService()
+  const toast = useToast();
+  const router = useRouter();
 
   const [newProject, setNewProject] = useState({
     projectName: "",
@@ -54,11 +58,27 @@ export default function ProjectInfo({ params }: any) {
   function registerNewProject() {
     console.log(newProject)
     projectService.createNewProject(newProject)
-      .then(() => {
-        console.log('ok')
+      .then((response) => {
+        toast({
+          title: "Projeto Criado",
+          description: "",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+
+        return router.push("/main/projects")
       })
-      .catch(() => {
-        console.log('error')
+      .catch((error) => {
+        toast({
+          title: "Falha em Criar Projeto",
+          description: "",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
       })
   }
 
@@ -93,12 +113,12 @@ export default function ProjectInfo({ params }: any) {
         </InputGroup>
 
 
-        <Checkbox>
+        {/* <Checkbox>
           Precisa de Localização
         </Checkbox>
         <Checkbox>
           Precisa de Tempo Comercial
-        </Checkbox>
+        </Checkbox> */}
         <InputGroup
           display='flex'
           flexDirection='column'
