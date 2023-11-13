@@ -86,4 +86,10 @@ export default class TimeRecordService {
     );
     return data.data;
   }
+
+  async getUserProjectTimeRecordsInfo(){
+    const result = await axios.get("/projects/time-records/info/list/user");
+    return result.data.data;
+  }
+
 }

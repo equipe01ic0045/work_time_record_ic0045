@@ -113,4 +113,35 @@ export default class TimeRecordsRepository extends BaseRepository {
       },
     });
   }
+
+  async findUserProjectTimeRecords(user_id: number) {
+    return this.client.user_project_role.findMany({
+      where: { user_id },
+      select: {
+        project: {
+          select: {
+            project_id: true,
+            project_name: true,
+            owner: {
+              select: {
+                full_name: true,
+                email: true,
+              },
+            },
+            time_records: {
+              orderBy: {
+                created_at: 'desc', 
+              },
+              take: 1, 
+              select: {
+                check_in_timestamp:true,
+                check_out_timestamp: true
+              },
+            },    
+          },
+        },
+        open_check_in: true,
+      },
+    });
+  }
 }

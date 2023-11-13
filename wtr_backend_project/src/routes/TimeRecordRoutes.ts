@@ -241,7 +241,6 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
       this.controller.detailedCheckOut
     );
 
-
     /**
      * @swagger
      * /projects/time-records/info/{time_record_id}:
@@ -271,6 +270,21 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
       this.validate,
       this.controller.getTimeRecordInfo
     );
+
+
+    /**
+     * @swagger
+     * /projects/time-records/info/list/user:
+     *   get:
+     *     summary: Get a user projects with last time record
+     *     tags: [Time Records]
+     *     security:
+     *       - CookieAuth: []
+     *     responses:
+     *       '200':
+     *         description: Successfully returned the proejcts with time records.
+     */
+    this._router.get("/info/list/user", this.controller.getTimeRecordsList);
 
     return this._router;
   }

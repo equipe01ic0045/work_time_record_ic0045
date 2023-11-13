@@ -172,4 +172,10 @@ export default class TimeRecordService {
 
     return timeRecord;
   }
+
+
+  async getUserProjectTimeRecords(userId:number) {
+    const timeRecords = await this.timeRecordsRepository.findUserProjectTimeRecords(userId)
+    return timeRecords
+  }
 }

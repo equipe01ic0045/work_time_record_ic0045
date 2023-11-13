@@ -44,7 +44,7 @@ export default function GerenciarColaborador({ params }: any) {
 
       })
 
-  }, [collaboratorList]);
+  }, []);
 
   const plusIcon = (
     <svg

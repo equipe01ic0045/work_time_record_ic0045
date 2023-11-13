@@ -168,7 +168,7 @@ export default function TimeRecordInfoPage(props: TimeRecordInfoPageProps) {
                 <Text fontWeight="bold">Data de início:</Text>
                 <Text>{checkInDate?.format("DD/MM/YYYY HH:mm")}</Text>
                 <Text fontWeight="bold">Data de fim:</Text>
-                <Text>{checkOutDate?.format("DD/MM/YYYY HH:mm")}</Text>
+                <Text>{timeRecord && timeRecord.check_out_timestamp? checkOutDate.format("DD/MM/YYYY HH:mm"): null}</Text>
                 <Text fontWeight="bold">Duração:</Text>
                 <Text>
                   {dayjs

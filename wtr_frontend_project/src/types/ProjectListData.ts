@@ -13,3 +13,21 @@ export default interface ProjectListData {
   };
   open_check_in: boolean;
 }
+
+type TimeRecordSnippet = {
+  check_in_timestamp: string;
+  check_out_timestamp: string;
+};
+
+export interface TimeRecordListData {
+  project: {
+    project_id: number;
+    project_name: string;
+    owner: {
+      full_name: string;
+      email: string;
+    };
+    time_records: TimeRecordSnippet[]
+  };
+  open_check_in: boolean;
+}

@@ -135,4 +135,21 @@ export default class TimeRecordController extends BaseController {
       next(error);
     }
   }
+
+  async getTimeRecordsList(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const timeRecords = await timeRecordService.getUserProjectTimeRecords(
+        req.user!.userId
+      );
+      new DataRetrievedResponse().send(res, timeRecords);
+    } catch (error) {
+      next(error);
+    }
+
+  }
+
 }

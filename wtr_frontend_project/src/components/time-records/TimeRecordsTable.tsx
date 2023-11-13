@@ -11,12 +11,12 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import ProjectListData from "@/types/ProjectListData";
+import {TimeRecordListData} from "@/types/ProjectListData";
 import { useEffect, useState } from "react";
 import TimeRecordService from "@/services/TimeRecordService";
 import { SimpleTimeRecordData } from "@/types/TimeRecordData";
 
-function ProjectRow({ projectData }: { projectData: ProjectListData }) {
+function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
   const [hasOpenCheckIn, setHasOpenCheckIn] = useState<boolean>(projectData.open_check_in);
   const [recordNextAction, setRecordNextAction] = useState<string | null>();
   const toast = useToast();
@@ -66,8 +66,9 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
   return (
     <Tr key={projectData.project.project_id} borderBottom="2px" borderColor="gray.300">
       <Td>{projectData.project.project_name}</Td>
-      <Td>{projectData.project.owner.email}</Td>
-      <Td>--</Td>
+      <Td>{projectData.project.owner.full_name}</Td>
+      <Td>{projectData.project.time_records[0].check_in_timestamp}</Td>
+      <Td>{projectData.project.time_records[0].check_out_timestamp}</Td>
       <Td>
         <HStack gap={2}>
           <Tooltip label={`${recordNextAction} rápido`}>
@@ -113,7 +114,7 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
 export default function TimeRecordsTable({
   projectsList,
 }: {
-  projectsList: ProjectListData[],
+  projectsList: TimeRecordListData[],
 }) {
   return (
     <TableContainer width={"100%"}>
@@ -122,7 +123,8 @@ export default function TimeRecordsTable({
           <Tr>
             <Th textColor={"white"}>NOME DO PROJETO</Th>
             <Th textColor={"white"}>PROPRIETÁRIO</Th>
-            <Th textColor={"white"}>ÚLTIMO REGISTRO</Th>
+            <Th textColor={"white"}>ÚLTIMO CHECKIN</Th>
+            <Th textColor={"white"}>ÚLTIMO CHECKOUT</Th>
             <Th textColor={"white"}>REGISTRAR</Th>
             <Th textColor={"white"}>REGISTROS FEITOS</Th>
           </Tr>

@@ -182,13 +182,13 @@ export default function ProjectInfo({ params }: any) {
                 <Heading size='xs' textTransform='uppercase'>
                   Tempo Comercial ( Inicio )
                 </Heading>
-                <Input name="commercial_time_start" onChange={inputHandler} value={projectInfo?.commercial_time_start} />
+                <Input name="commercial_time_start" type="number" onChange={inputHandler} value={projectInfo?.commercial_time_start} />
               </Box>
               <Box style={styleBox}>
                 <Heading size='xs' textTransform='uppercase'>
                   Tempo Comercial ( Final )
                 </Heading>
-                <Input name="commercial_time_end" onChange={inputHandler} value={projectInfo?.commercial_time_end} />
+                <Input name="commercial_time_end" type="number" onChange={inputHandler} value={projectInfo?.commercial_time_end} />
               </Box>
               <Box style={styleBox}>
                 <Heading size='xs' textTransform='uppercase'>
