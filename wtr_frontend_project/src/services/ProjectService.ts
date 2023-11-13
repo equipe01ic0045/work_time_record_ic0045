@@ -28,7 +28,14 @@ export interface editProject {
 }
 
 export interface deleteProject {
-  projectId?: number
+  projectId?: string
+}
+
+export interface addUserProject {
+  userId?: number,
+  userEmail?: string,
+  userRole?: string,
+  userHoursPerWeek?: number
 }
 
 export default class ProjectService {
@@ -48,14 +55,14 @@ export default class ProjectService {
     return result.data.data as ProjectUsers[]
   }
 
-  public async postProjectUsers(projectId: number, user_email: string, user_role: string, user_hours_per_week: number) {
-    const { data } = await axios.post("projects/" + projectId + "/users",
-      {
-        user_email: user_email,
-        user_role: user_role,
-        user_hours_per_week: user_hours_per_week
-      }
-    )
+  public async postProjectUsers(projectId: string, user: addUserProject) {
+    const addUserData = {
+      user_id: user.userId,
+      user_email: user.userEmail,
+      user_role: user.userRole,
+      user_hours_per_week: Number(user.userHoursPerWeek)
+    }
+    const { data } = await axios.post("projects/" + projectId + "/users", addUserData)
     return data
   }
 

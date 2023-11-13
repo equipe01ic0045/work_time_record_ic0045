@@ -67,13 +67,13 @@ export default function RegistrationComponent() {
         .catch((error) => {
           if (error.response.status === 409) {
             toast({
-              title: "Email já Registrado",
+              title: "Email ou CPF já Registrado",
               status: "warning",
               duration: 3000,
               isClosable: true,
               position: "top-right",
             });
-
+            return
           }
           if (error.response.status === 400) {
             toast({
@@ -83,7 +83,7 @@ export default function RegistrationComponent() {
               isClosable: true,
               position: "top-right",
             });
-
+            return
           }
           else {
             toast({
@@ -93,7 +93,7 @@ export default function RegistrationComponent() {
               isClosable: true,
               position: "top-right",
             });
-
+            return
           }
 
         });

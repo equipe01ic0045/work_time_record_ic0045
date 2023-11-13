@@ -35,4 +35,18 @@ export default class UserService {
   public passwordRecoveryUser(cpf: number) {
 
   }
+
+  public getUser(userId: number) {
+    return axios.get(`/user/${userId}`)
+  }
+
+  public async getUserByEmail(userEmail: string) {
+    const result = await axios.post(
+      '/user',
+      { email: userEmail },
+      { withCredentials: true, }
+    )
+
+    return result.data.data
+  }
 }
