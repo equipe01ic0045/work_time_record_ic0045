@@ -8,7 +8,7 @@
 import { Router } from "express";
 import TimeRecordController from "../controllers/TimeRecordController";
 import ProjectRelatedRoutes from "./abstract/ProjectRelatedRoutes";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import multer from "multer";
 
 export default class TimeRecordRoutes extends ProjectRelatedRoutes {
@@ -239,6 +239,37 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
       [...this.projectIdValidation],
       this.validate,
       this.controller.detailedCheckOut
+    );
+
+
+    /**
+     * @swagger
+     * /projects/time-records/info/{time_record_id}:
+     *   get:
+     *     summary: Get a time record
+     *     tags: [Time Records]
+     *     security:
+     *       - CookieAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: time_record_id
+     *         required: true
+     *         description: The ID of the time record.
+     *         schema:
+     *           type: string
+     *     responses:
+     *       '200':
+     *         description: Successfully returned the time record.
+     */
+    this._router.get(
+      "/info/:time_record_id",
+      [
+        param("time_record_id")
+          .isInt()
+          .withMessage("ID do time record deve ser um inteiro"),
+      ],
+      this.validate,
+      this.controller.getTimeRecordInfo
     );
 
     return this._router;

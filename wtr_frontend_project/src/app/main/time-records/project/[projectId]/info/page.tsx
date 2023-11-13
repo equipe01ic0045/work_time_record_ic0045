@@ -1,19 +1,39 @@
-'use client';
+"use client";
 import HeaderBox from "@/components/global/HeaderBox";
 import TimeRecordRow from "@/components/time-records/TimeRecordRow";
 import ProjectService from "@/services/ProjectService";
 import TimeRecordService from "@/services/TimeRecordService";
 import ProjectInfo from "@/types/ProjectInfo";
-import TimeRecord from "@/types/TimeRecord";
+import { TimeRecord } from "@/types/TimeRecordInfoData";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
-import { Box, Button, Flex, HStack, Heading, IconButton, Input, Link, Table, TableContainer, Tbody, Th, Thead, Tr, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Heading,
+  IconButton,
+  Input,
+  Link,
+  Table,
+  TableContainer,
+  Tbody,
+  Th,
+  Thead,
+  Tr,
+  useToast,
+} from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Page({ params }: any) {
   const [timeRecords, setTimeRecords] = useState<TimeRecord[]>([]);
-  const [fromDate, setFromDate] = useState<string>(dayjs().startOf('month').format('YYYY-MM-DD'));
-  const [toDate, setToDate] = useState<string>(dayjs().endOf('month').format('YYYY-MM-DD'));
+  const [fromDate, setFromDate] = useState<string>(
+    dayjs().startOf("month").format("YYYY-MM-DD")
+  );
+  const [toDate, setToDate] = useState<string>(
+    dayjs().endOf("month").format("YYYY-MM-DD")
+  );
   const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
   const toast = useToast();
   const timeRecordService = useMemo(() => new TimeRecordService(), []);
@@ -33,7 +53,6 @@ export default function Page({ params }: any) {
           position: "top-right",
         });
       }
-
     };
 
     fetchData();
@@ -47,7 +66,7 @@ export default function Page({ params }: any) {
 
     // setTimeRecords(data.results);
     setIsLoadingSearch(false);
-  }
+  };
 
   const projectService = new ProjectService();
   const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
@@ -65,7 +84,26 @@ export default function Page({ params }: any) {
 
   return (
     <Box w={"100%"}>
-      <HeaderBox title={<><Link href={`/main/time-records`}>Registros</Link>/ {projectInfo ? <Link href={'/main/time-records/project/' + params.projectId.toString() + '/info/'}>{projectInfo.project_name}</Link> : "...loading"}</>} />
+      <HeaderBox
+        title={
+          <>
+            <Link href={`/main/time-records`}>Registros</Link>/{" "}
+            {projectInfo ? (
+              <Link
+                href={
+                  "/main/time-records/project/" +
+                  params.projectId.toString() +
+                  "/info/"
+                }
+              >
+                {projectInfo.project_name}
+              </Link>
+            ) : (
+              "...loading"
+            )}
+          </>
+        }
+      />
 
       <Box
         display={"flex"}
@@ -75,20 +113,28 @@ export default function Page({ params }: any) {
         gap={"2em"}
       >
         <TableContainer>
-          <Flex marginY={10} minWidth="fit-content" alignItems="center" gap="2" justifyContent={"space-between"}>
+          <Flex
+            marginY={10}
+            minWidth="fit-content"
+            alignItems="center"
+            gap="2"
+            justifyContent={"space-between"}
+          >
             <HStack bg="#F0EFFF" rounded="md" padding={3} spacing={2}>
               <Input
                 bg="white"
                 type="date"
                 width="min-content"
                 value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)} />
+                onChange={(e) => setFromDate(e.target.value)}
+              />
               <Input
                 bg="white"
                 type="date"
                 width="min-content"
                 value={toDate}
-                onChange={e => setToDate(e.target.value)} />
+                onChange={(e) => setToDate(e.target.value)}
+              />
               <IconButton
                 bg="#4D47C3"
                 colorScheme="#4D47C3"
@@ -96,7 +142,8 @@ export default function Page({ params }: any) {
                 icon={<Search2Icon />}
                 size="md"
                 isLoading={isLoadingSearch}
-                onClick={filterByDate} />
+                onClick={filterByDate}
+              />
             </HStack>
             <Button
               size="lg"
@@ -121,12 +168,16 @@ export default function Page({ params }: any) {
             </Thead>
             <Tbody>
               {timeRecords.map((record) => (
-                <TimeRecordRow key={record.time_record_id} projectId={params.projectId} record={record} />
+                <TimeRecordRow
+                  key={record.time_record_id}
+                  projectId={params.projectId}
+                  record={record}
+                />
               ))}
             </Tbody>
           </Table>
         </TableContainer>
       </Box>
     </Box>
-  )
+  );
 }

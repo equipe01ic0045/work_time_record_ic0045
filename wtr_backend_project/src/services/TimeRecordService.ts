@@ -161,4 +161,15 @@ export default class TimeRecordService {
 
     return updatedRecord;
   }
+
+  async getTimeRecordInfo(timeRecordId: number) {
+    const timeRecord =
+      await this.timeRecordsRepository.findTimeRecordInfo(timeRecordId);
+
+    if (!timeRecord) {
+      throw new NotFoundError("time-record");
+    }
+
+    return timeRecord;
+  }
 }

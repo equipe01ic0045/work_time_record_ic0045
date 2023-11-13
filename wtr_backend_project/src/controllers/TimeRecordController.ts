@@ -103,7 +103,6 @@ export default class TimeRecordController extends BaseController {
     const { project_id } = req.params;
     const { check_out_timestamp, user_message } = req.body;
 
-
     try {
       let checkOutTimestamp: Date = new Date(check_out_timestamp);
       await timeRecordService.detailedCheckOut(
@@ -113,9 +112,25 @@ export default class TimeRecordController extends BaseController {
         user_message,
         req.file?.originalname,
         req.file?.mimetype,
-        req.file?.buffer,
+        req.file?.buffer
       );
       new ResourceCreatedResponse().send(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getTimeRecordInfo(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const { time_record_id } = req.params;
+    try {
+      const timeRecord = await timeRecordService.getTimeRecordInfo(
+        parseInt(time_record_id)
+      );
+      new DataRetrievedResponse().send(res, timeRecord);
     } catch (error) {
       next(error);
     }

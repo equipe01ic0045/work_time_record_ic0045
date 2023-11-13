@@ -77,4 +77,40 @@ export default class TimeRecordsRepository extends BaseRepository {
       where: { time_record_id },
     });
   }
+
+  async findTimeRecordInfo(time_record_id: number) {
+    return this.client.time_record.findUnique({
+      where: { time_record_id },
+      select: {
+        time_record_id: true,
+        user_id: true,
+        project_id: true,
+        check_in_timestamp: true,
+        check_out_timestamp: true,
+        location: true,
+        created_at: true,
+        time_record_justification: {
+          select: {
+            justification_id: true,
+            time_record_id: true,
+            project_id: true,
+            user_id: true,
+            reviewer_id: true,
+            user_message: true,
+            reviewer_message: true,
+            justification_type: true,
+            status: true,
+            created_at: true,
+            reviewer: {
+              select: {
+                full_name: true,
+                cpf: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }
