@@ -46,6 +46,16 @@ export default class UserController extends BaseController {
     }
   }
 
+  async getUserByEmail(req: Request, res: Response, next: NextFunction) {
+    const { user_email } = req.params;
+    try {
+      const user = await userService.getUserByEmail(user_email);
+      new DataRetrievedResponse().send(res, user);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async updateUser(req: AuthorizedRequest, res: Response, next: NextFunction) {
     const { full_name, email, password } = req.body;
     try {

@@ -72,6 +72,15 @@ export default class UserService {
     return foundUser;
   }
 
+  async getUserByEmail(userEmail: string): Promise<Omit<user, "password">> {
+    const foundUser = await this.userRepository.findUserByEmail(userEmail);
+    if (!foundUser) {
+      throw new NotFoundError("user");
+    }
+
+    return foundUser;
+  }
+
   async updateUser(
     userId: number,
     fullName: string,

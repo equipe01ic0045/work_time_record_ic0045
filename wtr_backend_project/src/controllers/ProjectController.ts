@@ -8,6 +8,9 @@ import {
   DataRetrievedResponse,
 } from "../types/responses";
 
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../config";
+
 export default class ProjectController extends BaseController {
   async createNewProject(
     req: AuthorizedRequest,
@@ -24,6 +27,8 @@ export default class ProjectController extends BaseController {
       commercial_time_start,
       commercial_time_end,
     } = req.body;
+    
+
     try {
       await projectService.createProject(
         req.user!.userId,

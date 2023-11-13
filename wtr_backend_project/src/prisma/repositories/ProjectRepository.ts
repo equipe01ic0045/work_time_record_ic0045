@@ -151,6 +151,7 @@ export default class ProjectRepository extends BaseRepository {
             user_id: true,
             full_name: true,
             email: true,
+            cpf: true
           },
         },
         role: true,

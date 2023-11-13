@@ -143,6 +143,15 @@ export default class UserRoutes extends BaseRoutes {
       this.controller.getUser
     );
 
+    this._router.get(
+      "/",
+      [
+        body("email").isEmail().withMessage("Email inválido"),
+      ],
+      this.validate,
+      this.controller.getUserByEmail
+    );
+
     /**
      * @swagger
      * /user/edit:
