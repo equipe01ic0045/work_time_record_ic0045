@@ -7,43 +7,57 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  user_id            Int                 @id @default(autoincrement())
-  picture_url        String?
-  full_name          String
-  password           String
-  email              String              @unique
-  cpf                String              @unique
-  created_at         DateTime            @default(now())
-  updated_at         DateTime            @default(now())
-  user_project_roles user_project_role[]
-  time_records       time_record[]
-  projects           project[]
-}
-
-model project {
-  project_id               Int                 @id @default(autoincrement())
-  project_name             String              @unique
-  project_description      String              @default("")
-  owner_id                 Int
-  location_required        Boolean
-  location                 String?
-  timezone                 String
-  commercial_time_required Boolean
-  commercial_time_start    Int?
-  commercial_time_end      Int?
-  users_count              Int                 @default(0)
-  created_at               DateTime            @default(now())
-  updated_at               DateTime            @default(now())
-  owner                    user                @relation(fields: [owner_id], references: [user_id])
-  user_project_roles       user_project_role[]
-  time_records             time_record[]
-}
-
 enum UserRole {
   ADMIN
   MANAGER
   USER
+}
+
+enum JustificationReviewStatus {
+  APPROVED
+  PENDING
+  DENIED
+  CANCELLED
+}
+
+enum JustificationType {
+  CHECKIN
+  CHECKOUT
+}
+
+model user {
+  user_id                     Int                         @id @default(autoincrement())
+  cpf                         String                      @unique
+  email                       String                      @unique
+  full_name                   String
+  password                    String
+  created_at                  DateTime                    @default(now())
+  updated_at                  DateTime                    @default(now())
+  projects                    project[]
+  user_project_roles          user_project_role[]
+  time_records                time_record[]
+  time_records_justifications time_record_justification[] @relation(name: "time_record_justification_user_colaborator_fk")
+  time_record_justifications  time_record_justification?  @relation(name: "time_record_justification_user_reviewer_fk")
+}
+
+model project {
+  project_id                  Int                         @id @default(autoincrement())
+  project_name                String                      @unique
+  project_description         String                      @default("")
+  owner_id                    Int
+  location_required           Boolean
+  location                    String?
+  timezone                    String
+  commercial_time_required    Boolean
+  commercial_time_start       Int?
+  commercial_time_end         Int?
+  users_count                 Int                         @default(0)
+  created_at                  DateTime                    @default(now())
+  updated_at                  DateTime                    @default(now())
+  owner                       user                        @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
+  user_project_roles          user_project_role[]
+  time_records                time_record[]
+  time_records_justifications time_record_justification[]
 }
 
 model user_project_role {
@@ -55,30 +69,56 @@ model user_project_role {
   created_at           DateTime @default(now())
   updated_at           DateTime @default(now())
   open_check_in        Boolean  @default(false)
-  user                 user     @relation(fields: [user_id], references: [user_id])
+  user                 user     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   project              project  @relation(fields: [project_id], references: [project_id], onDelete: Cascade)
 
-  @@unique([user_id, project_id]) // a single user record per project
+  @@unique([user_id, project_id]) // A single user record per project
 }
 
 model time_record {
-  time_record_id      Int                @id @default(autoincrement())
-  user_id             Int
-  project_id          Int
-  check_in_timestamp  DateTime           @default(now())
-  check_out_timestamp DateTime?
-  user_message        String?
-  location            String?
-  created_at          DateTime           @default(now())
-  updated_at          DateTime           @default(now())
-  user                user               @relation(fields: [user_id], references: [user_id])
-  project             project            @relation(fields: [project_id], references: [project_id], onDelete: Cascade)
-  absense_documents   absense_document[]
+  time_record_id            Int                         @id @default(autoincrement())
+  user_id                   Int
+  project_id                Int
+  check_in_timestamp        DateTime                    @default(now())
+  check_out_timestamp       DateTime?
+  location                  String?
+  created_at                DateTime                    @default(now())
+  updated_at                DateTime                    @default(now())
+  user                      user                        @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  project                   project                     @relation(fields: [project_id], references: [project_id])
+  time_record_justification time_record_justification[]
 }
 
-model absense_document {
-  absense_document_id Int         @id @default(autoincrement())
-  time_record_id      Int
-  document_file       Bytes
-  time_record         time_record @relation(fields: [absense_document_id], references: [time_record_id])
+model justification_document {
+  justification_document_id Int                       @id @default(autoincrement())
+  document_file             Bytes
+  file_name                 String
+  justification_id          Int                       @unique()
+  created_at                DateTime                  @default(now())
+  updated_at                DateTime                  @default(now())
+  time_record_justification time_record_justification @relation(fields: [justification_id], references: [justification_id])
+}
+
+model time_record_justification {
+  justification_id       Int                       @id @default(autoincrement())
+  colaborator_id         Int
+  reviewer_id            Int?                      @unique()
+  project_id             Int
+  time_record_id         Int
+  status                 JustificationReviewStatus
+  user_message           String?
+  manager_message        String?
+  justification_type     JustificationType
+  timestamp              DateTime
+  updated_location       String?
+  justification_document justification_document?
+  created_at             DateTime                  @default(now())
+  updated_at             DateTime                  @default(now())
+  colaborator            user                      @relation(name: "time_record_justification_user_colaborator_fk", fields: [colaborator_id], references: [user_id])
+  reviewer               user?                     @relation(name: "time_record_justification_user_reviewer_fk", fields: [reviewer_id], references: [user_id])
+  project                project                   @relation(fields: [project_id], references: [project_id])
+  time_record            time_record               @relation(fields: [time_record_id], references: [time_record_id])
+
+  @@unique([justification_id, reviewer_id])
+  @@unique([justification_id, time_record_id])
 }

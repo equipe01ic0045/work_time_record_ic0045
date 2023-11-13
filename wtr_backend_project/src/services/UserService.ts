@@ -7,7 +7,7 @@ import NotFoundError from "../types/errors/NotFoundError";
 import { JWT_SECRET, JWT_DEFAULT_SALT_ROUNDS } from "../config";
 import UserRepository from "../prisma/repositories/UserRepository";
 
-export default class AuthService {
+export default class UserService {
   private userRepository: UserRepository;
   constructor() {
     this.userRepository = new UserRepository();
@@ -23,9 +23,14 @@ export default class AuthService {
     password: string,
     cpf: string
   ): Promise<user> {
-    const foundUser = await this.userRepository.findUserByEmail(email);
-    if (!!foundUser) {
+    const emailUser = await this.userRepository.findUserByEmail(email);
+    if (emailUser) {
       throw new ConflictError("email");
+    }
+
+    const cpfUser = await this.userRepository.findUserByCPF(cpf);
+    if (cpfUser) {
+      throw new ConflictError("cpf");
     }
 
     const hashedPassword = await bcrypt.hash(password, JWT_DEFAULT_SALT_ROUNDS);
@@ -37,7 +42,7 @@ export default class AuthService {
       email
     );
 
-    if (!!foundUser) {
+    if (foundUser) {
       const isValidLogin = await this.validateLogin(password, foundUser);
       if (!isValidLogin) {
         throw new ValidationError(
@@ -45,17 +50,51 @@ export default class AuthService {
         );
       }
       return jwt.sign(
-            { 
-                userId: foundUser.user_id,
-                picture_url: foundUser.picture_url,
-                full_name : foundUser.full_name,
-                email : foundUser.email,
-            }, 
-            JWT_SECRET, 
-            { expiresIn: "1d"}
-       );
+        {
+          userId: foundUser.user_id,
+          full_name: foundUser.full_name,
+          email: foundUser.email,
+        },
+        JWT_SECRET,
+        { expiresIn: "1d" }
+      );
     } else {
       throw new NotFoundError("user");
     }
+  }
+
+  async getUser(userId: number): Promise<Omit<user, "password">> {
+    const foundUser = await this.userRepository.findUserByUserId(userId);
+    if (!foundUser) {
+      throw new NotFoundError("user");
+    }
+
+    return foundUser;
+  }
+
+  async getUserByEmail(userEmail: string): Promise<Omit<user, "password">> {
+    const foundUser = await this.userRepository.findUserByEmail(userEmail);
+    if (!foundUser) {
+      throw new NotFoundError("user");
+    }
+
+    return foundUser;
+  }
+
+  async updateUser(
+    userId: number,
+    fullName: string,
+    email: string,
+    password: string
+  ) {
+    const foundUser = await this.userRepository.findUserByUserId(userId);
+    if (!foundUser) {
+      throw new NotFoundError("user");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, JWT_DEFAULT_SALT_ROUNDS);
+    await this.userRepository.updateUser(userId, fullName, hashedPassword, email);
+
+    return await this.authenticateUser(email, password);
   }
 }

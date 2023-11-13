@@ -27,14 +27,11 @@
  *           schema:
  *             type: object
  *             properties:
- *               user_message:
- *                 type: string
  *               location:
  *                 type: string
  *               check_in_timestamp:
  *                 type: string
  *             example:
- *                user_message: "fiz o check-in de 1 hora atrás, mal 🫡"
  *                location: "Salvador, Bahia, Brazil"
  *                check_in_timestamp: "2023-08-22 13:57:40"
  *     responses:
@@ -103,10 +100,12 @@ import { Router } from "express";
 import TimeRecordController from "../controllers/TimeRecordController";
 import ProjectRelatedRoutes from "./abstract/ProjectRelatedRoutes";
 import { body } from "express-validator";
+import multer from "multer";
 
 export default class TimeRecordRoutes extends ProjectRelatedRoutes {
   constructor(
-    protected controller: TimeRecordController = new TimeRecordController()
+    protected controller: TimeRecordController = new TimeRecordController(),
+    private readonly storage = multer({ storage: multer.memoryStorage() })
   ) {
     super(controller);
   }
@@ -116,13 +115,6 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
       "/:project_id/check-in",
       [
         ...this.projectIdValidation,
-        body("user_message")
-          .isString()
-          .withMessage("mensagem invalida")
-          .isLength({ max: 500 })
-          .withMessage(
-            "mensagem de check-in ultrapassou o limite de 500 caracteres"
-          ),
         body("location").isString().withMessage("localizacao invalida"), // change that later, validate geophaphic location
         body("check_in_timestamp")
           .isISO8601()
@@ -144,15 +136,6 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
       ],
       this.validate,
       this.controller.checkOutTimeRecord
-    );
-
-    this._router.get(
-      "/:project_id",
-      [
-        ...this.projectIdValidation,
-      ],
-      this.validate,
-      this.controller.getUserTimeRecordsInProject
     );
 
     return this._router

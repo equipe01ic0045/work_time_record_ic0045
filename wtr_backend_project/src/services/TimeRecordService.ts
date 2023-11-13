@@ -61,6 +61,7 @@ export default class TimeRecordService {
         userId,
         projectId
       );
+
     if (!existingCheckIn) {
       throw new NotFoundError("open check-in");
     }

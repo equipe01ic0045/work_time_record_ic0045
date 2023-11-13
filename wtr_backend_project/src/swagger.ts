@@ -25,7 +25,8 @@ const specs = swaggerJsdoc({
 
 // Serve Swagger documentation using Swagger UI
 swaggerApp.use("/docs", swaggerUi.serve, swaggerUi.setup(specs, {
-  swaggerOptions: { tryItOutEnabled: true },
+  swaggerOptions: {
+    tryItOutEnabled: true
+  },
 }));
-
 export default swaggerApp;

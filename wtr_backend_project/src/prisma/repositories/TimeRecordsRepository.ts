@@ -23,7 +23,6 @@ export default class TimeRecordsRepository extends BaseRepository {
         user_id: userId,
         project_id: projectId,
         check_in_timestamp: checkInTimestamp,
-        user_message: userMessage,
         location: location,
       },
     });
@@ -73,4 +72,13 @@ export default class TimeRecordsRepository extends BaseRepository {
       take: 100,
     });
   }
+
+  async findTimeRecordById(timeRecordId: number) {
+    return this.client.time_record.findUnique({
+      where: {
+        time_record_id: timeRecordId,
+      },
+    });
+  }
+
 }

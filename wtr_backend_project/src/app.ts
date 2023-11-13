@@ -1,5 +1,4 @@
 import express from "express";
-import fileUpload from 'express-fileupload';
 import cors from "cors";
 import router from "./routes";
 import cookieParser from "cookie-parser";
@@ -19,7 +18,6 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
-app.use(fileUpload());
 app.use(router, handleError);
 app.use("/swagger", swaggerApp);
 
