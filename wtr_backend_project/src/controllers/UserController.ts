@@ -50,7 +50,14 @@ export default class UserController extends BaseController {
     const { email } = req.body;
     try {
       const user = await userService.getUserByEmail(email);
-      new DataRetrievedResponse().send(res, user);
+      const userData = {
+        user_id: user.user_id,
+        full_name: user.full_name,
+        cpf: user.cpf,
+        email: user.email,
+
+      }
+      new DataRetrievedResponse().send(res, userData);
     } catch (error) {
       next(error);
     }

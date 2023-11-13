@@ -32,7 +32,7 @@ export default class UserService {
     if (cpfUser) {
       throw new ConflictError("cpf");
     }
-    
+
     const hashedPassword = await bcrypt.hash(password, JWT_DEFAULT_SALT_ROUNDS);
     return this.userRepository.createUser(fullName, email, hashedPassword, cpf);
   }
