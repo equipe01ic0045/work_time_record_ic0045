@@ -63,6 +63,21 @@ export default class UserService {
     }
   }
 
+  async loggedUser(token: string) {
+    const user = jwt.verify(token, JWT_SECRET) as {
+      userId: number;
+    };
+    if (!user) {
+      throw new NotFoundError("user");
+    }
+    const foundUser = await this.userRepository.findUserByUserId(user.userId);
+    if (!foundUser) {
+      throw new NotFoundError("user");
+    }
+
+    return foundUser;
+  }
+
   async getUser(userId: number): Promise<Omit<user, "password">> {
     const foundUser = await this.userRepository.findUserByUserId(userId);
     if (!foundUser) {

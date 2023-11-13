@@ -36,6 +36,19 @@ export default class UserController extends BaseController {
     }
   }
 
+  async loggedUser(req: Request, res: Response, next: NextFunction) {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ message: "Authorization token is missing." });
+    }
+    try {
+      const userData = await userService.loggedUser(token)
+      new DataRetrievedResponse().send(res, userData);
+    } catch (error) {
+      next(error)
+    }
+  }
+
   async getUser(req: Request, res: Response, next: NextFunction) {
     const { user_id } = req.params;
     try {

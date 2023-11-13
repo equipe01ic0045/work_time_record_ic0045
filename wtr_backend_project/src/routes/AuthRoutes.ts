@@ -109,6 +109,13 @@ export default class AuthRoutes extends BaseRoutes {
       this.controller.loginUser
     );
 
+    this._router.post(
+      "/logged",
+      [],
+      this.validate,
+      this.controller.loggedUser
+    )
+
     return this._router;
   }
 }
