@@ -23,13 +23,14 @@ import {
   StackDivider,
   Textarea,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ProjectInfo({ params }: any) {
 
-  
+
   const [isOpenDelete, setOpenDlete] = useState(false)
   const [isOpenEdit, setOpenEdit] = useState(false)
 
@@ -54,10 +55,12 @@ export default function ProjectInfo({ params }: any) {
       <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z" />
     </svg>)
 
+  const router = useRouter()
   const projectService = new ProjectService();
   const parameters = useParams()
   const projectId = Number(parameters.projectId)
   const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
+  const toast = useToast();
 
   function inputHandler(event: any) {
     const { name, value } = event.target;
@@ -65,18 +68,71 @@ export default function ProjectInfo({ params }: any) {
   }
 
   function updateProjectHandler() {
+    const editProject = {
+      projectId,
+      projectName: projectInfo?.project_name,
+      projectDescription: projectInfo?.project_description,
+      timezone: projectInfo?.timezone,
+      location: projectInfo?.location,
+      commercialTimeStart: projectInfo?.commercial_time_start,
+      commercialTimeEnd: projectInfo?.commercial_time_end
+    }
+
+    projectService.updateProject(editProject)
+      .then((response) => {
+        toast({
+          title: "Projeto Atualizado",
+          description: "",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+        setOpenEdit(false)
+      })
+      .catch((error) => {
+        toast({
+          title: "Falha ao Atualizar Projeto",
+          description: "",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+      })
 
   }
 
   function deleteProjectHandler() {
-
+    projectService.deleteProject(projectId)
+      .then((response) => {
+        toast({
+          title: "Projeto Deletado",
+          description: "",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+        router.push("/main/projects")
+      })
+      .catch((error) => {
+        toast({
+          title: "Falha ao Deletar o Projeto",
+          description: "",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+      })
   }
 
-  function deleteModalHandler() {
+  function showDeleteModal() {
     setOpenDlete(!isOpenDelete)
   }
 
-  function editModalHandler() {
+  function showEditModal() {
     setOpenEdit(!isOpenEdit)
   }
 
@@ -104,8 +160,8 @@ export default function ProjectInfo({ params }: any) {
             flexDirection='row'
             gap='1em'
           >
-            <Button leftIcon={deleteIcon} colorScheme="red" onClick={()=>{setOpenDlete(true)}}> Deletar Projeto</Button>
-            <Button leftIcon={editIcon} colorScheme="orange" onClick={()=>{setOpenEdit(true)}}> Editar Projeto</Button>
+            <Button leftIcon={deleteIcon} colorScheme="red" onClick={() => { setOpenDlete(true) }}> Deletar Projeto</Button>
+            <Button leftIcon={editIcon} colorScheme="orange" onClick={() => { setOpenEdit(true) }}> Editar Projeto</Button>
             <Button leftIcon={userIcon} colorScheme="blue">Usuarios</Button>
           </Box>
           <CardBody>
@@ -151,38 +207,56 @@ export default function ProjectInfo({ params }: any) {
         </Card>
       </Box>
       {/* MODAL DELETE */}
-      <Modal isOpen={isOpenDelete} onClose={deleteModalHandler}>
+      <Modal isOpen={isOpenDelete} onClose={showDeleteModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Deseja Deletar O Projeto ? </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={deleteModalHandler}>
-              Close
+          <ModalFooter
+            display={'flex'}
+            alignItems={'center'}
+            justifyContent={'center'}
+          >
+            <Button
+              colorScheme='blue'
+              mr={3}
+              onClick={showDeleteModal}>
+              Cancelar
             </Button>
-            <Button variant='ghost'>Secondary Action</Button>
+            <Button
+              colorScheme="red"
+              variant='solid'
+              onClick={deleteProjectHandler}
+            >
+              Confirma
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
       {/* MODAL EDIT */}
-      <Modal isOpen={isOpenEdit} onClose={editModalHandler}>
+      <Modal isOpen={isOpenEdit} onClose={showEditModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Deseja Atualizar o Projeto ? </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={editModalHandler}>
-              Close
+          <ModalFooter
+            display={'flex'}
+            alignItems={'center'}
+            justifyContent={'center'}
+          >
+            <Button
+              colorScheme='blue'
+              mr={3}
+              onClick={showEditModal}>
+              Cancelar
             </Button>
-            <Button variant='ghost'>Secondary Action</Button>
+            <Button
+              colorScheme="orange"
+              variant='solid'
+              onClick={updateProjectHandler}
+            >
+              Confirma
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

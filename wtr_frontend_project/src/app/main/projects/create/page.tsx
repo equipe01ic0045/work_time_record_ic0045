@@ -57,7 +57,7 @@ export default function ProjectInfo({ params }: any) {
 
   function registerNewProject() {
     console.log(newProject)
-    projectService.createNewProject(newProject)
+    projectService.createProject(newProject)
       .then((response) => {
         toast({
           title: "Projeto Criado",

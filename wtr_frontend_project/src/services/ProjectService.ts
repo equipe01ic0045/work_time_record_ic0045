@@ -5,14 +5,30 @@ import ProjectUsers from "@/types/ProjectUsers";
 import ProjectInfo from "@/types/ProjectInfo";
 
 export interface registerProject {
-  projectName: string;
-  projectDescription: string,
-  locationRequired: boolean,
-  commercialTimeRequired: boolean,
-  timezone: string,
-  location: String,
-  commercialTimeStart: number,
-  commercialTimeEnd: number
+  projectName?: string,
+  projectDescription?: string,
+  locationRequired?: boolean,
+  commercialTimeRequired?: boolean,
+  timezone?: string,
+  location?: String,
+  commercialTimeStart?: number,
+  commercialTimeEnd?: number
+}
+
+export interface editProject {
+  projectId?: number,
+  projectName?: string;
+  projectDescription?: string,
+  locationRequired?: boolean,
+  commercialTimeRequired?: boolean,
+  timezone?: string,
+  location?: String,
+  commercialTimeStart?: number,
+  commercialTimeEnd?: number
+}
+
+export interface deleteProject {
+  projectId?: number
 }
 
 export default class ProjectService {
@@ -54,22 +70,56 @@ export default class ProjectService {
     return data
   }
 
-  public async createNewProject(registerProject: registerProject): Promise<AxiosResponse> {
-    const newProject = {
-      project_name: registerProject.projectName,
-      location_required: registerProject.locationRequired,
-      commercial_time_required: registerProject.commercialTimeRequired,
-      timezone: registerProject.timezone,
-      location: registerProject.location,
-      commercial_time_start: Number(registerProject.commercialTimeStart),
-      commercial_time_end: Number(registerProject.commercialTimeEnd),
-      project_description: registerProject.projectDescription
+  public async createProject(createProject: registerProject): Promise<AxiosResponse> {
+    const createProjectData = {
+      project_name: createProject.projectName,
+      location_required: createProject.locationRequired,
+      commercial_time_required: createProject.commercialTimeRequired,
+      timezone: createProject.timezone,
+      location: createProject.location,
+      commercial_time_start: Number(createProject.commercialTimeStart),
+      commercial_time_end: Number(createProject.commercialTimeEnd),
+      project_description: createProject.projectDescription
     }
-    console.log(newProject)
     return axios.post(
       "/projects",
-      newProject,
+      createProjectData,
       { withCredentials: true }
+    );
+  }
+
+  public async updateProject(editProject: editProject) {
+    const editProjectData = {
+      project_id: editProject.projectId,
+      project_name: editProject.projectName,
+      location_required: editProject.locationRequired,
+      commercial_time_required: editProject.commercialTimeRequired,
+      timezone: editProject.timezone,
+      location: editProject.location,
+      commercial_time_start: editProject.commercialTimeStart,
+      commercial_time_end: editProject.commercialTimeEnd,
+      project_description: editProject.projectDescription
+    }
+
+    return axios.put(
+      "/projects",
+      editProjectData,
+      { withCredentials: true }
+    );
+  }
+
+  public async deleteProject(projectId: number) {
+
+
+    return axios.delete(
+      "/projects",
+      {
+        data: {
+          project_id: projectId
+        },
+        withCredentials: true
+      },
+
     );
   }
 }
