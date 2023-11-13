@@ -27,11 +27,11 @@ export default class UserService {
 
     console.log(newUser)
 
-    return axios.post("auth/register", newUser);
+    return axios.post("register", newUser);
   }
 
   public loginUser(data: loginData) {
-    return axios.post("auth/login", data);
+    return axios.post("login", data);
   }
 
   public  passwordRecoveryUser(cpf: number){

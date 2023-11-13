@@ -5,7 +5,7 @@ import TimeRecord from "@/types/TimeRecord";
 
 export default class TimeRecordService {
   async getTimeRecords(projectId: number): Promise<PaginationData<TimeRecord>> {
-    const {data} = await axios.get(`/projects/time-records/${projectId}`);
+    const { data } = await axios.get(`/projects/time-records/${projectId}`);
 
     return {
       page: 1,
@@ -19,10 +19,9 @@ export default class TimeRecordService {
       `/projects/time-records/${record.projectId}/check-in`,
       {
         user_message: record.description || "",
-        location: record.location || "Salvador, Bahia",
-        check_in_timestamp: record.date.toISOString(),
-        document: record.document,
-      },
+        location: record.location,
+        check_in_timestamp: record.timestamp.toISOString()
+      }
     );
 
     return data;
@@ -35,7 +34,7 @@ export default class TimeRecordService {
         user_message: record.description,
         check_out_timestamp: record.date.toISOString(),
         document: record.document,
-      },
+      }
     );
 
     return data;
@@ -62,7 +61,8 @@ export default class TimeRecordService {
         },
         {
           justification_id: 1,
-          description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. \
+          description:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. \
           Donec euismod, nisl eget ultricies aliquam, nunc nisl ultricies nunc, quis aliquam nisl nunc eu nisl.\
           Donec euismod, nisl eget ultricies aliquam, nunc nisl ultricies nunc, quis aliquam nisl nunc eu nisl.",
           type: "check-in",
@@ -78,8 +78,8 @@ export default class TimeRecordService {
           datetime: "2023-10-29T14:10:10.000Z",
           status: "pending",
           created_at: "2023-10-28T15:10:10.000Z",
-        }
-      ]
+        },
+      ],
     };
 
     const { data } = await axios.get(`/time-records/${recordId}`);

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import HeaderBox from "@/components/global/HeaderBox";
 import RecordCard from "@/components/time-records/RecordCard";
 import TimeRecordService from "@/services/TimeRecordService";
@@ -12,53 +12,53 @@ export default function Page({
   params,
   searchParams,
 }: {
-  params: { projectId: number }
-  searchParams: { hasOpenCheckIn: boolean }
+  params: { projectId: number };
+  searchParams: { hasOpenCheckIn: boolean };
 }) {
   const router = useRouter();
   const toast = useToast();
 
   const [newRecord, setRecord] = useState<Justification>({});
 
-  async function getLocation() {
-    const coordinates = await new Promise<GeolocationCoordinates>((resolve, reject) => {
+  // async function getLocation() {
+  //   const coordinates = await new Promise<GeolocationCoordinates>(
+  //     (resolve, reject) => {
+  //       const onSuccess = (position: GeolocationPosition) => {
+  //         resolve(position.coords);
+  //       };
 
-      const onSuccess = (position: GeolocationPosition) => {
-        resolve(position.coords);
-      };
+  //       const onError = (error: GeolocationPositionError) => {
+  //         toast({
+  //           title: "Erro ao capturar localização",
+  //           description: "Verifique a permissão para detectar sua localização.",
+  //           status: "error",
+  //           duration: 3000,
+  //           isClosable: true,
+  //           position: "top-right",
+  //         });
+  //         reject(error);
+  //       };
 
-      const onError = (error: GeolocationPositionError) => {
-        toast({
-          title: 'Erro ao capturar localização',
-          description: "Verifique a permissão para detectar sua localização.",
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-          position: "top-right",
-        })
-        reject(error);
-      };
+  //       navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+  //         enableHighAccuracy: true,
+  //       });
+  //     }
+  //   );
 
-      navigator.geolocation.getCurrentPosition(onSuccess, onError, {
-        enableHighAccuracy: true,
-      });
-    });
-
-    const { latitude, longitude } = coordinates;
-    return { latitude, longitude };
-  }
+  //   const { latitude, longitude } = coordinates;
+  //   return { latitude, longitude };
+  // }
 
   async function newRecordHandler(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const timeRecordService = new TimeRecordService();
 
-    const location = 'Salvador, Bahia';
+    const location = "Salvador, Bahia";
 
     const timeRecordData: TimeRecordData = {
-      ...newRecord,
-      date: new Date(),
+      timestamp: new Date(),
+      projectId: params.projectId,
       location,
-      projectId: params.projectId
     };
 
     try {
@@ -69,33 +69,41 @@ export default function Page({
       }
 
       toast({
-        title: 'Registro de horario efetuado',
+        title: "Registro de horario efetuado",
         description: "Você será redirecionado para a página anterior.",
-        status: 'success',
+        status: "success",
         duration: 2000,
         isClosable: true,
         position: "top-right",
         onCloseComplete: () => {
           router.back();
-        }
+        },
       });
     } catch (e) {
       toast({
-        title: 'Erro ao efetuar registro de horario.',
-        description: e instanceof AxiosError && e?.response?.data.message
-          ? e.response.data.message
-          : "Verifique os dados preenchidos e tente novamente.",
-        status: 'error',
+        title: "Erro ao efetuar registro de horario.",
+        description:
+          e instanceof AxiosError && e?.response?.data.message
+            ? e.response.data.message
+            : "Verifique os dados preenchidos e tente novamente.",
+        status: "error",
         duration: 3000,
         isClosable: true,
         position: "top-right",
-      })
+      });
     }
   }
 
   return (
     <VStack w={"100%"} spacing="3rem">
-      <HeaderBox title={<><Link href={`/main/time-records`}>Registros</Link> / Projeto {params.projectId.toString()}</>} />
+      <HeaderBox
+        title={
+          <>
+            <Link href={`/main/time-records`}>Registros</Link> / Projeto{" "}
+            {params.projectId.toString()}
+          </>
+        }
+      />
 
       <form onSubmit={newRecordHandler}>
         <Box
@@ -113,5 +121,5 @@ export default function Page({
         </Box>
       </form>
     </VStack>
-  )
+  );
 }

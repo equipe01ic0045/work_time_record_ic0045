@@ -11,40 +11,46 @@ export interface newProjectData {
 export default class ProjectService {
   public async getUserProjects() {
     const result = await axios.get("projects");
-    const projects: ProjectListData[] = result.data.data
+    const projects: ProjectListData[] = result.data.data;
     return projects;
   }
 
-  public async getProjectInfo(projectId:number){
-    const result = await axios.get("projects/"+projectId)
-    return result.data.data as ProjectInfo
+  public async getProjectInfo(projectId: number) {
+    const result = await axios.get("projects/" + projectId);
+    return result.data.data as ProjectInfo;
   }
 
-  public async getProjectUsers(projectId:number){
-    const result = await axios.get("projects/"+projectId+"/users")
-    return result.data.data as ProjectUsers[]
+  public async getProjectUsers(projectId: number) {
+    const result = await axios.get("projects/" + projectId + "/users");
+    return result.data.data as ProjectUsers[];
   }
 
-  public async postProjectUsers(projectId:number, user_email: string, user_role: string, user_hours_per_week: number){
-    const { data } = await axios.post("projects/"+projectId+"/users",
-      {
-        user_email: user_email,
-        user_role: user_role,
-        user_hours_per_week: user_hours_per_week
-      }
-    )
-    return data
+  public async postProjectUsers(
+    projectId: number,
+    user_email: string,
+    user_role: string,
+    user_hours_per_week: number
+  ) {
+    const { data } = await axios.post("projects/" + projectId + "/users", {
+      user_email: user_email,
+      user_role: user_role,
+      user_hours_per_week: user_hours_per_week,
+    });
+    return data;
   }
 
-  public async putProjectUsers(projectId:number, user_email: string, user_role: string, user_hours_per_week: number){
-    const { data } = await axios.put("projects/"+projectId+"/users",
-      {
-        user_email: user_email,
-        user_role: user_role,
-        user_hours_per_week: user_hours_per_week
-      }
-    )
-    return data
+  public async putProjectUsers(
+    projectId: number,
+    user_email: string,
+    user_role: string,
+    user_hours_per_week: number
+  ) {
+    const { data } = await axios.put("projects/" + projectId + "/users", {
+      user_email: user_email,
+      user_role: user_role,
+      user_hours_per_week: user_hours_per_week,
+    });
+    return data;
   }
 
   public async createNewProject(data: newProjectData): Promise<AxiosResponse> {

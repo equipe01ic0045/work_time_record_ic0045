@@ -11,9 +11,11 @@ export type JustificationData = Justification & {
 }
 
 type TimeRecordData = Justification & {
-  date: Date;
+  timestamp: Date;
   projectId: number;
   location?: string;
 };
+
+
 
 export default TimeRecordData;
