@@ -4,8 +4,15 @@ import axios from "./axios";
 import ProjectUsers from "@/types/ProjectUsers";
 import ProjectInfo from "@/types/ProjectInfo";
 
-export interface newProjectData {
-  project_name: string;
+export interface registerProject {
+  projectName: string;
+  projectDescription: string,
+  locationRequired: boolean,
+  commercialTimeRequired: boolean,
+  timezone: string,
+  location: String,
+  commercialTimeStart: number,
+  commercialTimeEnd: number
 }
 
 export default class ProjectService {
@@ -15,18 +22,18 @@ export default class ProjectService {
     return projects;
   }
 
-  public async getProjectInfo(projectId:number){
-    const result = await axios.get("projects/"+projectId)
+  public async getProjectInfo(projectId: number) {
+    const result = await axios.get("projects/" + projectId)
     return result.data.data as ProjectInfo
   }
 
-  public async getProjectUsers(projectId:number){
-    const result = await axios.get("projects/"+projectId+"/users")
+  public async getProjectUsers(projectId: number) {
+    const result = await axios.get("projects/" + projectId + "/users")
     return result.data.data as ProjectUsers[]
   }
 
-  public async postProjectUsers(projectId:number, user_email: string, user_role: string, user_hours_per_week: number){
-    const { data } = await axios.post("projects/"+projectId+"/users",
+  public async postProjectUsers(projectId: number, user_email: string, user_role: string, user_hours_per_week: number) {
+    const { data } = await axios.post("projects/" + projectId + "/users",
       {
         user_email: user_email,
         user_role: user_role,
@@ -36,8 +43,8 @@ export default class ProjectService {
     return data
   }
 
-  public async putProjectUsers(projectId:number, user_email: string, user_role: string, user_hours_per_week: number){
-    const { data } = await axios.put("projects/"+projectId+"/users",
+  public async putProjectUsers(projectId: number, user_email: string, user_role: string, user_hours_per_week: number) {
+    const { data } = await axios.put("projects/" + projectId + "/users",
       {
         user_email: user_email,
         user_role: user_role,
@@ -47,7 +54,22 @@ export default class ProjectService {
     return data
   }
 
-  public async createNewProject(data: newProjectData): Promise<AxiosResponse> {
-    return axios.post("projects", data);
+  public async createNewProject(registerProject: registerProject): Promise<AxiosResponse> {
+    const newProject = {
+      project_name: registerProject.projectName,
+      location_required: registerProject.locationRequired,
+      commercial_time_required: registerProject.commercialTimeRequired,
+      timezone: registerProject.timezone,
+      location: registerProject.location,
+      commercial_time_start: Number(registerProject.commercialTimeStart),
+      commercial_time_end: Number(registerProject.commercialTimeEnd),
+      project_description: registerProject.projectDescription
+    }
+    console.log(newProject)
+    return axios.post(
+      "/projects",
+      newProject,
+      { withCredentials: true }
+    );
   }
 }

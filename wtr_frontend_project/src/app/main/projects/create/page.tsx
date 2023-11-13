@@ -11,15 +11,18 @@ import {
   InputGroup,
   InputRightElement,
   Link,
-  Checkbox
+  Checkbox,
+  Textarea
 } from "@chakra-ui/react";
 import { useState } from "react";
+import ProjectService from "@/services/ProjectService";
 
 export default function ProjectInfo({ params }: any) {
+  const projectService = new ProjectService()
 
   const [newProject, setNewProject] = useState({
-    userId: 1,
     projectName: "",
+    projectDescription: "",
     locationRequired: false,
     commercialTimeRequired: false,
     timezone: '',
@@ -43,30 +46,21 @@ export default function ProjectInfo({ params }: any) {
     setNewProject({ ...newProject, [name]: value });
   }
 
-  function registerNewProject(){
-    console.log(newProject)
+  function textAreaHandler(event: any) {
+    const { value } = event.target
+    setNewProject({ ...newProject, projectDescription: value })
   }
 
-  const loadingData = {
-    project_name: "",
-    project_description: "",
-    location: "",
-    commercial_time_start: "00:00",
-    commercial_time_end: "05:00",
-    timezone: "America/Bahia",
-    location_required: false,
-    commercial_time_required: false,
-  };
-
-  // "user_id":1,
-  // "project_name": "projeto-legal",
-  // "location_required": true,
-  // "commercial_time_required": true,
-  // "timezone": "America/Bahia",
-  // "location": "Salvador, Bahia",
-  // "commercial_time_start": 480,
-  // "commercial_time_end": 1080
-
+  function registerNewProject() {
+    console.log(newProject)
+    projectService.createNewProject(newProject)
+      .then(() => {
+        console.log('ok')
+      })
+      .catch(() => {
+        console.log('error')
+      })
+  }
 
   return (
     <Box
@@ -128,7 +122,7 @@ export default function ProjectInfo({ params }: any) {
         >
           <FormLabel>Localização</FormLabel>
           <Input
-            placeholder="Salvador, Bahia"
+            placeholder="BA"
             type="text"
             name="location"
             bgColor="Lavender"
@@ -169,6 +163,13 @@ export default function ProjectInfo({ params }: any) {
             onChange={inputHandler}
           />
         </InputGroup>
+        <FormLabel>Descrição do Projeto</FormLabel>
+        <Textarea
+          value={newProject.projectDescription}
+          onChange={textAreaHandler}
+          placeholder='Coloque alguma descrição do projeto'
+          size='sm'
+        />
         <Button
           mt={4}
           colorScheme='blue'
@@ -179,6 +180,6 @@ export default function ProjectInfo({ params }: any) {
           Registrar Projeto
         </Button>
       </Box>
-    </Box>
+    </Box >
   );
 }
