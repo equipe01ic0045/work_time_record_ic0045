@@ -1,7 +1,11 @@
-import TimeRecordData from "@/types/TimeRecordData";
 import axios from "./axios";
 import PaginationData from "@/types/PaginationData";
 import TimeRecord from "@/types/TimeRecord";
+import {
+  DetailedTimeRecordData,
+  SimpleTimeRecordData,
+} from "@/types/TimeRecordData";
+import fs from "fs";
 
 export default class TimeRecordService {
   async getTimeRecords(projectId: number): Promise<PaginationData<TimeRecord>> {
@@ -14,26 +18,62 @@ export default class TimeRecordService {
     };
   }
 
-  async checkIn(record: TimeRecordData) {
+  async simpleCheckIn(checkInData: SimpleTimeRecordData) {
     const { data } = await axios.post(
-      `/projects/time-records/${record.projectId}/check-in`,
+      `/projects/time-records/${checkInData.project_id}/check-in`,
       {
-        user_message: record.description || "",
-        location: record.location,
-        check_in_timestamp: record.timestamp.toISOString()
+        location: checkInData.location,
+        check_in_timestamp: checkInData.timestamp,
       }
     );
 
     return data;
   }
 
-  async checkOut(record: TimeRecordData) {
+  async simpleCheckOut(checkOutData: SimpleTimeRecordData) {
     const { data } = await axios.put(
-      `/projects/time-records/${record.projectId}/check-out`,
+      `/projects/time-records/${checkOutData.project_id}/check-out`,
       {
-        user_message: record.description,
-        check_out_timestamp: record.date.toISOString(),
-        document: record.document,
+        check_out_timestamp: checkOutData.timestamp,
+      }
+    );
+
+    return data;
+  }
+
+  async detailedCheckIn(formData: DetailedTimeRecordData) {
+    const { data } = await axios.post(
+      `/projects/time-records/${formData.project_id}/check-in/detailed`,
+      {
+        project_id: formData.project_id,
+        check_in_timestamp: formData.timestamp,
+        location: formData.location,
+        user_message: formData.user_message,
+        justification_file: formData.justification_file,
+      },
+      {
+        headers: {
+          "Content-Type": `multipart/form-data`,
+        },
+      }
+    );
+
+    return data;
+  }
+
+  async detailedCheckOut(formData: DetailedTimeRecordData) {
+    const { data } = await axios.put(
+      `/projects/time-records/${formData.project_id}/check-out/detailed`,
+      {
+        project_id: formData.project_id,
+        check_out_timestamp: formData.timestamp,
+        user_message: formData.user_message,
+        justification_file: formData.justification_file,
+      },
+      {
+        headers: {
+          "Content-Type": `multipart/form-data`,
+        },
       }
     );
 

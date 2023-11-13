@@ -2,13 +2,13 @@
 import HeaderBox from "@/components/global/HeaderBox";
 import RecordCard from "@/components/time-records/RecordCard";
 import TimeRecordService from "@/services/TimeRecordService";
-import TimeRecordData, { Justification } from "@/types/TimeRecordData";
+import { DetailedTimeRecordData } from "@/types/TimeRecordData";
 import { Box, Link, VStack, useToast } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
-export default function Page({
+export default function DetailedTimeRecordRegisterPage({
   params,
   searchParams,
 }: {
@@ -18,54 +18,23 @@ export default function Page({
   const router = useRouter();
   const toast = useToast();
 
-  const [newRecord, setRecord] = useState<Justification>({});
-
-  // async function getLocation() {
-  //   const coordinates = await new Promise<GeolocationCoordinates>(
-  //     (resolve, reject) => {
-  //       const onSuccess = (position: GeolocationPosition) => {
-  //         resolve(position.coords);
-  //       };
-
-  //       const onError = (error: GeolocationPositionError) => {
-  //         toast({
-  //           title: "Erro ao capturar localização",
-  //           description: "Verifique a permissão para detectar sua localização.",
-  //           status: "error",
-  //           duration: 3000,
-  //           isClosable: true,
-  //           position: "top-right",
-  //         });
-  //         reject(error);
-  //       };
-
-  //       navigator.geolocation.getCurrentPosition(onSuccess, onError, {
-  //         enableHighAccuracy: true,
-  //       });
-  //     }
-  //   );
-
-  //   const { latitude, longitude } = coordinates;
-  //   return { latitude, longitude };
-  // }
+  const [newRecord, setRecord] = useState<DetailedTimeRecordData>({
+    project_id: params.projectId,
+    timestamp: new Date(),
+    location: undefined,
+    user_message: "",
+    justification_file: undefined,
+  });
 
   async function newRecordHandler(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const timeRecordService = new TimeRecordService();
 
-    const location = "Salvador, Bahia";
-
-    const timeRecordData: TimeRecordData = {
-      timestamp: new Date(),
-      projectId: params.projectId,
-      location,
-    };
-
     try {
       if (searchParams.hasOpenCheckIn) {
-        await timeRecordService.checkOut(timeRecordData);
+        await timeRecordService.detailedCheckOut(newRecord);
       } else {
-        await timeRecordService.checkIn(timeRecordData);
+        await timeRecordService.detailedCheckIn(newRecord);
       }
 
       toast({
@@ -116,7 +85,6 @@ export default function Page({
           <RecordCard
             record={newRecord}
             setRecord={setRecord}
-            projectId={params.projectId}
           />
         </Box>
       </form>

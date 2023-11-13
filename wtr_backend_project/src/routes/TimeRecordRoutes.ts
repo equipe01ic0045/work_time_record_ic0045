@@ -171,8 +171,6 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
      *                 type: string
      *               user_message:
      *                 type: string
-     *               location:
-     *                 type: string
      *               justification_file:
      *                 type: string
      *                 format: binary

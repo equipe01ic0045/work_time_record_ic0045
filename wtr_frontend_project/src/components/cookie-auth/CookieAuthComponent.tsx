@@ -9,13 +9,10 @@ export default function CookieAuthComponent() {
 
     useEffect(()=>{
        const cookie = document.cookie
-       console.log(cookie)
        if (!cookie){
         router.refresh()
        }
     }, [router])
-
-    router.refresh()
 
   return null
 }

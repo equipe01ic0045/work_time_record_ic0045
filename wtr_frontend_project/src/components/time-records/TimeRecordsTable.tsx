@@ -14,6 +14,7 @@ import Link from "next/link";
 import ProjectListData from "@/types/ProjectListData";
 import { useEffect, useState } from "react";
 import TimeRecordService from "@/services/TimeRecordService";
+import { SimpleTimeRecordData } from "@/types/TimeRecordData";
 
 function ProjectRow({ projectData }: { projectData: ProjectListData }) {
   const [hasOpenCheckIn, setHasOpenCheckIn] = useState<boolean>(projectData.open_check_in);
@@ -28,14 +29,19 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
     }
   }, [hasOpenCheckIn]);
 
-  async function quickRecord(projectId: number) {
+  async function simpleCheckInCheckOut(project_id: number) {
     const timeRecordService = new TimeRecordService();
-
     try {
+      const simpleTimeRecord: SimpleTimeRecordData = {
+        project_id,
+        timestamp: new Date(),
+        location: "salvador bahia"
+      }
+
       if (hasOpenCheckIn) {
-        await timeRecordService.checkOut({ projectId, date: new Date() });
+        await timeRecordService.simpleCheckOut(simpleTimeRecord);
       } else {
-        await timeRecordService.checkIn({ projectId, date: new Date() });
+        await timeRecordService.simpleCheckIn(simpleTimeRecord);
       }
 
       setHasOpenCheckIn(!hasOpenCheckIn);
@@ -70,7 +76,7 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
               icon={<Icon boxSize="2em" as={FiClock} />}
               p={3}
               color={hasOpenCheckIn ? "orange" : "black"}
-              onClick={() => quickRecord(projectData.project.project_id)}
+              onClick={() => simpleCheckInCheckOut(projectData.project.project_id)}
             />
           </Tooltip>
           <Link

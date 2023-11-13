@@ -1,37 +1,58 @@
-'use client';
+"use client";
 
-import { Card, CardBody, Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Alert, AlertIcon, Box, Button, Text, Collapse } from "@chakra-ui/react";
+import {
+  Card,
+  CardBody,
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Alert,
+  AlertIcon,
+  Box,
+  Button,
+  Text,
+  Collapse,
+} from "@chakra-ui/react";
 import Clock from "./Clock";
 import JustifyCardBody from "./JustifyCardBody";
 import { useState } from "react";
-import { Justification } from "@/types/TimeRecordData";
+import { DetailedTimeRecordData } from "@/types/TimeRecordData";
 
 type RecordCardProps<T> = {
-  projectId: number,
-  record: T,
-  setRecord: (record: T) => void,
-  requireDescription?: boolean,
+  record: T;
+  setRecord: (record: T) => void;
+  requireUserMessage?: boolean;
 };
 
 export default function RecordCard(
-  props: RecordCardProps<Justification>
+  props: RecordCardProps<DetailedTimeRecordData>
 ) {
-  const [requireDescription, setRequireDescription] = useState(props.requireDescription || false);
+  const [requireUserMessage, setRequireUserMessage] = useState(
+    props.requireUserMessage || false
+  );
 
-  const onDateChange = () => setRequireDescription(true);
+  const onDateChange = () => setRequireUserMessage(true);
 
   return (
     <Card variant={"filled"} size="lg" w="500px">
       <CardBody display="flex" gap="2em" flexDir="column" alignItems="center">
-        {/* <Icon as={PiUserFocusFill} boxSize="3xs" /> */}
+        <Clock
+          onDateChange={onDateChange}
+          defaultValue={props.record.timestamp}
+        />
 
-        <Clock onDateChange={onDateChange} defaultValue={props.record.date} />
-
-        <Collapse in={requireDescription} transition={{ enter: { duration: 0.3 } }}>
-          <Alert status='warning'>
+        <Collapse
+          in={requireUserMessage}
+          transition={{ enter: { duration: 0.3 } }}
+        >
+          <Alert status="warning">
             <AlertIcon />
-            <Text>Ao alterar o horário do registro,
-              você <strong>deve</strong> descrever sua justificativa.</Text>
+            <Text>
+              Ao alterar o horário do registro, você <strong>deve</strong>{" "}
+              descrever sua justificativa.
+            </Text>
           </Alert>
         </Collapse>
 
@@ -39,7 +60,7 @@ export default function RecordCard(
           <AccordionItem>
             <h2>
               <AccordionButton>
-                <Box as="span" flex='1' textAlign='left'>
+                <Box as="span" flex="1" textAlign="left">
                   Descrição / Justificativa
                 </Box>
                 <AccordionIcon />
@@ -47,7 +68,7 @@ export default function RecordCard(
             </h2>
             <AccordionPanel>
               <JustifyCardBody
-                requireDescription={requireDescription}
+                requireUserMessage={requireUserMessage}
                 record={props.record}
                 setRecord={props.setRecord}
               />
