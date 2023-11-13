@@ -197,7 +197,7 @@ export default class ProjectService {
     if (!foundUserProjectRole || !userToBeDeletedRole) {
       throw new AuthorizationError();
     }
-    const deletedUser = await this.userRepository.deleteUserById(user_id);
+    const deletedUser = await this.projectRepository.deleteUserInProject(user_id, project_id);
     return deletedUser;
   }
 
