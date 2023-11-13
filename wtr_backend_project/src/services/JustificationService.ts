@@ -46,8 +46,6 @@ export default class JustificationService {
     fileSize: number, // TODO: definir valor máximo do arquivo
     documentFile: Buffer,
     justificationType: JustificationType,
-    updatedTimeStamp: Date,
-    updatedLocation?: string
   ) {
     if (!this.allowedMimeTypes.includes(fileType)) {
       throw new ValidationError(
@@ -73,15 +71,13 @@ export default class JustificationService {
     try {
       const createdTimeRecordJustificationRequest =
         await this.justificationRepository.createJustification(
+          timeRecordId,
           projectId,
           userId,
-          timeRecordId,
           userMessage,
-          documentFile,
-          fileName,
           justificationType,
-          updatedTimeStamp,
-          updatedLocation
+          fileName,
+          documentFile
         );
 
       return createdTimeRecordJustificationRequest;
@@ -138,7 +134,7 @@ export default class JustificationService {
       throw new NotFoundError("Justificativa não encontrada");
     }
 
-    if (foundtimeRecordJustification.colaborator_id !== userId) {
+    if (foundtimeRecordJustification.user_id !== userId) {
       const foundManagerProjectRole =
         await this.projectsRepository.findUserProjectRole(userId, projectId, [
           "MANAGER",
@@ -210,7 +206,7 @@ export default class JustificationService {
       throw new NotFoundError("Justificativa não encontrada");
     }
 
-    if (justificationRecord.colaborator_id !== userId) {
+    if (justificationRecord.user_id !== userId) {
       const foundManagerProjectRole =
         await this.projectsRepository.findUserProjectRole(userId, projectId, [
           "MANAGER",

@@ -4,25 +4,43 @@ import { NextFunction, Response } from "express";
 import { timeRecordService } from "../services";
 import {
   DataRetrievedResponse,
+  ErrorResponse,
   ResourceCreatedResponse,
   ResourceUpdatedResponse,
 } from "../types/responses";
 
 export default class TimeRecordController extends BaseController {
-  async checkInTimeRecord(
+  async getUserTimeRecordsInProject(
     req: AuthorizedRequest,
     res: Response,
     next: NextFunction
   ) {
     const { project_id } = req.params;
-    const { user_message, location, check_in_timestamp } = req.body;
+
+    try {
+      const timeRecords = await timeRecordService.getUserTimeRecordsInProject(
+        req.user!.userId,
+        parseInt(project_id)
+      );
+      new DataRetrievedResponse().send(res, timeRecords);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async simpleCheckIn(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const { project_id } = req.params;
+    const { location, check_in_timestamp } = req.body;
     try {
       let checkInTimestamp: Date = new Date(check_in_timestamp);
-      await timeRecordService.checkInTimeRecord(
+      await timeRecordService.simpleCheckIn(
         req.user!.userId,
         parseInt(project_id),
         checkInTimestamp,
-        user_message,
         location
       );
       new ResourceCreatedResponse().send(res);
@@ -31,7 +49,7 @@ export default class TimeRecordController extends BaseController {
     }
   }
 
-  async checkOutTimeRecord(
+  async simpleCheckOut(
     req: AuthorizedRequest,
     res: Response,
     next: NextFunction
@@ -40,7 +58,7 @@ export default class TimeRecordController extends BaseController {
     const { check_out_timestamp } = req.body;
     try {
       let checkOutTimestamp: Date = new Date(check_out_timestamp);
-      await timeRecordService.checkOutTimeRecord(
+      await timeRecordService.simpleCheckout(
         req.user!.userId,
         parseInt(project_id),
         checkOutTimestamp
@@ -51,19 +69,53 @@ export default class TimeRecordController extends BaseController {
     }
   }
 
-  async getUserTimeRecordsInProject(
+  async detailedCheckIn(
     req: AuthorizedRequest,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) {
     const { project_id } = req.params;
+    const { check_in_timestamp, user_message, location } = req.body;
 
     try {
-      const timeRecords = await timeRecordService.getUserTimeRecordsInProject(
+      let checkInTimestamp: Date = new Date(check_in_timestamp);
+      await timeRecordService.detailedCheckIn(
         req.user!.userId,
-        parseInt(project_id)
+        parseInt(project_id),
+        checkInTimestamp,
+        user_message,
+        req.file?.originalname,
+        req.file?.mimetype,
+        req.file?.buffer,
+        location
       );
-      new DataRetrievedResponse().send(res, timeRecords);
+      new ResourceCreatedResponse().send(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async detailedCheckOut(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const { project_id } = req.params;
+    const { check_out_timestamp, user_message } = req.body;
+
+
+    try {
+      let checkOutTimestamp: Date = new Date(check_out_timestamp);
+      await timeRecordService.detailedCheckOut(
+        req.user!.userId,
+        parseInt(project_id),
+        checkOutTimestamp,
+        user_message,
+        req.file?.originalname,
+        req.file?.mimetype,
+        req.file?.buffer,
+      );
+      new ResourceCreatedResponse().send(res);
     } catch (error) {
       next(error);
     }

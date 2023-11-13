@@ -1,26 +1,44 @@
 import TimeRecordsRepository from "../prisma/repositories/TimeRecordsRepository";
 import ProjectRepository from "../prisma/repositories/ProjectRepository";
-import { time_record } from "@prisma/client";
+import JustificationRepository from "../prisma/repositories/JustificationRepository";
+import { JustificationType, time_record } from "@prisma/client";
 import {
   AuthorizationError,
   ConflictError,
   NotFoundError,
+  ValidationError,
 } from "../types/errors";
 
 export default class TimeRecordService {
   private readonly timeRecordsRepository: TimeRecordsRepository;
   private readonly projectsRepository: ProjectRepository;
+  private readonly justificationRepository: JustificationRepository;
+  private readonly allowedMimeTypes: Array<string>;
 
   constructor() {
     this.timeRecordsRepository = new TimeRecordsRepository();
     this.projectsRepository = new ProjectRepository();
+    this.justificationRepository = new JustificationRepository();
+    this.allowedMimeTypes = ["application/pdf"];
   }
 
-  async checkInTimeRecord(
+  async getUserTimeRecordsInProject(userId: number, projectId: number) {
+    const foundUserProjectRole =
+      await this.projectsRepository.findUserProjectRole(userId, projectId);
+    if (!foundUserProjectRole) {
+      throw new AuthorizationError();
+    }
+
+    return this.timeRecordsRepository.getUserTimeRecordsInProject(
+      userId,
+      projectId
+    );
+  }
+
+  async simpleCheckIn(
     userId: number,
     projectId: number,
     checkInTimestamp: Date,
-    userMessage?: string,
     location?: string
   ): Promise<time_record> {
     const foundUserProjectRole =
@@ -36,16 +54,15 @@ export default class TimeRecordService {
     if (existingCheckIn) {
       throw new ConflictError("open check-in");
     }
-    return this.timeRecordsRepository.createTimeRecord(
+    return this.timeRecordsRepository.checkInTimeRecord(
       userId,
       projectId,
       checkInTimestamp,
-      userMessage,
       location
     );
   }
 
-  async checkOutTimeRecord(
+  async simpleCheckout(
     userId: number,
     projectId: number,
     checkoutTimeStamp: Date | null
@@ -72,16 +89,76 @@ export default class TimeRecordService {
     );
   }
 
-  async getUserTimeRecordsInProject(
+  private validFileType(fileType: string) {
+    if (!this.allowedMimeTypes.includes(fileType)) {
+      throw new ValidationError(
+        `Formato de arquivo inválido os unicos formatos aceitos são: ${this.allowedMimeTypes.join(
+          ","
+        )}`
+      );
+    }
+    return true;
+  }
+
+  async detailedCheckIn(
     userId: number,
     projectId: number,
+    checkInTimestamp: Date,
+    userMessage: string,
+    fileName?: string,
+    fileType?: string,
+    fileContent?: Buffer,
+    location?: string
   ) {
-    const foundUserProjectRole =
-      await this.projectsRepository.findUserProjectRole(userId, projectId);
-    if (!foundUserProjectRole) {
-      throw new AuthorizationError();
+    const newRecord = await this.simpleCheckIn(
+      userId,
+      projectId,
+      checkInTimestamp,
+      location
+    );
+
+    if (!fileType || this.validFileType(fileType)) {
+      await this.justificationRepository.createJustification(
+        newRecord.time_record_id,
+        projectId,
+        userId,
+        userMessage,
+        JustificationType.CHECKIN,
+        fileName,
+        fileContent
+      );
+
+      return newRecord;
+    }
+  }
+
+  async detailedCheckOut(
+    userId: number,
+    projectId: number,
+    checkoutTimeStamp: Date | null,
+    userMessage: string,
+    fileName?: string,
+    fileType?: string,
+    fileContent?: Buffer
+  ) {
+    const updatedRecord = await this.simpleCheckout(
+      userId,
+      projectId,
+      checkoutTimeStamp
+    );
+
+    if (!fileType || this.validFileType(fileType)) {
+      await this.justificationRepository.createJustification(
+        updatedRecord.time_record_id,
+        projectId,
+        userId,
+        userMessage,
+        JustificationType.CHECKOUT,
+        fileName,
+        fileContent
+      );
     }
 
-    return this.timeRecordsRepository.getUserTimeRecordsInProject(userId, projectId);
+    return updatedRecord;
   }
 }
