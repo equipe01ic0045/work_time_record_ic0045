@@ -88,7 +88,7 @@ export default function ProjectsTable({
                 <Td>{commercialTimeFormat}</Td>
                 <Td>
                   <Link
-                    href={`/main/projects/info/${projectData.project.project_id}/manageColaborator`}
+                    href={`/main/projects/info/${projectData.project.project_id}/collaborators`}
                   >
                     <Button
                       width={"auto"}
