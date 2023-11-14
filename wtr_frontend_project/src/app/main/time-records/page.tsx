@@ -1,17 +1,20 @@
 "use client";
 import HeaderBox from "@/components/global/HeaderBox";
 import TimeRecordsTable from "@/components/time-records/TimeRecordsTable";
-import ProjectService from "@/services/ProjectService";
-import ProjectListData from "@/types/ProjectListData";
+import TimeRecordService from "@/services/TimeRecordService";
+import { TimeRecordListData } from "@/types/ProjectListData";
 import { Box, Link } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 export default function TimeRecords() {
-  const [projects, setProjects] = useState<ProjectListData[]>([]);
+  const [projects, setProjects] = useState<TimeRecordListData[]>([]);
 
   useEffect(() => {
-    new ProjectService().getUserProjects()
-      .then((projectsList) => setProjects(projectsList));
+    new TimeRecordService()
+      .getUserProjectTimeRecordsInfo()
+      .then((projectsList) => {
+        setProjects(projectsList);
+      });
   }, []);
 
   return (

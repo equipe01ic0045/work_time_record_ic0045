@@ -4,7 +4,7 @@ import ReportsTableRow from "@/components/projects/ReportsTableRow";
 import ProjectService from "@/services/ProjectService";
 import TimeRecordService from "@/services/TimeRecordService";
 import ProjectInfo from "@/types/ProjectInfo";
-import TimeRecord from "@/types/TimeRecord";
+import {TimeRecord} from "@/types/TimeRecordInfoData";
 import { CalendarIcon, Search2Icon } from "@chakra-ui/icons";
 import {
   Box,

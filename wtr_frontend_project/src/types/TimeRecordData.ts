@@ -1,19 +1,13 @@
-export type Justification = {
-  description?: string;
-  document?: File|null;
-  date?: Date;
-};
-
-export type JustificationData = Justification & {
-  date: Date;
-  projectId: number;
-  timeRecordId: number;
-}
-
-type TimeRecordData = Justification & {
-  date: Date;
-  projectId: number;
+export type SimpleTimeRecordData = {
+  project_id: number;
+  timestamp: Date;
   location?: string;
 };
 
-export default TimeRecordData;
+export type JustificationData = {
+  user_message: string;
+  justification_file?: File;
+};
+
+export type DetailedTimeRecordData = SimpleTimeRecordData & JustificationData;
+

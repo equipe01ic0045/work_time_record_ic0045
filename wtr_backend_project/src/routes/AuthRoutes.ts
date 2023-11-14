@@ -3,12 +3,13 @@
  * tags:
  *   name: User
  *   description: User routes
-*/
+ */
 
 import UserController from "../controllers/UserController";
 import BaseRoutes from "./abstract/BaseRoutes";
 import { body, param } from "express-validator";
 import { Router } from "express";
+import authorize from "../middlewares/authorize";
 
 export default class AuthRoutes extends BaseRoutes {
   constructor(protected controller: UserController = new UserController()) {
@@ -18,7 +19,7 @@ export default class AuthRoutes extends BaseRoutes {
   get router(): Router {
     /**
      * @swagger
-     * /user/register:
+     * /register:
      *   post:
      *     summary: Register a new user
      *     tags: [User]
@@ -73,7 +74,7 @@ export default class AuthRoutes extends BaseRoutes {
 
     /**
      * @swagger
-     * /user/login:
+     * /login:
      *   post:
      *     summary: Log in as a user
      *     tags: [User]
@@ -108,13 +109,6 @@ export default class AuthRoutes extends BaseRoutes {
       this.validate,
       this.controller.loginUser
     );
-
-    this._router.post(
-      "/logged",
-      [],
-      this.validate,
-      this.controller.loggedUser
-    )
 
     return this._router;
   }

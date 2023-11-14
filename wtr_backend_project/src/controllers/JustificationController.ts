@@ -17,10 +17,8 @@ export default class JustificationController extends BaseController {
     const { project_id } = req.params;
 
     const {
-      updated_timestamp,
-      location,
-      user_message,
       time_record_id,
+      user_message,
       justification_type,
     } = req.body;
 
@@ -40,8 +38,6 @@ export default class JustificationController extends BaseController {
         fileSize,
         fileBuffer,
         justification_type,
-        updated_timestamp,
-        location
       );
 
       new ResourceCreatedResponse().send(res, data);

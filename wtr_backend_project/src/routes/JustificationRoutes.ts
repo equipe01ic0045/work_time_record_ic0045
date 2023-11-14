@@ -33,8 +33,6 @@
  *                 type: string
  *               location:
  *                 type: string
- *               updated_timestamp:
- *                 type: string
  *               justification_type:
  *                 type: string
  *                 enum: ["CHECKIN", "CHECKOUT"]
@@ -44,7 +42,6 @@
  *             example:
  *                user_message: "fiz o check-in de 1 hora atrás, mal 🫡"
  *                location: "Salvador, Bahia, Brazil"
- *                updated_timestamp: "2023-08-22 13:57:40"
  *                time_record_id: 1
  *                justification_type: CHECKIN
  *     responses:
@@ -190,6 +187,7 @@ export default class JustificationRoutes extends ProjectRelatedRoutes {
   constructor(
     protected controller: JustificationController = new JustificationController(),
     private readonly storage = multer({ storage: multer.memoryStorage() })
+
   ) {
     super(controller);
   }

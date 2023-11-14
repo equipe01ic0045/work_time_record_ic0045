@@ -11,31 +11,39 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import ProjectListData from "@/types/ProjectListData";
+import { TimeRecordListData } from "@/types/ProjectListData";
 import { useEffect, useState } from "react";
 import TimeRecordService from "@/services/TimeRecordService";
+import { SimpleTimeRecordData } from "@/types/TimeRecordData";
 
-function ProjectRow({ projectData }: { projectData: ProjectListData }) {
-  const [hasOpenCheckIn, setHasOpenCheckIn] = useState<boolean>(projectData.open_check_in);
+function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
+  const [hasOpenCheckIn, setHasOpenCheckIn] = useState<boolean>(
+    projectData.open_check_in
+  );
   const [recordNextAction, setRecordNextAction] = useState<string | null>();
   const toast = useToast();
 
   useEffect(() => {
     if (hasOpenCheckIn) {
-      setRecordNextAction('Check-out');
+      setRecordNextAction("Check-out");
     } else {
-      setRecordNextAction('Check-in');
+      setRecordNextAction("Check-in");
     }
   }, [hasOpenCheckIn]);
 
-  async function quickRecord(projectId: number) {
+  async function simpleCheckInCheckOut(project_id: number) {
     const timeRecordService = new TimeRecordService();
-
     try {
+      const simpleTimeRecord: SimpleTimeRecordData = {
+        project_id,
+        timestamp: new Date(),
+        location: "salvador bahia",
+      };
+
       if (hasOpenCheckIn) {
-        await timeRecordService.checkOut({ projectId, date: new Date() });
+        await timeRecordService.simpleCheckOut(simpleTimeRecord);
       } else {
-        await timeRecordService.checkIn({ projectId, date: new Date() });
+        await timeRecordService.simpleCheckIn(simpleTimeRecord);
       }
 
       setHasOpenCheckIn(!hasOpenCheckIn);
@@ -49,7 +57,7 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
     } catch (e) {
       toast({
         title: "Erro ao fazer registro",
-        description: e instanceof Error ? e.message : '',
+        description: e instanceof Error ? e.message : "",
         status: "error",
         duration: 2000,
         position: "top-right",
@@ -58,10 +66,27 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
   }
 
   return (
-    <Tr key={projectData.project.project_id} borderBottom="2px" borderColor="gray.300">
+    <Tr
+      key={projectData.project.project_id}
+      borderBottom="2px"
+      borderColor="gray.300"
+    >
       <Td>{projectData.project.project_name}</Td>
-      <Td>{projectData.project.owner.email}</Td>
-      <Td>--</Td>
+      <Td>{projectData.project.owner.full_name}</Td>
+
+      {projectData.project.time_records[0] ? (
+        <>
+          <Td>{projectData.project.time_records[0].check_in_timestamp}</Td>
+          <Td>{projectData.project.time_records[0].check_out_timestamp}</Td>
+        </>
+      ) : (
+        <>
+          <Td>--</Td>
+          <Td>--</Td>
+        </>
+      )}
+
+
       <Td>
         <HStack gap={2}>
           <Tooltip label={`${recordNextAction} rápido`}>
@@ -70,13 +95,15 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
               icon={<Icon boxSize="2em" as={FiClock} />}
               p={3}
               color={hasOpenCheckIn ? "orange" : "black"}
-              onClick={() => quickRecord(projectData.project.project_id)}
+              onClick={() =>
+                simpleCheckInCheckOut(projectData.project.project_id)
+              }
             />
           </Tooltip>
           <Link
             href={{
               pathname: `time-records/project/${projectData.project.project_id}/register`,
-              query: { hasOpenCheckIn: hasOpenCheckIn || '' },
+              query: { hasOpenCheckIn: hasOpenCheckIn || "" },
             }}
           >
             <Tooltip label={`${recordNextAction} detalhado`}>
@@ -100,14 +127,14 @@ function ProjectRow({ projectData }: { projectData: ProjectListData }) {
           />
         </Link>
       </Td>
-    </Tr >
+    </Tr>
   );
 }
 
 export default function TimeRecordsTable({
   projectsList,
 }: {
-  projectsList: ProjectListData[],
+  projectsList: TimeRecordListData[];
 }) {
   return (
     <TableContainer width={"100%"}>
@@ -116,7 +143,8 @@ export default function TimeRecordsTable({
           <Tr>
             <Th textColor={"white"}>NOME DO PROJETO</Th>
             <Th textColor={"white"}>PROPRIETÁRIO</Th>
-            <Th textColor={"white"}>ÚLTIMO REGISTRO</Th>
+            <Th textColor={"white"}>ÚLTIMO CHECKIN</Th>
+            <Th textColor={"white"}>ÚLTIMO CHECKOUT</Th>
             <Th textColor={"white"}>REGISTRAR</Th>
             <Th textColor={"white"}>REGISTROS FEITOS</Th>
           </Tr>
@@ -125,8 +153,8 @@ export default function TimeRecordsTable({
           {projectsList.map((projectData, i) => {
             return <ProjectRow key={i} projectData={projectData} />;
           })}
-        </Tbody >
-      </Table >
-    </TableContainer >
+        </Tbody>
+      </Table>
+    </TableContainer>
   );
 }

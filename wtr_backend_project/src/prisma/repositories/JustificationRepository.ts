@@ -3,45 +3,46 @@ import { JustificationType, JustificationReviewStatus } from "@prisma/client";
 
 export default class JustificationRepository extends BaseRepository {
   async createJustification(
-    projectId: number,
-    userId: number,
-    timeRecordId: number,
-    userMessage: string,
-    documentFile: Buffer,
-    fileName: string,
-    justificationType: JustificationType,
-    updatedTimeStamp: Date,
-    updatedLocation?: string
+    time_record_id: number,
+    project_id: number,
+    user_id: number,
+    user_message: string,
+    justification_type: JustificationType,
+    file_name?: string,
+    document_file?: Buffer
   ) {
-    return this.client.time_record_justification.create({
-      data: {
-        user_message: userMessage,
-        justification_type: justificationType,
-        timestamp: updatedTimeStamp,
-        updated_location: updatedLocation,
-        status: JustificationReviewStatus.PENDING,
-        time_record: {
-          connect: {
-            time_record_id: timeRecordId,
-          },
-        },
-        project: {
-          connect: {
-            project_id: projectId,
-          },
-        },
-        colaborator: {
-          connect: {
-            user_id: userId,
-          },
-        },
-        justification_document: {
-          create: {
-            document_file: documentFile,
-            file_name: fileName,
-          },
+    const justificationData: any = {
+      user_message,
+      justification_type,
+      status: JustificationReviewStatus.PENDING,
+      time_record: {
+        connect: {
+          time_record_id,
         },
       },
+      user: {
+        connect: {
+          user_id,
+        },
+      },
+      project: {
+        connect: {
+          project_id,
+        },
+      },
+    };
+
+    if (file_name && document_file) {
+      justificationData.justification_document = {
+        create: {
+          document_file,
+          file_name,
+        },
+      };
+    }
+
+    return this.client.time_record_justification.create({
+      data: justificationData,
     });
   }
 
@@ -52,7 +53,7 @@ export default class JustificationRepository extends BaseRepository {
   ) {
     return this.client.time_record_justification.findMany({
       include: {
-        colaborator: {
+        user: {
           select: {
             user_id: true,
             email: true,
@@ -71,7 +72,7 @@ export default class JustificationRepository extends BaseRepository {
       },
       where: {
         project_id,
-        colaborator_id: user_id,
+        user_id,
         status: {
           in: status as JustificationReviewStatus[],
         },
@@ -79,10 +80,10 @@ export default class JustificationRepository extends BaseRepository {
     });
   }
 
-  async findJustificationById(justificationId: number) {
+  async findJustificationById(justification_id: number) {
     return this.client.time_record_justification.findUnique({
       include: {
-        colaborator: {
+        user: {
           select: {
             user_id: true,
             email: true,
@@ -114,37 +115,37 @@ export default class JustificationRepository extends BaseRepository {
         },
       },
       where: {
-        justification_id: justificationId,
+        justification_id,
       },
     });
   }
 
   async reviewJustification(
-    justificationId: number,
-    reviewerId: number,
+    justification_id: number,
+    reviewer_id: number,
     status: JustificationReviewStatus,
-    manager_message: string
+    reviewer_message: string
   ) {
     return this.client.time_record_justification.update({
       where: {
-        justification_id: justificationId,
+        justification_id,
       },
       data: {
         reviewer: {
           connect: {
-            user_id: reviewerId,
+            user_id: reviewer_id,
           },
         },
         status,
-        manager_message,
+        reviewer_message,
         updated_at: new Date(),
       },
     });
   }
 
-  async findJustificationDocument(justificationId: number) {
+  async findJustificationDocument(justification_id: number) {
     return this.client.justification_document.findUnique({
-      where: { justification_id: justificationId },
+      where: { justification_id },
     });
   }
 }
