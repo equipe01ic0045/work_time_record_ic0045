@@ -15,8 +15,10 @@ import { TimeRecordListData } from "@/types/ProjectListData";
 import { useEffect, useState } from "react";
 import TimeRecordService from "@/services/TimeRecordService";
 import { SimpleTimeRecordData } from "@/types/TimeRecordData";
+import { useRouter } from "next/navigation";
 
 function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
+  const router = useRouter()
   const [hasOpenCheckIn, setHasOpenCheckIn] = useState<boolean>(
     projectData.open_check_in
   );
@@ -54,6 +56,7 @@ function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
         duration: 2000,
         position: "top-right",
       });
+
     } catch (e) {
       toast({
         title: "Erro ao fazer registro",
@@ -62,7 +65,15 @@ function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
         duration: 2000,
         position: "top-right",
       });
+
     }
+  }
+
+  function timeHandler(value: any) {
+    const time = new Date(value)
+    const timeHours = time.getHours()
+    const timeMinutes = time.getMinutes()
+    return `${timeHours}:${timeMinutes}`
   }
 
   return (
@@ -76,8 +87,8 @@ function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
 
       {projectData.project.time_records[0] ? (
         <>
-          <Td>{projectData.project.time_records[0].check_in_timestamp}</Td>
-          <Td>{projectData.project.time_records[0].check_out_timestamp}</Td>
+          <Td>{timeHandler(projectData.project.time_records[0].check_in_timestamp) ?? ''}</Td>
+          <Td>{timeHandler(projectData.project.time_records[0].check_out_timestamp) ?? ''}</Td>
         </>
       ) : (
         <>
@@ -100,7 +111,7 @@ function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
               }
             />
           </Tooltip>
-          <Link
+          {/* <Link
             href={{
               pathname: `time-records/project/${projectData.project.project_id}/register`,
               query: { hasOpenCheckIn: hasOpenCheckIn || "" },
@@ -113,7 +124,7 @@ function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
                 p={3}
               />
             </Tooltip>
-          </Link>
+          </Link> */}
         </HStack>
       </Td>
       <Td>
