@@ -1,6 +1,7 @@
 "use client";
 
 import HeaderBox from "@/components/global/HeaderBox";
+import InputMask from 'react-input-mask';
 
 import ProjectInfo from "@/types/ProjectInfo";
 import {
@@ -25,14 +26,14 @@ export default function ProjectInfo({ params }: any) {
   const router = useRouter();
 
   const [newProject, setNewProject] = useState({
-    projectName: "",
-    projectDescription: "",
+    projectName: '',
+    projectDescription: '',
     locationRequired: false,
     commercialTimeRequired: false,
     timezone: '',
     location: '',
-    commercialTimeStart: 0,
-    commercialTimeEnd: 0
+    commercialTimeStart: '',
+    commercialTimeEnd: ''
   })
 
   function locationRequiredCheckboxHandler(event: any) {
@@ -57,6 +58,7 @@ export default function ProjectInfo({ params }: any) {
 
   function registerNewProject() {
     console.log(newProject)
+    console.log(Number(newProject.commercialTimeStart))
     projectService.createProject(newProject)
       .then((response) => {
         toast({
@@ -157,15 +159,22 @@ export default function ProjectInfo({ params }: any) {
           gap='0.5em'
         >
           <FormLabel>Tempo Comercial ( Inicio )</FormLabel>
-          <Input
+          <InputMask
+          mask="99:00"
+          maskChar=''
+          alwaysShowMask={true}
+          value={newProject.commercialTimeStart}
+          onChange={inputHandler}
+          >
+          {(inputProps:any)=>{return(<Input
+          {...inputProps}
             placeholder="08:00"
-            type="number"
+            type="text"
             name="commercialTimeStart"
             bgColor="Lavender"
             color="blueviolet"
-            value={newProject.commercialTimeStart}
-            onChange={inputHandler}
-          />
+          />)}}
+          </InputMask>
         </InputGroup>
         <InputGroup
           display='flex'
@@ -173,15 +182,23 @@ export default function ProjectInfo({ params }: any) {
           gap='0.5em'
         >
           <FormLabel>Tempo Comercial ( Final )</FormLabel>
-          <Input
+          <InputMask
+          mask="99:00"
+          maskChar=''
+          alwaysShowMask={true}
+          value={newProject.commercialTimeEnd}
+          onChange={inputHandler}
+          >
+          {(inputProps:any)=>{return(<Input
+          {...inputProps}
             placeholder="17:00"
-            type="number"
+            type="text"
             name="commercialTimeEnd"
             bgColor="Lavender"
             color="blueviolet"
-            value={newProject.commercialTimeEnd}
-            onChange={inputHandler}
-          />
+          />)}}
+          </InputMask>
+          
         </InputGroup>
         <FormLabel>Descrição do Projeto</FormLabel>
         <Textarea

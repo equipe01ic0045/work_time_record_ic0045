@@ -11,8 +11,8 @@ export interface registerProject {
   commercialTimeRequired?: boolean;
   timezone?: string;
   location?: String;
-  commercialTimeStart?: number;
-  commercialTimeEnd?: number;
+  commercialTimeStart?: number | string;
+  commercialTimeEnd?: number | string;
 }
 
 export interface editProject {
@@ -92,8 +92,8 @@ export default class ProjectService {
       commercial_time_required: createProject.commercialTimeRequired,
       timezone: createProject.timezone,
       location: createProject.location,
-      commercial_time_start: Number(createProject.commercialTimeStart),
-      commercial_time_end: Number(createProject.commercialTimeEnd),
+      commercial_time_start: this.timeStringHandler(createProject.commercialTimeStart),
+      commercial_time_end: this.timeStringHandler(createProject.commercialTimeEnd),
       project_description: createProject.projectDescription,
     };
     return axios.post("/projects", createProjectData, {
@@ -131,4 +131,16 @@ export default class ProjectService {
       withCredentials: true,
     });
   }
+
+  public timeStringHandler(value: string | any) {
+    const newValue = value.slice(0, 2)
+    if (newValue[0] === '0') {
+      return Number(newValue[1])
+    }
+    else {
+      return Number(newValue)
+    }
+
+  }
+
 }

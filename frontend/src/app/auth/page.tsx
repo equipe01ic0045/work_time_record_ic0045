@@ -59,7 +59,7 @@ export default function LoginComponent() {
         display="flex"
         flexDirection="column">
         <Input
-          placeholder="email"
+          placeholder="user@mail.com"
           type="email"
           name="email"
           value={user.email}
@@ -70,7 +70,7 @@ export default function LoginComponent() {
         />
         <Box position="relative" mt="1em">
           <Input
-            placeholder="senha"
+            placeholder="123abc"
             type={showPassword ? 'text' : 'password'}
             name="password"
             value={user.password}
