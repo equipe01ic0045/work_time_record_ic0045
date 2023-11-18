@@ -1,5 +1,6 @@
 "use client";
 
+import InputMask from 'react-input-mask';
 import HeaderBox from "@/components/global/HeaderBox";
 import ProjectService from "@/services/ProjectService";
 import ProjectInfo from "@/types/ProjectInfo";
@@ -136,10 +137,27 @@ export default function ProjectInfo({ params }: any) {
     setOpenEdit(!isOpenEdit)
   }
 
+  function getTimeHandler(value: any) {
+    const timeValue = (value / 60).toString()
+    if (timeValue.length === 2) {
+      return timeValue
+    }
+    if (timeValue.length === 1) {
+      return `0${timeValue}`
+    }
+
+  }
+
   useEffect(() => {
     projectService.getProjectInfo(projectId)
-      .then((response) => {
-        setProjectInfo(response)
+      .then((response: any) => {
+        const responseProject = {
+          ...response,
+          commercial_time_start: getTimeHandler(response.commercial_time_start),
+          commercial_time_end: getTimeHandler(response.commercial_time_end)
+        }
+        console.log('response project: ', responseProject)
+        setProjectInfo(responseProject)
       }).catch((error) => {
 
       })
@@ -182,13 +200,47 @@ export default function ProjectInfo({ params }: any) {
                 <Heading size='xs' textTransform='uppercase'>
                   Tempo Comercial ( Inicio )
                 </Heading>
-                <Input name="commercial_time_start" type="number" onChange={inputHandler} value={projectInfo?.commercial_time_start} />
+                <InputMask
+                  mask="99:00"
+                  maskChar=''
+                  alwaysShowMask={true}
+                  value={projectInfo?.commercial_time_start}
+                  onChange={inputHandler}
+                >
+                  {(inputProps: any) => {
+                    return (<Input
+                      {...inputProps}
+                      placeholder="08:00"
+                      type="text"
+                      name="commercial_time_start"
+                      bgColor="Lavender"
+                      color="blueviolet"
+                    />)
+                  }}
+                </InputMask>
               </Box>
               <Box style={styleBox}>
                 <Heading size='xs' textTransform='uppercase'>
                   Tempo Comercial ( Final )
                 </Heading>
-                <Input name="commercial_time_end" type="number" onChange={inputHandler} value={projectInfo?.commercial_time_end} />
+                <InputMask
+                  mask="99:00"
+                  maskChar=''
+                  alwaysShowMask={true}
+                  value={projectInfo?.commercial_time_end}
+                  onChange={inputHandler}
+                >
+                  {(inputProps: any) => {
+                    return (<Input
+                      {...inputProps}
+                      placeholder="17:00"
+                      type="text"
+                      name="commercial_time_end"
+                      bgColor="Lavender"
+                      color="blueviolet"
+                    />)
+                  }}
+                </InputMask>
               </Box>
               <Box style={styleBox}>
                 <Heading size='xs' textTransform='uppercase'>

@@ -110,8 +110,8 @@ export default class ProjectService {
       commercial_time_required: editProject.commercialTimeRequired,
       timezone: editProject.timezone,
       location: editProject.location,
-      commercial_time_start: editProject.commercialTimeStart,
-      commercial_time_end: editProject.commercialTimeEnd,
+      commercial_time_start: this.timeStringHandler(editProject.commercialTimeStart),
+      commercial_time_end: this.timeStringHandler(editProject.commercialTimeEnd),
     };
 
     return axios.put("/projects", editProjectData, { withCredentials: true });
@@ -135,10 +135,10 @@ export default class ProjectService {
   public timeStringHandler(value: string | any) {
     const newValue = value.slice(0, 2)
     if (newValue[0] === '0') {
-      return Number(newValue[1])
+      return Number(newValue[1])*60
     }
     else {
-      return Number(newValue)
+      return Number(newValue)*60
     }
 
   }

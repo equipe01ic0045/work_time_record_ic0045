@@ -2,7 +2,6 @@
 
 import HeaderBox from "@/components/global/HeaderBox";
 import InputMask from 'react-input-mask';
-
 import ProjectInfo from "@/types/ProjectInfo";
 import {
   Box,
@@ -57,8 +56,6 @@ export default function ProjectInfo({ params }: any) {
   }
 
   function registerNewProject() {
-    console.log(newProject)
-    console.log(Number(newProject.commercialTimeStart))
     projectService.createProject(newProject)
       .then((response) => {
         toast({
