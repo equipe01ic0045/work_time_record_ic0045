@@ -124,9 +124,7 @@ export default function LoginComponent() {
           </Box>
           <Text fontSize="sm">Ou continue com:</Text>
           <Box display="flex" flexDirection="row" gap="1em">
-            <Link href="/auth/google"><Box as={FaGoogle} size="24px" cursor="pointer" aria-label="Google Login" /></Link>
-            <Link href="/auth/facebook"><Box as={FaFacebookF} size="24px" cursor="pointer" aria-label="Facebook Login" /></Link>
-            <Link href="/auth/github"><Box as={FaGithub} size="24px" cursor="pointer" aria-label="GitHub Login" /></Link>
+            
           </Box>
         </Box>
       </Box>
