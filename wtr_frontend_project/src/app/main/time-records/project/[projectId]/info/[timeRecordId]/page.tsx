@@ -17,7 +17,6 @@ import {
   Card,
   CardBody,
   CardFooter,
-  CardHeader,
   Divider,
   HStack,
   Heading,
@@ -101,7 +100,6 @@ const JustificationItem = ({
         )}
 
         <Divider my={4} color="white" opacity="100%" />
-        {/* TODO: adicionar download de documentos */}
         <Tooltip isDisabled={!!documentBlob} label="Nenhum documento fornecido">
           <Button
             isDisabled={!documentBlob}
@@ -168,7 +166,11 @@ export default function TimeRecordInfoPage(props: TimeRecordInfoPageProps) {
                 <Text fontWeight="bold">Data de início:</Text>
                 <Text>{checkInDate?.format("DD/MM/YYYY HH:mm")}</Text>
                 <Text fontWeight="bold">Data de fim:</Text>
-                <Text>{timeRecord && timeRecord.check_out_timestamp? checkOutDate.format("DD/MM/YYYY HH:mm"): null}</Text>
+                <Text>
+                  {timeRecord && timeRecord.check_out_timestamp
+                    ? checkOutDate.format("DD/MM/YYYY HH:mm")
+                    : null}
+                </Text>
                 <Text fontWeight="bold">Duração:</Text>
                 <Text>
                   {dayjs

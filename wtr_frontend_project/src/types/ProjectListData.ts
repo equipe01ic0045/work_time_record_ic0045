@@ -10,7 +10,11 @@ export default interface ProjectListData {
     timezone: string;
     commercial_time_start: number | null;
     commercial_time_end: number | null;
+    _count: {
+      time_record_justification: number
+    }
   };
+
   open_check_in: boolean;
 }
 

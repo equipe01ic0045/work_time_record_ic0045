@@ -108,6 +108,7 @@ model time_record_justification {
   project                project                   @relation(fields: [project_id], references: [project_id])
 
   @@unique([justification_id, reviewer_id])
+  @@unique([time_record_id, justification_type])
 }
 
 model justification_document {

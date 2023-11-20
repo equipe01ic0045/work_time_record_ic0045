@@ -66,7 +66,6 @@ export default function Projects() {
       >
         <Button colorScheme="purple" bgColor="#4D47C3"
           gap={"10px"}
-          //textColor={"#4D47C3"}
           textColor={"#FFFFFF"}
           fontSize={"2em"}
           onClick={() => router.push("/main/projects/create")}

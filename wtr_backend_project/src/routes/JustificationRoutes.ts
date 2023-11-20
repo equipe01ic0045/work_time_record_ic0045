@@ -31,8 +31,6 @@
  *                 type: string
  *               user_message:
  *                 type: string
- *               location:
- *                 type: string
  *               justification_type:
  *                 type: string
  *                 enum: ["CHECKIN", "CHECKOUT"]
@@ -41,7 +39,6 @@
  *                 format: binary
  *             example:
  *                user_message: "fiz o check-in de 1 hora atrás, mal 🫡"
- *                location: "Salvador, Bahia, Brazil"
  *                time_record_id: 1
  *                justification_type: CHECKIN
  *     responses:
@@ -113,8 +110,8 @@
 /**
  * @swagger
  * /projects/justification/{project_id}/record/{justification_id}/review:
- *   patch:
- *     summary: reviewes a justification request
+ *   post:
+ *     summary: review a justification request
  *     tags: [Justifications]
  *     security:
  *       - CookieAuth: []
@@ -208,11 +205,6 @@ export default class JustificationRoutes extends ProjectRelatedRoutes {
           .withMessage(
             "mensagem de check-in ultrapassou o limite de 500 caracteres"
           ),
-        body("location").isString().withMessage("localizacao invalida"), // change that later, validate geophaphic location
-        body("updated_timestamp")
-          .isISO8601()
-          .toDate()
-          .withMessage("datetime invalido"),
         body("justification_type")
           .isString()
           .withMessage("Tipo de justificativa inválida"),
@@ -241,12 +233,12 @@ export default class JustificationRoutes extends ProjectRelatedRoutes {
       this.controller.getProjectJustification
     );
 
-    this._router.patch(
+    this._router.post(
       "/:project_id/record/:justification_id/review",
       [
         ...this.projectIdValidation,
         body("status").isString().withMessage("Formato de status inválido"),
-        body("manager_message")
+        body("reviewer_message")
           .isString()
           .withMessage("Formato de messagem inválido"),
       ],

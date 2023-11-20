@@ -50,7 +50,7 @@ export default class ProjectService {
   }
 
   async updateProject(
-    projectId : number,
+    projectId: number,
     projectName: string,
     projectDescription: string,
     locationRequired: boolean,
@@ -60,7 +60,6 @@ export default class ProjectService {
     commercialTimeStart?: number,
     commercialTimeEnd?: number
   ): Promise<project> {
-
     const newProject = await this.projectRepository.updateProject(
       projectId,
       projectName,
@@ -75,13 +74,9 @@ export default class ProjectService {
     return newProject;
   }
 
-  async deleteProject(
-    projectId : number,
-  ): Promise<boolean> {
-      await this.projectRepository.deleteProject(projectId);
-      return true;
+  async deleteProject(projectId: number) {
+    await this.projectRepository.deleteProject(projectId);
   }
-
 
   async addUserToProject(
     adminUserId: number,
@@ -106,7 +101,7 @@ export default class ProjectService {
     if (!foundUser) {
       throw new NotFoundError("user");
     }
-    
+
     try {
       return this.projectRepository.addUserToProject(
         foundUser.user_id,
@@ -192,13 +187,25 @@ export default class ProjectService {
   }
 
   async deleteUser(admin_id: number, project_id: number, user_id: number) {
-    const foundUserProjectRole =  await this.projectRepository.findUserProjectRole(admin_id, project_id, ["ADMIN"]);
-    const userToBeDeletedRole =  await this.projectRepository.findUserProjectRole(user_id, project_id, ["USER", "MANAGER"]); // ADMINS cannot delete users from other projects nor other admins
-    if (!foundUserProjectRole || !userToBeDeletedRole) {
+
+    const foundAdminUserProjectRole =
+      await this.projectRepository.findUserProjectRole(admin_id, project_id, [
+        "ADMIN",
+        "MANAGER"
+      ]);
+
+    const userToBeDeletedRole =
+      await this.projectRepository.findUserProjectRole(user_id, project_id);
+
+    if (!foundAdminUserProjectRole || !userToBeDeletedRole) {
       throw new AuthorizationError();
     }
-    const deletedUser = await this.projectRepository.deleteUserInProject(user_id, project_id);
+
+    const deletedUser = await this.projectRepository.deleteUserInProject(
+      user_id,
+      project_id
+    );
+
     return deletedUser;
   }
-
 }

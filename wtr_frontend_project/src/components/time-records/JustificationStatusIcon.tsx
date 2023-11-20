@@ -18,7 +18,7 @@ export default function JustificationStatusIcon({
         </span>
       </Tooltip>
     );
-  } else if (status === "REJECTED") {
+  } else if (status === "DENIED") {
     return (
       <Tooltip label="Justificativa negada">
         <span>

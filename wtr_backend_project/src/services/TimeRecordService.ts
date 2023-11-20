@@ -1,7 +1,11 @@
 import TimeRecordsRepository from "../prisma/repositories/TimeRecordsRepository";
 import ProjectRepository from "../prisma/repositories/ProjectRepository";
 import JustificationRepository from "../prisma/repositories/JustificationRepository";
-import { JustificationType, time_record } from "@prisma/client";
+import {
+  JustificationReviewStatus,
+  JustificationType,
+  time_record,
+} from "@prisma/client";
 import {
   AuthorizationError,
   ConflictError,
@@ -163,8 +167,9 @@ export default class TimeRecordService {
   }
 
   async getTimeRecordInfo(timeRecordId: number) {
-    const timeRecord =
-      await this.timeRecordsRepository.findTimeRecordInfo(timeRecordId);
+    const timeRecord = await this.timeRecordsRepository.findTimeRecordInfo(
+      timeRecordId
+    );
 
     if (!timeRecord) {
       throw new NotFoundError("time-record");
@@ -173,9 +178,147 @@ export default class TimeRecordService {
     return timeRecord;
   }
 
+  async updateTimeRecordInfo(
+    time_record_id: number,
+    check_in_timestamp?: string,
+    check_out_timestamp?: string,
+    user_message?: string,
+    reviewer_message?: string,
+    status?: JustificationReviewStatus,
+    file_name?: string,
+    file_type?: string,
+    file_content?: Buffer
+  ) {
+    const timeRecord = await this.timeRecordsRepository.findTimeRecordById(
+      time_record_id
+    );
+    if (!timeRecord) {
+      throw new NotFoundError("time_record");
+    }
 
-  async getUserProjectTimeRecords(userId:number) {
-    const timeRecords = await this.timeRecordsRepository.findUserProjectTimeRecords(userId)
-    return timeRecords
+    if (check_in_timestamp && check_out_timestamp) {
+      throw new AuthorizationError();
+    }
+
+    const justification_type = check_in_timestamp
+      ? JustificationType.CHECKIN
+      : JustificationType.CHECKOUT;
+
+    const existing_justification =
+      await this.justificationRepository.findJustificationByTimeRecordIdAndType(
+        time_record_id,
+        justification_type
+      );
+
+    let checkInTimestamp: Date | undefined = check_in_timestamp
+      ? new Date(check_in_timestamp)
+      : undefined;
+    let checkOutTimestamp: Date | undefined = check_out_timestamp
+      ? new Date(check_out_timestamp)
+      : undefined;
+
+    await this.timeRecordsRepository.updateTimeRecord(
+      time_record_id,
+      checkInTimestamp,
+      checkOutTimestamp
+    );
+
+    if (existing_justification) {
+      if (!file_type || this.validFileType(file_type)) {
+        await this.justificationRepository.updateJustification(
+          existing_justification.justification_id,
+          user_message,
+          reviewer_message,
+          status,
+          file_name,
+          file_content
+        );
+      }
+    } else if (
+      !existing_justification &&
+      (user_message ||
+        reviewer_message ||
+        status ||
+        file_name ||
+        file_type ||
+        file_content)
+    ) {
+      throw new NotFoundError("justification");
+    }
+  }
+
+  async updateTimeRecordInfoManager(
+    time_record_id: number,
+    check_in_timestamp?: string,
+    check_out_timestamp?: string,
+    user_message?: string,
+    reviewer_message?: string,
+    status?: JustificationReviewStatus,
+    file_name?: string,
+    file_type?: string,
+    file_content?: Buffer
+  ) {
+    const timeRecord = await this.timeRecordsRepository.findTimeRecordById(
+      time_record_id
+    );
+    if (!timeRecord) {
+      throw new NotFoundError("time_record");
+    }
+
+    if (check_in_timestamp && check_out_timestamp) {
+      throw new AuthorizationError();
+    }
+
+    const justification_type = check_in_timestamp
+      ? JustificationType.CHECKIN
+      : JustificationType.CHECKOUT;
+
+    const existing_justification =
+      await this.justificationRepository.findJustificationByTimeRecordIdAndType(
+        time_record_id,
+        justification_type
+      );
+
+    let checkInTimestamp: Date | undefined = check_in_timestamp
+      ? new Date(check_in_timestamp)
+      : undefined;
+    let checkOutTimestamp: Date | undefined = check_out_timestamp
+      ? new Date(check_out_timestamp)
+      : undefined;
+
+    await this.timeRecordsRepository.updateTimeRecord(
+      time_record_id,
+      checkInTimestamp,
+      checkOutTimestamp
+    );
+
+    if (existing_justification) {
+      if (!file_type || this.validFileType(file_type)) {
+        await this.justificationRepository.updateJustification(
+          existing_justification.justification_id,
+          user_message,
+          reviewer_message,
+          status,
+          file_name,
+          file_content
+        );
+      }
+    } else if (
+      !existing_justification &&
+      (user_message ||
+        reviewer_message ||
+        status ||
+        file_name ||
+        file_type ||
+        file_content)
+    ) {
+      throw new NotFoundError("justification");
+    }
+  }
+
+  async getUserProjectTimeRecords(userId: number) {
+    const timeRecords =
+      await this.timeRecordsRepository.findUserProjectTimeRecords(userId);
+    return timeRecords;
   }
 }

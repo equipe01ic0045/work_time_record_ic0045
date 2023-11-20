@@ -79,6 +79,11 @@ export default class TimeRecordController extends BaseController {
 
     try {
       let checkInTimestamp: Date = new Date(check_in_timestamp);
+
+      console.log(project_id,
+      check_in_timestamp,
+      user_message)
+
       await timeRecordService.detailedCheckIn(
         req.user!.userId,
         parseInt(project_id),
@@ -136,6 +141,38 @@ export default class TimeRecordController extends BaseController {
     }
   }
 
+  async updateTimeRecordInfo(
+    req: AuthorizedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const { time_record_id } = req.params;
+    const {
+      check_in_timestamp,
+      check_out_timestamp,
+      user_message,
+      reviewer_message,
+      status,
+    } = req.body;
+
+    try {
+      await timeRecordService.updateTimeRecordInfo(
+        parseInt(time_record_id),
+        check_in_timestamp,
+        check_out_timestamp,
+        user_message,
+        reviewer_message,
+        status,
+        req.file?.originalname,
+        req.file?.mimetype,
+        req.file?.buffer
+      );
+      new ResourceUpdatedResponse().send(res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getTimeRecordsList(
     req: AuthorizedRequest,
     res: Response,
@@ -149,7 +186,5 @@ export default class TimeRecordController extends BaseController {
     } catch (error) {
       next(error);
     }
-
   }
-
 }

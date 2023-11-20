@@ -43,7 +43,6 @@ export default class JustificationService {
     userMessage: string,
     fileName: string,
     fileType: string,
-    fileSize: number, // TODO: definir valor máximo do arquivo
     documentFile: Buffer,
     justificationType: JustificationType,
   ) {
@@ -131,7 +130,7 @@ export default class JustificationService {
       await this.justificationRepository.findJustificationById(justificationId);
 
     if (!foundtimeRecordJustification) {
-      throw new NotFoundError("Justificativa não encontrada");
+      throw new NotFoundError("justification");
     }
 
     if (foundtimeRecordJustification.user_id !== userId) {
@@ -154,7 +153,7 @@ export default class JustificationService {
     reviewerId: number,
     justificationId: number,
     status: JustificationReviewStatus,
-    managerMessage: string
+    reviewerMessage: string
   ) {
     const foundUserProjectRole =
       await this.projectsRepository.findUserProjectRole(reviewerId, projectId, [
@@ -177,7 +176,7 @@ export default class JustificationService {
         justificationId,
         reviewerId,
         status,
-        managerMessage
+        reviewerMessage
       );
 
     return updatedTimeJustification;
