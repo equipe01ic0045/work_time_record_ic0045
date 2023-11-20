@@ -1,6 +1,4 @@
-
-
-export type Justification = {
+export type JustificationData = {
   justification_id: number;
   time_record_id: number;
   project_id: number;
@@ -11,11 +9,33 @@ export type Justification = {
   justification_type: "CHECKIN" | "CHECKOUT";
   status: "PENDING" | "APPROVED" | "REJECTED";
   created_at: string;
+};
+
+export type Justification = JustificationData & {
   reviewer: {
-    full_name:string,
-    email:string,
-    cpf:string
-  }
+    full_name: string;
+    email: string;
+    cpf: string;
+  };
+};
+
+export type JustificationInfoManager = JustificationData & {
+  updated_at: string;
+  user: {
+    user_id: number;
+    email: string;
+    full_name: string;
+    cpf: string;
+  };
+
+  time_record: {
+    check_in_timestamp: string;
+    check_out_timestamp: string | undefined;
+  };
+
+  justification_document: {
+    justification_id: number;
+  };
 };
 
 export type TimeRecord = {

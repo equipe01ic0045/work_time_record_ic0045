@@ -37,13 +37,10 @@ export default function RelatorioColaborador({ params }: any) {
 
  return (
   <>
-    {/* <RelatorioColaborador project={mockDataList}/> */}
       <ChakraProvider>
         <Box display={"flex"} flexDirection={"column"} width={'100%'}>
-          {/* Box no topo da página */}
           <HeaderBox title={<><Link href={`/main/projects`}>Projetos</Link> / {projectInfo? <Link href={`/main/projects/info/`+ params.projectId.toString()}>{projectInfo.project_name}</Link> : "...loading"} / <Link href={`/main/projects/info/`+ params.projectId.toString()+"/manageColaborator"}>Colaboradores</Link>{" / {Maria da Silva}"}</>} />
 
-          {/* Box no meio da página */}
           <Box
             flex={1}
             display="flex"
@@ -60,7 +57,6 @@ export default function RelatorioColaborador({ params }: any) {
 
               <Box mt={4}></Box>
 
-              {/* Tabela */}
           
               <Box maxW="800px" width="100%" borderWidth="1px" bg="#F0EFFF">
                   <Table variant="simple" >
@@ -72,7 +68,6 @@ export default function RelatorioColaborador({ params }: any) {
                         </Tr>
                       </Thead>
                       <Tbody>
-                      {/* Linhas da tabela */}
                       <Tr borderBottom="2px" borderColor="gray.300">
                           <Td>27/08/2023</Td>
                           <Td>08:00 HOURS</Td>
