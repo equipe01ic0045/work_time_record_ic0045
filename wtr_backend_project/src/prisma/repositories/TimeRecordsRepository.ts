@@ -1,3 +1,4 @@
+import { JustificationReviewStatus, JustificationType } from "@prisma/client";
 import BaseRepository from "./abstract/BaseRepository";
 
 export default class TimeRecordsRepository extends BaseRepository {
@@ -114,6 +115,21 @@ export default class TimeRecordsRepository extends BaseRepository {
     });
   }
 
+  async updateTimeRecord(
+    time_record_id: number,
+    check_in_timestamp?: Date,
+    check_out_timestamp?: Date,
+  ) {
+    return this.client.time_record.update({
+      where: { time_record_id },
+      data: {
+        check_in_timestamp,
+        check_out_timestamp,
+        updated_at: new Date(),
+      },
+    });
+  }
+
   async findUserProjectTimeRecords(user_id: number) {
     return this.client.user_project_role.findMany({
       where: { user_id },
@@ -130,14 +146,14 @@ export default class TimeRecordsRepository extends BaseRepository {
             },
             time_records: {
               orderBy: {
-                created_at: 'desc', 
+                created_at: "desc",
               },
-              take: 1, 
+              take: 1,
               select: {
-                check_in_timestamp:true,
-                check_out_timestamp: true
+                check_in_timestamp: true,
+                check_out_timestamp: true,
               },
-            },    
+            },
           },
         },
         open_check_in: true,

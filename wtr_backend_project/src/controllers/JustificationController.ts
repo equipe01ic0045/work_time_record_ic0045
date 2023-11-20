@@ -23,7 +23,6 @@ export default class JustificationController extends BaseController {
     } = req.body;
 
     const fileType = req.file!.mimetype;
-    const fileSize = req.file!.size;
     const fileBuffer = req.file!.buffer;
     const fileName = req.file!.originalname;
 
@@ -35,7 +34,6 @@ export default class JustificationController extends BaseController {
         user_message,
         fileName,
         fileType,
-        fileSize,
         fileBuffer,
         justification_type,
       );
@@ -95,14 +93,14 @@ export default class JustificationController extends BaseController {
   ) {
     try {
       const { project_id, justification_id } = req.params;
-      const { status, manager_message } = req.body;
+      const { status, reviewer_message } = req.body;
       const updatedTimeRecordJustification =
         await justificationService.reviewJustification(
           +project_id,
           req.user!.userId,
           +justification_id,
           status,
-          manager_message
+          reviewer_message
         );
       new ResourceUpdatedResponse().send(res, updatedTimeRecordJustification);
     } catch (err) {

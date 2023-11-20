@@ -16,7 +16,7 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
     protected controller: TimeRecordController = new TimeRecordController(),
     private readonly storage = multer({
       storage: multer.memoryStorage(),
-      limits: { fileSize: 1024 * 1024 },
+      limits: { fileSize: 5000000 },
     })
   ) {
     super(controller);
@@ -270,6 +270,66 @@ export default class TimeRecordRoutes extends ProjectRelatedRoutes {
       this.validate,
       this.controller.getTimeRecordInfo
     );
+
+
+    /**
+     * @swagger
+     * /projects/time-records/info/{time_record_id}:
+     *   put:
+     *     summary: update a time record
+     *     tags: [Time Records]
+     *     security:
+     *       - CookieAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: time_record_id
+     *         required: true
+     *         description: The ID of the time record.
+     *         schema:
+     *           type: string
+    *     requestBody:
+    *       required: true
+    *       content:
+    *         multipart/form-data:
+    *           schema:
+    *             type: object
+    *             properties:
+    *               check_in_timestamp:
+    *                 type: string
+    *               check_out_timestamp:
+    *                 type: string
+    *               user_message:
+    *                 type: string   
+    *               reviewer_message:
+    *                 type: string
+    *               status:
+    *                 type: string
+    *               justification_file:
+    *                 type: string
+    *                 format: binary
+     *           example:
+     *              check_in_timestamp: 2023-08-22 13:57:40
+     *              user_message: "teste update"
+     *              reviewer_message: "reviewer teste update"
+     *              status: "PENDING"
+     *     responses:
+     *       '200':
+     *         description: Successfully returned the time record.
+     * 
+     * 
+     */
+    this._router.put(
+      "/info/:time_record_id",
+      this.storage.single("justification_file"),
+      [
+        param("time_record_id")
+          .isInt()
+          .withMessage("ID do time record deve ser um inteiro"),
+      ],
+      this.validate,
+      this.controller.updateTimeRecordInfo
+    );
+
 
 
     /**
