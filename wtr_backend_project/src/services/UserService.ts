@@ -96,6 +96,15 @@ export default class UserService {
     return foundUser;
   }
 
+  async getUsersByName(full_name: string): Promise<Omit<user, "password">[]> {
+    const foundUsers = await this.userRepository.findUsersByName(full_name);
+    if (!foundUsers) {
+      throw new NotFoundError("user");
+    }
+
+    return foundUsers;
+  }
+
   async updateUser(
     userId: number,
     fullName: string,

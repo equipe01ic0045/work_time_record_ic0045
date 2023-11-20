@@ -71,6 +71,16 @@ export default class UserController extends BaseController {
     }
   }
 
+  async getUsersByName(req: Request, res: Response, next: NextFunction) {
+    const { full_name } = req.body;
+    try {
+      const users = await userService.getUsersByName(full_name);
+      res.json({users});
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async updateUser(req: AuthorizedRequest, res: Response, next: NextFunction) {
     const { full_name, email, password } = req.body;
     try {

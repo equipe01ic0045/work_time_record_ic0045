@@ -52,6 +52,11 @@ export default class UserRepository extends BaseRepository {
       select: this.findUserFields,
     });
   }
+  async findUsersByName(
+    full_name: string
+  ): Promise<Omit<user, "password">[]> {
+    return this.client.user.findMany({ where: { full_name: {contains: full_name, mode: 'insensitive'} } });
+  }
 
   async findUserByEmail(email: string): Promise<user | null> {
     return this.client.user.findUnique({
