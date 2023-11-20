@@ -5,14 +5,14 @@ import ProjectUsers from "@/types/ProjectUsers";
 import ProjectInfo from "@/types/ProjectInfo";
 
 export interface registerProject {
-  projectName?: string;
-  projectDescription?: string;
+  project_name?: string;
+  project_description?: string;
   locationRequired?: boolean;
   commercialTimeRequired?: boolean;
   timezone?: string;
   location?: String;
-  commercialTimeStart?: number;
-  commercialTimeEnd?: number;
+  commercial_time_start?: number;
+  commercial_time_end?: number;
 }
 
 export interface editProject {
@@ -87,14 +87,14 @@ export default class ProjectService {
     createProject: registerProject
   ): Promise<AxiosResponse> {
     const createProjectData = {
-      project_name: createProject.projectName,
+      project_name: createProject.project_name,
       location_required: createProject.locationRequired,
       commercial_time_required: createProject.commercialTimeRequired,
       timezone: createProject.timezone,
       location: createProject.location,
-      commercial_time_start: Number(createProject.commercialTimeStart),
-      commercial_time_end: Number(createProject.commercialTimeEnd),
-      project_description: createProject.projectDescription,
+      commercial_time_start: Number(createProject.commercial_time_start),
+      commercial_time_end: Number(createProject.commercial_time_end),
+      project_description: createProject.project_description,
     };
     return axios.post("/projects", createProjectData, {
       withCredentials: true,

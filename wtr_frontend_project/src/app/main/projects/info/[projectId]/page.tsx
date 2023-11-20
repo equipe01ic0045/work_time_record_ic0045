@@ -1,6 +1,7 @@
 "use client";
 
 import HeaderBox from "@/components/global/HeaderBox";
+import ProjectCard, { Project, ProjectError } from "@/components/projects/ProjectCard";
 import ProjectService from "@/services/ProjectService";
 import ProjectInfo from "@/types/ProjectInfo";
 import {
@@ -77,6 +78,16 @@ export default function ProjectInfo({ params }: any) {
   const parameters = useParams();
   const projectId = Number(parameters.projectId);
   const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
+  const [errors, setErrors] = useState<ProjectError>({
+    project_name: '',
+    location_required: '',
+    commercial_time_required: '',
+    timezone: '',
+    location: '',
+    commercial_time_start: '',
+    commercial_time_end: '',
+    project_description: '',
+  });
   const toast = useToast();
 
   function inputHandler(event: any) {
@@ -84,7 +95,7 @@ export default function ProjectInfo({ params }: any) {
     setProjectInfo({ ...projectInfo, [name]: value });
   }
 
-  function updateProjectHandler() {
+  async function updateProjectHandler(projectInfo : Project) : Promise<ProjectError>{
     const editProject = {
       projectId,
       projectName: projectInfo?.project_name,
@@ -92,12 +103,20 @@ export default function ProjectInfo({ params }: any) {
       timezone: projectInfo?.timezone,
       location: projectInfo?.location,
       commercialTimeStart: projectInfo?.commercial_time_start,
-      commercialTimeEnd: projectInfo?.commercial_time_end,
+      commercialTimeEnd: projectInfo?.commercial_time_end
+    }
+    const erros : ProjectError = {
+      project_name: '',
+      location_required: '',
+      commercial_time_required: '',
+      timezone: '',
+      location: '',
+      commercial_time_start: '',
+      commercial_time_end: '',
+      project_description: '',
     };
-
-    projectService
-      .updateProject(editProject)
-      .then((response) => {
+    try{
+        const response = await projectService.updateProject(editProject);
         toast({
           title: "Projeto Atualizado",
           description: "",
@@ -107,8 +126,9 @@ export default function ProjectInfo({ params }: any) {
           position: "top-right",
         });
         setOpenEdit(false);
-      })
-      .catch((error) => {
+        return erros
+      }
+      catch(error : any){
         toast({
           title: "Falha ao Atualizar Projeto",
           description: "",
@@ -117,7 +137,18 @@ export default function ProjectInfo({ params }: any) {
           isClosable: true,
           position: "top-right",
         });
-      });
+        
+        const data = error?.response?.data;
+        const fieldErrors = data?.data?.errors;
+        if (fieldErrors)
+          fieldErrors.forEach((error: any) => erros[error.path as keyof (typeof erros)] = error.msg);
+        if(data?.message && data?.message == "project already exists."){
+          erros.project_name = 'Já existe um projeto com este nome!';
+        }
+        setOpenEdit(false);
+        return (erros);
+    }
+
   }
 
   function deleteProjectHandler() {
@@ -209,8 +240,8 @@ export default function ProjectInfo({ params }: any) {
               <Link href={`${projectId}/collaborators`}>Usuarios</Link>
             </Button>
           </Box>
-          <CardBody>
-            <Stack divider={<StackDivider />} spacing="4">
+          {/* <CardBody>
+            <Stack divider={<StackDivider />} spacing='4'>
               <Box style={styleBox}>
                 <Heading size="xs" textTransform="uppercase">
                   Fuso Horario
@@ -266,7 +297,15 @@ export default function ProjectInfo({ params }: any) {
                 />
               </Box>
             </Stack>
-          </CardBody>
+          </CardBody> */}
+          {projectInfo ? <ProjectCard 
+          onSubmit={updateProjectHandler} 
+          project={projectInfo as Project} 
+          setRecord={setProjectInfo} 
+          requireName={false}
+          errors={errors}
+          setErrors={setErrors}
+          /> : 'Carregando...'}
         </Card>
       </Box>
       {/* MODAL DELETE */}
@@ -309,8 +348,8 @@ export default function ProjectInfo({ params }: any) {
             </Button>
             <Button
               colorScheme="orange"
-              variant="solid"
-              onClick={updateProjectHandler}
+              variant='solid'
+              onClick={async () => setErrors(await updateProjectHandler(projectInfo as Project))}
             >
               Confirma
             </Button>
