@@ -286,7 +286,25 @@ import ProjectRelatedRoutes from "./abstract/ProjectRelatedRoutes";
 import { body, param } from "express-validator";
 import { UserRole } from "@prisma/client";
 import { Router } from "express";
-
+const validators = [
+  body("project_name")
+    .notEmpty()
+    .withMessage("Nome do projeto requerido")
+    .custom((value: string) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
+    .withMessage(
+      'Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen'
+    ),
+  body("project_description")
+    .isString()
+    .withMessage("Descricao do projeto requerida"),
+  body("location")
+    .isString()
+    .custom((value: string) => /^[a-zA-z ]+$/.test(value))
+    .withMessage("Localização deve conter apenas letras maiúsculas, minúsculas e espaço."),
+  body('commercial_time_end')
+    .custom((value, {req}) => parseInt(value) > req.body.commercial_time_start)
+    .withMessage("O horario fim deve ser maior que o horario começo."),
+];
 export default class ProjectRoutes extends ProjectRelatedRoutes {
   constructor(
     protected controller: ProjectController = new ProjectController()
@@ -298,42 +316,13 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
     this._router.get("/", this.controller.getUserProjects);
     this._router.post(
       "/",
-      [
-        body("project_name")
-          .notEmpty()
-          .withMessage("Nome do projeto requerido")
-          .custom((value: string) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
-          .withMessage(
-            'Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen'
-          ),
-        body("project_description")
-          .isString()
-          .withMessage("Descricao do projeto requerida"),
-        body("location")
-          .isString()
-          .custom((value: string) => /^[a-zA-z ]+$/.test(value))
-          .withMessage("Localização deve conter apenas letras maiúsculas, minúsculas e espaço."),
-        body('commercial_time_end')
-          .custom((value, {req}) => parseInt(value) > req.body.commercial_time_start)
-          .withMessage("O horario fim deve ser maior que o horario começo."),
-      ],
+      validators,
       this.validate,
       this.controller.createNewProject
     );
     this._router.put(
       "/",
-      [
-        body("project_name")
-          .notEmpty()
-          .withMessage("Nome do projeto requerido")
-          .custom((value: string) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
-          .withMessage(
-            'Nome do projeto inválido. Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen, examplo: "examplo-nome-de-projeto-32"'
-          ),
-          body("project_description")
-            .isString()
-            .withMessage("Descricao do projeto requerida")
-      ],
+      validators,
       this.validate,
       this.controller.updateProject
     );
