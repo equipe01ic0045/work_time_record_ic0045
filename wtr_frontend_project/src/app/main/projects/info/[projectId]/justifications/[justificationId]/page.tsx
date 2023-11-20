@@ -31,15 +31,42 @@ export default function JustificationInfoManagerPage() {
 
   const [reviewStatus, setReviewStatus] = useState("");
   const [reviewerMessage, setReviewerMessage] = useState<string>("");
+  const [documentBlob, setdocumentBlob] = useState<Blob>();
 
   useEffect(() => {
     JustificationService.getJustificationData(
       Number(params.projectId),
       Number(params.justificationId)
-    ).then((justificationData) => {
-      setJustification(justificationData);
-    });
+    )
+      .then((justificationData) => {
+        setJustification(justificationData);
+        try {
+          const document = JustificationService.getDocument(
+            justificationData.project_id,
+            justificationData.justification_id
+          );
+          return document;
+        } catch (error) {
+          console.error("Error fetching document:", error);
+        }
+      })
+      .then((blob) => {
+        setdocumentBlob(blob);
+      });
   }, []);
+
+  function downloadDocument() {
+    if (documentBlob) {
+      const fileName = `documento_registro_${justification?.time_record_id}_justificativa_${justification?.justification_id}.pdf`;
+
+      const url = URL.createObjectURL(documentBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  }
 
   function submitReview() {
     JustificationService.sendReviewData(
@@ -47,7 +74,7 @@ export default function JustificationInfoManagerPage() {
       Number(params.justificationId),
       { status: reviewStatus, reviewer_message: reviewerMessage }
     );
-    router.push(`/main/projects/info/${params.projectId}/justifications`)
+    router.push(`/main/projects/info/${params.projectId}/justifications`);
   }
 
   return (
@@ -100,12 +127,15 @@ export default function JustificationInfoManagerPage() {
             </CardBody>
             <CardFooter>
               <VStack>
-                <Tooltip isDisabled={true} label="Nenhum documento fornecido">
+                <Tooltip
+                  isDisabled={!!documentBlob}
+                  label="Nenhum documento fornecido"
+                >
                   <Button
-                    isDisabled={true}
+                    isDisabled={!documentBlob}
                     colorScheme="gray"
                     rightIcon={<DownloadIcon />}
-                    // onClick={downloadDocument}
+                    onClick={downloadDocument}
                   >
                     Baixar documento
                   </Button>

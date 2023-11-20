@@ -8,9 +8,6 @@ import {
   DataRetrievedResponse,
 } from "../types/responses";
 
-import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config";
-
 export default class ProjectController extends BaseController {
   async createNewProject(
     req: AuthorizedRequest,
@@ -27,7 +24,6 @@ export default class ProjectController extends BaseController {
       commercial_time_start,
       commercial_time_end,
     } = req.body;
-
 
     try {
       await projectService.createProject(
@@ -46,7 +42,6 @@ export default class ProjectController extends BaseController {
       next(error);
     }
   }
-
 
   async updateProject(
     req: AuthorizedRequest,
@@ -82,19 +77,14 @@ export default class ProjectController extends BaseController {
     }
   }
 
-
   async deleteProject(
     req: AuthorizedRequest,
     res: Response,
     next: NextFunction
   ) {
-    const {
-      project_id,
-    } = req.body;
+    const { project_id } = req.body;
     try {
-      await projectService.deleteProject(
-        project_id,
-      );
+      await projectService.deleteProject(project_id);
       new ResourceCreatedResponse().send(res);
     } catch (error) {
       next(error);
@@ -194,8 +184,16 @@ export default class ProjectController extends BaseController {
     try {
       const admin_id = req.user!.userId;
       const { user_id, project_id } = req.params;
-      const deletedUser = await projectService.deleteUser(admin_id, +project_id, +user_id);
-      new ResourceUpdatedResponse().send(res, deletedUser?.user_id, `Usuário deletado, ID${deletedUser?.user_id}`);
+      const deletedUser = await projectService.deleteUser(
+        admin_id,
+        +project_id,
+        +user_id
+      );
+      new ResourceUpdatedResponse().send(
+        res,
+        deletedUser?.user_id,
+        `Usuário deletado, ID${deletedUser?.user_id}`
+      );
     } catch (error) {
       next(error);
     }

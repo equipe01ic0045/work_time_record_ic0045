@@ -13,7 +13,6 @@ import {
   Input,
   Link,
   Modal,
-  ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalFooter,
@@ -22,7 +21,6 @@ import {
   Stack,
   StackDivider,
   Textarea,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -208,7 +206,7 @@ export default function ProjectInfo({ params }: any) {
               Editar Projeto
             </Button>
             <Button leftIcon={userIcon} colorScheme="blue">
-              Usuarios
+              <Link href={`${projectId}/collaborators`}>Usuarios</Link>
             </Button>
           </Box>
           <CardBody>

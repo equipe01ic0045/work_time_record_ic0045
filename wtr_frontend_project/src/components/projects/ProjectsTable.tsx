@@ -132,9 +132,15 @@ export default function ProjectsTable({
                       justifyContent={"space-around"}
                       color={"#FFFFFF"}
                       colorScheme="white"
-                      bgColor="#fa7b05"
+                      bgColor={
+                        projectData.project._count.time_record_justification > 0
+                          ? "#fa7b05"
+                          : "#4D47C3"
+                      }
                     >
-                      <EmailIcon boxSize={6} marginRight={3} /> 5 pendentes
+                      <EmailIcon boxSize={6} marginRight={3} />{" "}
+                      {projectData.project._count.time_record_justification}{" "}
+                      pendentes
                     </Button>
                   </Link>
                 </Td>

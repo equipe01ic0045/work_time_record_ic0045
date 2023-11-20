@@ -1,49 +1,36 @@
-'use client'
-import {
-  Box,
-  Button,
-  Link,
-  useToast,
-} from '@chakra-ui/react';
-import {
-  useEffect,
-  useState
-} from 'react';
+"use client";
+import { Box, Button, Link, useToast } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import ProjectService from "@/services/ProjectService";
-import ProjectUsers from '@/types/ProjectUsers';
-import HeaderBox from '@/components/global/HeaderBox';
-import ProjectInfo from '@/types/ProjectInfo';
-import CollaboratorsTable from '@/components/projects/CollaboratorsTable';
-import { useParams, useRouter } from 'next/navigation';
+import HeaderBox from "@/components/global/HeaderBox";
+import ProjectInfo from "@/types/ProjectInfo";
+import CollaboratorsTable from "@/components/projects/CollaboratorsTable";
+import { useParams, useRouter } from "next/navigation";
 
 export default function GerenciarColaborador({ params }: any) {
   const projectService = new ProjectService();
   const toast = useToast();
-  const router = useRouter()
+  const router = useRouter();
   const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
   const [collaboratorList, setCollaboratorList] = useState<any>();
-  const urlParameters = useParams()
-  const projectId = Number(urlParameters.projectId)
-  const projectIdString = urlParameters.projectId
+  const urlParameters = useParams();
+  const projectId = Number(urlParameters.projectId);
+  const projectIdString = urlParameters.projectId;
 
   useEffect(() => {
-
-    projectService.getProjectInfo(params.projectId)
+    projectService
+      .getProjectInfo(params.projectId)
       .then((response) => {
         setProjectInfo(response);
       })
-      .catch((error) => {
+      .catch((error) => {});
 
-      })
-
-    projectService.getProjectUsers(projectId)
+    projectService
+      .getProjectUsers(projectId)
       .then((response) => {
-        setCollaboratorList(response)
+        setCollaboratorList(response);
       })
-      .catch((error) => {
-
-      })
-
+      .catch((error) => {});
   }, []);
 
   const plusIcon = (
@@ -61,19 +48,38 @@ export default function GerenciarColaborador({ params }: any) {
           fill="#4D47C3"
         />
       </g>
-      <defs>
-      </defs>
+      <defs></defs>
     </svg>
   );
 
   return (
     <>
-      <Box display={"flex"} flexDirection={"column"} width={'100%'}>
-        <HeaderBox title={
-          <>
-            <Link href={`/main/projects`}>Projetos</Link> / {projectInfo ? <Link href={`/main/projects/info/` + params.projectId.toString()}>{projectInfo.project_name}</Link> : "...loading"} / <Link href={`/main/projects/info/` + params.projectId.toString() + "/collaborators"}>Colaboradores
-            </Link>
-          </>}
+      <Box display={"flex"} flexDirection={"column"} width={"100%"}>
+        <HeaderBox
+          title={
+            <>
+              <Link href={`/main/projects`}>Projetos</Link> /{" "}
+              {projectInfo ? (
+                <Link
+                  href={`/main/projects/info/` + params.projectId.toString()}
+                >
+                  {projectInfo.project_name}
+                </Link>
+              ) : (
+                "...loading"
+              )}{" "}
+              /{" "}
+              <Link
+                href={
+                  `/main/projects/info/` +
+                  params.projectId.toString() +
+                  "/collaborators"
+                }
+              >
+                Colaboradores
+              </Link>
+            </>
+          }
         />
         <Box
           flex={1}
@@ -85,26 +91,30 @@ export default function GerenciarColaborador({ params }: any) {
           zIndex={0}
           width="80%"
         >
-          {/* MELHORAR LOGICA OU PATH ABSOLUTO OU RELATIVO */}
           <Link
             my={8}
-            style={{ justifyContent: 'flex-start' }}
-            href={`http://localhost:4400/main/projects/add-collaborator/project/${projectIdString}`}>
+            style={{ justifyContent: "flex-start" }}
+            href={`/main/projects/add-collaborator/project/${projectIdString}`}
+          >
             <Button
               gap={"10px"}
               fontSize={"2em"}
               textColor={"#FFFFFF"}
               colorScheme="purple"
               bgColor="#4D47C3"
-            >{plusIcon}
+            >
+              {plusIcon}
               NOVO COLABORADOR
             </Button>
           </Link>
           <Box maxW="1000px" width="100%" borderWidth="1px" bg="#F0EFFF">
-            <CollaboratorsTable projectId={projectId} collaboratorList={collaboratorList} />
+            <CollaboratorsTable
+              projectId={projectId}
+              collaboratorList={collaboratorList}
+            />
           </Box>
         </Box>
       </Box>
     </>
-  )
+  );
 }

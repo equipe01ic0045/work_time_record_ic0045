@@ -66,9 +66,7 @@ export default class ProjectRepository extends BaseRepository {
 
     return project;
   }
-  async deleteProject(
-    projectId: number,
-  ): Promise<boolean> {
+  async deleteProject(projectId: number): Promise<boolean> {
     await this.client.project.delete({
       where: {
         project_id: projectId,
@@ -133,6 +131,16 @@ export default class ProjectRepository extends BaseRepository {
                 email: true,
               },
             },
+
+            _count: {
+              select: {
+                time_record_justification: {
+                  where: {
+                    status: "PENDING",
+                  },
+                },
+              },
+            },
           },
         },
         open_check_in: true,
@@ -151,7 +159,7 @@ export default class ProjectRepository extends BaseRepository {
             user_id: true,
             full_name: true,
             email: true,
-            cpf: true
+            cpf: true,
           },
         },
         role: true,
@@ -213,9 +221,9 @@ export default class ProjectRepository extends BaseRepository {
       where: {
         user_id_project_id: {
           user_id: userId,
-          project_id: projectId
-        }
-      }
-    })
+          project_id: projectId,
+        },
+      },
+    });
   }
 }
