@@ -108,6 +108,44 @@ export default class UserRoutes extends BaseRoutes {
       this.controller.updateUser
     );
 
+    /**
+     * @swagger
+     * /user/byName:
+     *   post:
+     *     summary: Edit a user profile
+     *     tags: [User]
+     *     security:
+     *       - CookieAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               full_name:
+     *                  type: string
+     *             example:
+     *                 full_name: "Pedro"
+     *     responses:
+     *       '201':
+     *         description: Successfully registered a new user.
+     *       '400':
+     *         description: Bad request. Invalid input data.
+     *       '409':
+     *         description: Conflict. User with the same email already exists.
+     */
+    this._router.post(
+      "/byName",
+      body("full_name")
+        .isString()
+        .withMessage("Nome completo inválido")
+        .isLength({ min: 1 })
+        .withMessage("Insira o nome completo"),
+      this.validate,
+      this.controller.getUsersByName
+    );
+
     return this._router;
   }
 }
