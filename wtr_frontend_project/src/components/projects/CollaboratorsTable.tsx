@@ -13,6 +13,7 @@ import {
   Button,
   useToast,
   IconButton,
+  Link,
 } from "@chakra-ui/react";
 
 export default function CollaboratorsTable({
@@ -76,7 +77,7 @@ export default function CollaboratorsTable({
             collaboratorList.map((collaborator: CollaboratorListData) => {
               return (
                 <Tr key={collaborator.user.user_id}>
-                  <Td>{collaborator.user.full_name}</Td>
+                  <Td><Link href={'/main/profile/'+collaborator.user.user_id}>{collaborator.user.full_name}</Link></Td>
                   <Td>{collaborator.user.cpf}</Td>
                   <Td>{collaborator.user.email}</Td>
                   <Td>{collaborator.role}</Td>

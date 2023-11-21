@@ -96,7 +96,7 @@ export default function ProjectsTable({
                     </Button>
                   </Link>
                 </Td>
-                <Td>{projectData.project.owner.full_name}</Td>
+                <Td><Link href={'/main/profile/'+projectData.project.owner.user_id}>{projectData.project.owner.full_name}</Link></Td>
                 <Td>{commercialTimeFormat}</Td>
                 <Td>
                   <Link

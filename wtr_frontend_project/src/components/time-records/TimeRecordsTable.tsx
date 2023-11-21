@@ -72,7 +72,7 @@ function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
       borderColor="gray.300"
     >
       <Td>{projectData.project.project_name}</Td>
-      <Td>{projectData.project.owner.full_name}</Td>
+      <Td><Link href={'/main/profile/'+projectData.project.owner.user_id}>{projectData.project.owner.full_name}</Link></Td>
 
       {projectData.project.time_records[0] ? (
         <>

@@ -140,6 +140,7 @@ export default class TimeRecordsRepository extends BaseRepository {
             project_name: true,
             owner: {
               select: {
+                user_id: true,
                 full_name: true,
                 email: true,
               },

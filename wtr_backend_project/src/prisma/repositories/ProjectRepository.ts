@@ -127,6 +127,7 @@ export default class ProjectRepository extends BaseRepository {
             users_count: true,
             owner: {
               select: {
+                user_id: true,
                 full_name: true,
                 email: true,
               },

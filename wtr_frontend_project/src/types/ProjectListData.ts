@@ -3,6 +3,7 @@ export default interface ProjectListData {
     project_id: number;
     project_name: string;
     owner: {
+      user_id: number;
       full_name: string;
       email: string;
     };
@@ -28,6 +29,7 @@ export interface TimeRecordListData {
     project_id: number;
     project_name: string;
     owner: {
+      user_id: number;
       full_name: string;
       email: string;
     };
