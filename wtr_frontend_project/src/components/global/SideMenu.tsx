@@ -1,8 +1,7 @@
 "use client";
-import { Box, Button, Image } from "@chakra-ui/react";
+import { Box, Button, Image, Link } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
-import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { cookies } from 'next/headers';
 import { useRouter } from "next/navigation";
 import { FiLogOut } from "react-icons/fi";
@@ -12,6 +11,31 @@ export default function SideMenu() {
 
   const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+
+  // Necessário para o link de perfil do usuário, não remover, se for refatorar, mudar para outra solução ao invez de remover
+  function parseJwt (token : string) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+  }
+
+
+  const [parsedJWT, setParsedJWT] = useState<{[key: string] : string}>({});
+
+  useEffect(() => {
+    const splits = document.cookie.split('=');
+    if(splits.length > 1){
+      setParsedJWT(parseJwt(document.cookie.split("=")[1]))
+    }else{
+      window.location.href = '/auth';
+    }
+  }, []);
+
   const iconCase = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -75,6 +99,7 @@ export default function SideMenu() {
   }
 
   return (
+    
     <Box
       display={"flex"}
       flexDirection={"column"}
@@ -88,8 +113,8 @@ export default function SideMenu() {
       flexWrap={"wrap"}
       
     >
-      <Box
-        background='white'
+      <Link href={'/main/profile/'+parsedJWT.userId+'/info'}
+        backgroundColor='white'
         borderRadius='50%'
         padding='0.5em'
         _hover={{
@@ -98,7 +123,11 @@ export default function SideMenu() {
         }}
       >
         {iconUser}
-      </Box>
+      </Link>
+      
+      <Link fontWeight="bold" href={'/main/profile/'+parsedJWT.userId+'/info'}>{parsedJWT.full_name}</Link>
+
+
       <Box 
       height="1px" 
       backgroundColor={"black"} 

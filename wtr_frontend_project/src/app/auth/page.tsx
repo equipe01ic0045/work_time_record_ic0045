@@ -85,6 +85,7 @@ export default function LoginComponent() {
             top="50%"
             transform="translateY(-50%)"
             cursor="pointer"
+            zIndex={'999999'}
             onClick={() =>
               setShowPassword(!showPassword)}>
             {showPassword ? <ViewOffIcon /> : <ViewIcon />}

@@ -6,25 +6,21 @@ export interface loginUser {
 }
 
 export interface registerUser {
-  fullName: String,
+  full_name: String,
   cpf: String
   email: string;
-  confirmEmail: string;
   password: string;
-  confirmPassword: string;
 }
 
 export default class UserService {
 
   public registerUser(registerUser: registerUser) {
+    return axios.post("/register", registerUser);
 
-    const newUser = {
-      full_name: registerUser.fullName,
-      cpf: registerUser.cpf,
-      password: registerUser.password,
-      email: registerUser.email
-    }
-    return axios.post("/register", newUser);
+  }
+  
+  public updateUser(registerUser: Omit<registerUser,'password'> & {password?: string}) {
+    return axios.put("/user/edit", registerUser);
 
   }
 

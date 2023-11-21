@@ -82,13 +82,14 @@ export default class UserController extends BaseController {
   }
 
   async updateUser(req: AuthorizedRequest, res: Response, next: NextFunction) {
-    const { full_name, email, password } = req.body;
+    const { full_name, email, password, cpf } = req.body;
     try {
       const newToken = await userService.updateUser(
         req.user!.userId,
         full_name,
         email,
-        password
+        cpf,
+        password,
       );
 
       res.cookie("token", newToken, {

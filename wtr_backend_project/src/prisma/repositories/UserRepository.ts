@@ -97,14 +97,16 @@ export default class UserRepository extends BaseRepository {
   async updateUser(
     user_id: number,
     full_name: string,
-    password: string,
-    email: string
+    email: string,
+    cpf: string,
+    password?: string,
   ) {
     return this.client.user.update({
       where: { user_id },
       data: {
         full_name,
-        password,
+        ...(password != undefined ? {password} : {}), // Password is optional
+        cpf,
         email,
       },
       select: this.findUserFields,
