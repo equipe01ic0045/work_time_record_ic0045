@@ -91,10 +91,6 @@ export default function ProjectInfo({ params }: any) {
     full_name: string
   ) => {
     setFullName(full_name);
-    if(full_name.length == 0){
-      setUsersSearch([]);
-      return;
-    }
     try {
       const users = await userService.getUsersByName(full_name);
       console.log(users);
@@ -117,6 +113,7 @@ export default function ProjectInfo({ params }: any) {
     projectService.getProjectUsers(parseInt(projectIdString))
       .then((response) => {
         setCollaborators(new Set(response.map(projectUser => projectUser.user.user_id)))
+        updateSearch('');
       })
       .catch((error) => {
         console.error(error);
@@ -160,7 +157,7 @@ export default function ProjectInfo({ params }: any) {
                       <Tbody>
                         {usersSearch.slice(pageSearch*MAX_USERS_PER_PAGE, pageSearch*MAX_USERS_PER_PAGE+MAX_USERS_PER_PAGE).map((user : any, index) => {
                           return (<Tr key={"usersearch_"+index} bg={"#F0EFFF"}>
-                            <Td>{user.full_name}</Td>
+                            <Td><Link href={'/main/profile/'+user.user_id}>{user.full_name}</Link></Td>
                             <Td>{user.email}</Td>
                             <Td>{user.cpf.slice(0,3)}.{user.cpf.slice(3,6)}.{user.cpf.slice(6,9)}-{user.cpf.slice(9)}</Td>
                             <Td>

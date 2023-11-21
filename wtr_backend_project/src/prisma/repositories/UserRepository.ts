@@ -53,9 +53,9 @@ export default class UserRepository extends BaseRepository {
     });
   }
   async findUsersByName(
-    full_name: string
+    full_name?: string
   ): Promise<Omit<user, "password">[]> {
-    return this.client.user.findMany({ where: { full_name: {contains: full_name, mode: 'insensitive'} } });
+    return (full_name !== undefined) ? this.client.user.findMany({ where: { full_name: {contains: full_name, mode: 'insensitive'} } }) : this.client.user.findMany();
   }
 
   async findUserByEmail(email: string): Promise<user | null> {

@@ -113,7 +113,7 @@ export default function SideMenu() {
       flexWrap={"wrap"}
       
     >
-      <Link href={'/main/profile/'+parsedJWT.userId+'/info'}
+      <Link href={'/main/profile/'+parsedJWT.userId}
         backgroundColor='white'
         borderRadius='50%'
         padding='0.5em'
@@ -125,7 +125,7 @@ export default function SideMenu() {
         {iconUser}
       </Link>
       
-      <Link fontWeight="bold" href={'/main/profile/'+parsedJWT.userId+'/info'}>{parsedJWT.full_name}</Link>
+      <Link fontWeight="bold" href={'/main/profile/'+parsedJWT.userId}>{parsedJWT.full_name}</Link>
 
 
       <Box 
