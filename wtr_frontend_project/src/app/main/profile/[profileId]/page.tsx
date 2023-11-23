@@ -1,30 +1,17 @@
 "use client";
 
 import HeaderBox from "@/components/global/HeaderBox";
-import ProjectInfoBox from "@/components/projects/ProjectInfoBox";
-import ProjectCreateBox from "@/components/projects/ProjectCreateBox";
-import ProjectService from "@/services/ProjectService";
-import ProjectInfo from "@/types/ProjectInfo";
-import { Box, Link,
-  Card,
-  CardBody,
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Alert,
-  AlertIcon,
+import {
+  Box,
+  Link,
   Button,
-  Text,
-  Collapse,
   FormLabel,
   Input,
   InputGroup,
-  Textarea,
   FormControl,
   FormErrorMessage,
-  useToast } from "@chakra-ui/react";
+  useToast,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import UserService from "@/services/UserService";
 import { useRouter } from "next/navigation";
@@ -42,45 +29,48 @@ export type User = {
 
 type k = keyof User;
 export type ProjectError = {
-  [key in k] : string
+  [key in k]: string;
 };
 export default function UserUpdate({ params }: any) {
   const userService = new UserService();
   const toast = useToast();
-  const router = useRouter();
-  
+
   const [edit, setEdit] = useState<boolean>(false);
   const [user, setUser] = useState<User>();
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<ProjectError>({
-    user_id: '',
-    cpf: '',
-    email: '',
-    full_name: '',
-    created_at: '',
-    updated_at: '',
-    password: '',
+    user_id: "",
+    cpf: "",
+    email: "",
+    full_name: "",
+    created_at: "",
+    updated_at: "",
+    password: "",
   });
 
   const editIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="white">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="24"
+      viewBox="0 -960 960 960"
+      width="24"
+      fill="white"
+    >
       <path d="M611-461 461-612l111-110-29-29-219 219-56-56 218-219q24-24 56.5-24t56.5 24l29 29 50-50q12-12 28.5-12t28.5 12l93 93q12 12 12 28.5T828-678L611-461ZM270-120H120v-150l284-285 151 150-285 285Z" />
-    </svg>)
+    </svg>
+  );
 
-
-
-
-async function updateUserHandler(projectInfo : User) : Promise<ProjectError>{
-  const erros : ProjectError = {
-    user_id: '',
-    cpf: '',
-    email: '',
-    full_name: '',
-    created_at: '',
-    updated_at: '',
-    password: '',
-  };
-  try{
+  async function updateUserHandler(projectInfo: User): Promise<ProjectError> {
+    const erros: ProjectError = {
+      user_id: "",
+      cpf: "",
+      email: "",
+      full_name: "",
+      created_at: "",
+      updated_at: "",
+      password: "",
+    };
+    try {
       const response = await userService.updateUser(projectInfo);
       toast({
         title: "Projeto Atualizado",
@@ -90,9 +80,8 @@ async function updateUserHandler(projectInfo : User) : Promise<ProjectError>{
         isClosable: true,
         position: "top-right",
       });
-      return erros
-    }
-    catch(error : any){
+      return erros;
+    } catch (error: any) {
       toast({
         title: "Falha ao Atualizar Projeto",
         description: "",
@@ -101,155 +90,170 @@ async function updateUserHandler(projectInfo : User) : Promise<ProjectError>{
         isClosable: true,
         position: "top-right",
       });
-      
+
       const data = error?.response?.data;
       const fieldErrors = data?.data?.errors;
       if (fieldErrors)
-        fieldErrors.forEach((error: any) => erros[error.path as keyof (typeof erros)] = error.msg);
-      if(data?.message){
+        fieldErrors.forEach(
+          (error: any) => (erros[error.path as keyof typeof erros] = error.msg)
+        );
+      if (data?.message) {
         const msg = data.message;
-        const split = msg.split('Unique constraint failed on the fields: (`')
-        if(split.length > 1){
-          erros[split[1].split('`')[0] as keyof (typeof erros)] = "Já existe um usuário com estes dados.";
+        const split = msg.split("Unique constraint failed on the fields: (`");
+        if (split.length > 1) {
+          erros[split[1].split("`")[0] as keyof typeof erros] =
+            "Já existe um usuário com estes dados.";
         }
-        // erros.project_name = 'Já existe um projeto com este nome!';
-        // erros.project_name = 'Já existe um projeto com este nome!';
       }
-      console.error(data?.message)
-      return (erros);
+      console.error(data?.message);
+      return erros;
+    }
   }
-
-}
-
 
   async function getProjectInfo() {
-  
-    const projectInfoDataR = await fetch('http://localhost:5000/user/'+params.profileId, {
-      method: "GET",
-      credentials: 'include',
-    });
-    
+    const projectInfoDataR = await fetch(
+      "http://localhost:5000/user/" + params.profileId,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+
     const projectInfoDataJSON = await projectInfoDataR.json();
     const projectInfoData = projectInfoDataJSON.data;
-    const info ={...projectInfoData};
+    const info = { ...projectInfoData };
     setUser(info);
 
-    const splits = document.cookie.split('=');
-    if(splits.length > 1){
+    const splits = document.cookie.split("=");
+    if (splits.length > 1) {
       const parsed = parseJwt(document.cookie.split("=")[1]);
       setParsedJWT(parsed);
-      const ed = parsed.userId == ""+info?.user_id
-      console.log(parsed.userId, info?.user_id)
+      const ed = parsed.userId == "" + info?.user_id;
+      console.log(parsed.userId, info?.user_id);
       setEdit(ed);
-    }else{
-      window.location.href = '/auth';
+    } else {
+      window.location.href = "/auth";
     }
-    
-    
   }
-  
-  function parseJwt (token : string) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
+
+  function parseJwt(token: string) {
+    var base64Url = token.split(".")[1];
+    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    var jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
 
     return JSON.parse(jsonPayload);
   }
 
-
-  const [parsedJWT, setParsedJWT] = useState<{[key: string] : string}>({});
+  const [parsedJWT, setParsedJWT] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
-    
     getProjectInfo();
-    
   }, []);
 
-
-
-  const keys : [keyof User, string][] = [
-    ['full_name', 'Nome Completo'],
-    ['email', 'E-mail'],
-    ['cpf', 'CPF'],
+  const keys: [keyof User, string][] = [
+    ["full_name", "Nome Completo"],
+    ["email", "E-mail"],
+    ["cpf", "CPF"],
   ];
 
-    
   return (
-    <Box display={"flex"} flexDirection={"column"} width={'100%'}>
-      <HeaderBox title={<><Link href={`/main/projects`}>Perfil</Link> / {params.profileId} / Info</>} />
+    <Box display={"flex"} flexDirection={"column"} width={"100%"}>
+      <HeaderBox
+        title={
+          <>
+            <Link href={`/main/projects`}>Perfil</Link> / {params.profileId} /
+            Info
+          </>
+        }
+      />
       <Box padding={"1em"}>
-        
-        {user ? (<Box
-    display="flex"
-    flexDirection="column"
-    gap="1em"
-    padding='1em'
-  >
+        {user ? (
+          <Box display="flex" flexDirection="column" gap="1em" padding="1em">
+            {keys.map(([key, label], i) => (
+              <FormControl key={i} isInvalid={errors[key] ? true : false}>
+                <InputGroup display="flex" flexDirection="column" gap="0.5em">
+                  <FormLabel key="0">{label}</FormLabel>
+                  <Input
+                    placeholder="Nome do Projeto"
+                    type="text"
+                    name={key}
+                    bgColor="Lavender"
+                    color="blueviolet"
+                    value={user[key]}
+                    onChange={(ev) =>
+                      setUser({ ...user, [key]: ev.target.value })
+                    }
+                  />
+                </InputGroup>
+                <FormErrorMessage>{errors[key]}</FormErrorMessage>
+              </FormControl>
+            ))}
 
-    {keys.map( ([key, label], i) => (<FormControl key={i} isInvalid={errors[key] ? true : false}>
-      <InputGroup
-        display='flex'
-        flexDirection='column'
-        gap='0.5em'
-      >
-        <FormLabel key="0">{label}</FormLabel>
-        <Input
-          placeholder="Nome do Projeto"
-          type="text"
-          name={key}
-          bgColor="Lavender"
-          color="blueviolet"
-          value={user[key]}
-          onChange={(ev) => setUser({...user, [key] : ev.target.value})}
-        />
-      </InputGroup>
-      <FormErrorMessage>{errors[key]}</FormErrorMessage>
-    </FormControl>))}
+            {edit ? (
+              <FormControl isInvalid={errors["password"] ? true : false}>
+                <InputGroup display="flex" flexDirection="column" gap="0.5em">
+                  <FormLabel key="0">{"Senha (Opcional)"}</FormLabel>
+                  <Box position="relative">
+                    <Input
+                      placeholder="Nome do Projeto"
+                      type={showPassword ? "text" : "password"}
+                      name={"password"}
+                      bgColor="Lavender"
+                      color="blueviolet"
+                      value={user["password"]}
+                      autoComplete="one-time-code"
+                      onChange={(ev) =>
+                        setUser({ ...user, ["password"]: ev.target.value })
+                      }
+                    />
+                    <Box
+                      position="absolute"
+                      right="10px"
+                      top="50%"
+                      transform="translateY(-50%)"
+                      zIndex={"999999"}
+                      cursor="pointer"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                    </Box>
+                  </Box>
+                </InputGroup>
+                <FormErrorMessage>{errors["password"]}</FormErrorMessage>
+              </FormControl>
+            ) : (
+              ""
+            )}
+            {/*
+             */}
 
-
-    {edit ? (<FormControl isInvalid={errors['password'] ? true : false}>
-      <InputGroup
-        display='flex'
-        flexDirection='column'
-        gap='0.5em'
-      >
-        <FormLabel key="0">{'Senha (Opcional)'}</FormLabel>
-        <Box position="relative">
-        
-        <Input
-          placeholder="Nome do Projeto"
-          type={showPassword ? 'text' : 'password'}
-          name={'password'}
-          bgColor="Lavender"
-          color="blueviolet"
-          value={user['password']}
-          autoComplete="one-time-code"
-          onChange={(ev) => setUser({...user, ['password'] : ev.target.value})}
-        />
-        <Box
-          position="absolute"
-          right="10px"
-          top="50%"
-          transform="translateY(-50%)"
-          zIndex={'999999'}
-          cursor="pointer"
-          onClick={() =>
-            setShowPassword(!showPassword)}>
-          {showPassword ? <ViewOffIcon /> : <ViewIcon />}
-        </Box></Box>
-      </InputGroup>
-      <FormErrorMessage>{errors['password']}</FormErrorMessage>
-    </FormControl>) : ''}
-{/* 
-     */}
-    
-    {edit ? <Button leftIcon={editIcon} colorScheme="orange" onClick={async () => { setErrors(await updateUserHandler(user)) }}> Editar Usuário</Button> : ''}
-  </Box>
-  ) : 'Loading...'}
+            {edit ? (
+              <Button
+                leftIcon={editIcon}
+                colorScheme="orange"
+                onClick={async () => {
+                  setErrors(await updateUserHandler(user));
+                }}
+              >
+                {" "}
+                Editar Usuário
+              </Button>
+            ) : (
+              ""
+            )}
+          </Box>
+        ) : (
+          "Loading..."
+        )}
       </Box>
-      
     </Box>
   );
 }
