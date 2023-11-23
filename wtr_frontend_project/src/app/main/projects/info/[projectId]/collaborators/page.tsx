@@ -10,7 +10,6 @@ import { useParams, useRouter } from "next/navigation";
 export default function GerenciarColaborador({ params }: any) {
   const projectService = new ProjectService();
   const toast = useToast();
-  const router = useRouter();
   const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
   const [collaboratorList, setCollaboratorList] = useState<any>();
   const urlParameters = useParams();

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Box, Button, Link } from "@chakra-ui/react";
+import { Box, Button, Link, Text } from "@chakra-ui/react";
 import { useAuth } from "../auth/AuthContext";
 
 export default function SideMenu() {
@@ -39,17 +39,6 @@ export default function SideMenu() {
     </svg>
   );
 
-  const iconUser = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="48"
-      viewBox="0 -960 960 960"
-      width="48"
-    >
-      <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z" />
-    </svg>
-  );
-
   const pages = [
     {
       id: 1,
@@ -85,22 +74,16 @@ export default function SideMenu() {
       width={"15%"}
       flexWrap={"wrap"}
     >
-      <Link
-        href={"/main/profile/" + user?.userId}
-        backgroundColor="white"
-        borderRadius="50%"
-        padding="0.5em"
-        _hover={{
-          cursor: "pointer",
-          background: "gray.200",
-        }}
-      >
-        {iconUser}
-      </Link>
+      <Box>
+        <Text>
+          <Link fontWeight="bold" href={"/main/profile/" + user?.userId}>
+            {user?.full_name}
+          </Link>
+        </Text>
 
-      <Link fontWeight="bold" href={"/main/profile/" + user?.userId}>
-        {user?.full_name}
-      </Link>
+        <Text>email: {user?.email}</Text>
+        <Text>cpf: {user?.cpf}</Text>
+      </Box>
 
       <Box
         height="1px"

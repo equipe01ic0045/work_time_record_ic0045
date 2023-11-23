@@ -1,7 +1,10 @@
 "use client";
 import HeaderBox from "@/components/global/HeaderBox";
 import JustificationService from "@/services/JustificationService";
-import { JustificationInfoManager } from "@/types/TimeRecordInfoData";
+import {
+  JustificationInfoManager,
+  statusLangMapping,
+} from "@/types/TimeRecordInfoData";
 import { DownloadIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -31,7 +34,7 @@ export default function JustificationInfoManagerPage() {
 
   const [reviewStatus, setReviewStatus] = useState("");
   const [reviewerMessage, setReviewerMessage] = useState<string>("");
-  const [documentBlob, setdocumentBlob] = useState<Blob>();
+  const [documentBlob, setdocumentBlob] = useState<Blob | null>();
 
   useEffect(() => {
     JustificationService.getJustificationData(
@@ -41,11 +44,14 @@ export default function JustificationInfoManagerPage() {
       .then((justificationData) => {
         setJustification(justificationData);
         try {
-          const document = JustificationService.getDocument(
-            justificationData.project_id,
-            justificationData.justification_id
-          );
-          return document;
+          if (justificationData.justification_document.justification_id) {
+            const document = JustificationService.getDocument(
+              justificationData.project_id,
+              justificationData.justification_id
+            );
+            return document;
+          }
+          return null;
         } catch (error) {
           console.error("Error fetching document:", error);
         }
@@ -79,7 +85,7 @@ export default function JustificationInfoManagerPage() {
 
   return (
     <Box width={"100%"}>
-      <HeaderBox title={`Justificativa ${params.justificationId}`} />
+      <HeaderBox title={`Justificativas / ${params.justificationId}`} />
 
       <HStack margin={10}>
         <Box w="100%">
@@ -100,6 +106,7 @@ export default function JustificationInfoManagerPage() {
                 <Box>
                   <Text fontWeight="bold">Usuario</Text>
                   <Text>nome: {justification?.user.full_name}</Text>
+                  <Text>email: {justification?.user.email}</Text>
                   <Text>cpf: {justification?.user.cpf}</Text>
                 </Box>
                 <Box>
@@ -117,13 +124,33 @@ export default function JustificationInfoManagerPage() {
                 </Box>
                 <Box>
                   <Text fontWeight="bold">Status</Text>
-                  <Text>{justification?.status}</Text>
+                  <Text>
+                    {justification
+                      ? statusLangMapping[justification?.status]
+                      : ""}
+                  </Text>
                 </Box>
               </SimpleGrid>
+
               <Box marginTop={20} w="100%">
                 <Text fontWeight="bold">Mensagem de Justificativa</Text>
                 <Text>{justification?.user_message}</Text>
               </Box>
+
+              {justification?.status !== "PENDING" ? (
+                <Box marginTop={20}>
+                  <Box>
+                    <Text fontWeight="bold">Revisado por</Text>
+                    <Text>{justification?.reviewer.full_name}</Text>
+                    <Text>email: {justification?.reviewer.email}</Text>
+                    <Text>cpf: {justification?.reviewer.cpf}</Text>
+                  </Box>
+                  <Box marginTop={5} w="100%">
+                    <Text fontWeight="bold">Mensagem do Revisor</Text>
+                    <Text>{justification?.reviewer_message}</Text>
+                  </Box>
+                </Box>
+              ) : null}
             </CardBody>
             <CardFooter>
               <VStack>
@@ -146,49 +173,51 @@ export default function JustificationInfoManagerPage() {
           </Card>
         </Box>
 
-        <Box w="100%">
-          <Card backgroundColor="#e3a300">
-            <CardHeader>
-              <Text fontWeight="bold" marginBottom={4} fontSize={20}>
-                Revisar Justificativa
-              </Text>
+        {justification?.status == "PENDING" ? (
+          <Box w="100%">
+            <Card backgroundColor="#e3a300">
+              <CardHeader>
+                <Text fontWeight="bold" marginBottom={4} fontSize={20}>
+                  Revisar Justificativa
+                </Text>
 
-              <Select
-                placeholder="Aprovar/Rejeitar"
-                size="lg"
-                bg="white"
-                value={reviewStatus}
-                onChange={(e) => setReviewStatus(e.target.value)}
-              >
-                <option value="APPROVED">Aprovar</option>
-                <option value="DENIED">Rejeitar</option>
-              </Select>
-            </CardHeader>
-            <CardBody>
-              <Text fontWeight="bold" marginBottom={4}>
-                Mensagem
-              </Text>
-              <Textarea
-                aria-labelledby="reviewer message"
-                variant="filled"
-                bg="white"
-                _hover={{ bg: "white" }}
-                minHeight={100}
-                value={reviewerMessage}
-                onChange={(e) => setReviewerMessage(e.target.value)}
-              />
-            </CardBody>
-            <CardFooter>
-              <Button
-                colorScheme="black"
-                backgroundColor={"black"}
-                onClick={submitReview}
-              >
-                Enviar
-              </Button>
-            </CardFooter>
-          </Card>
-        </Box>
+                <Select
+                  placeholder="Aprovar/Rejeitar"
+                  size="lg"
+                  bg="white"
+                  value={reviewStatus}
+                  onChange={(e) => setReviewStatus(e.target.value)}
+                >
+                  <option value="APPROVED">Aprovar</option>
+                  <option value="DENIED">Rejeitar</option>
+                </Select>
+              </CardHeader>
+              <CardBody>
+                <Text fontWeight="bold" marginBottom={4}>
+                  Mensagem
+                </Text>
+                <Textarea
+                  aria-labelledby="reviewer message"
+                  variant="filled"
+                  bg="white"
+                  _hover={{ bg: "white" }}
+                  minHeight={100}
+                  value={reviewerMessage}
+                  onChange={(e) => setReviewerMessage(e.target.value)}
+                />
+              </CardBody>
+              <CardFooter>
+                <Button
+                  colorScheme="black"
+                  backgroundColor={"black"}
+                  onClick={submitReview}
+                >
+                  Enviar
+                </Button>
+              </CardFooter>
+            </Card>
+          </Box>
+        ) : null}
       </HStack>
     </Box>
   );

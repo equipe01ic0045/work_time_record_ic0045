@@ -12,11 +12,12 @@ export default interface ProjectListData {
     commercial_time_start: number | null;
     commercial_time_end: number | null;
     _count: {
-      time_record_justification: number
-    }
+      time_record_justification: number;
+    };
   };
 
   open_check_in: boolean;
+  role: "ADMIN" | "MANAGER" | "USER";
 }
 
 type TimeRecordSnippet = {
@@ -33,7 +34,7 @@ export interface TimeRecordListData {
       full_name: string;
       email: string;
     };
-    time_records: TimeRecordSnippet[]
+    time_records: TimeRecordSnippet[];
   };
   open_check_in: boolean;
 }

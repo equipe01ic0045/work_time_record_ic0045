@@ -1,3 +1,11 @@
+export type status = "PENDING" | "APPROVED" | "DENIED";
+
+export const statusLangMapping = {
+  PENDING: "PENDENTE",
+  APPROVED: "APROVADO",
+  DENIED: "NEGADO",
+};
+
 export type JustificationData = {
   justification_id: number;
   time_record_id: number;
@@ -7,7 +15,7 @@ export type JustificationData = {
   user_message: string;
   reviewer_message: string;
   justification_type: "CHECKIN" | "CHECKOUT";
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: status;
   created_at: string;
 };
 
@@ -35,6 +43,12 @@ export type JustificationInfoManager = JustificationData & {
 
   justification_document: {
     justification_id: number;
+  };
+
+  reviewer: {
+    email: string;
+    full_name: string;
+    cpf: string;
   };
 };
 

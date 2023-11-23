@@ -6,6 +6,7 @@ type user = {
   userId: number;
   full_name: string;
   email: string;
+  cpf: string;
 };
 
 interface AuthContextProps {
@@ -41,7 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (token) {
       const decodedToken = jwtDecode(token) as user;
       setUser(decodedToken);
-    } else{
+    } else {
       setUser(undefined);
     }
   }

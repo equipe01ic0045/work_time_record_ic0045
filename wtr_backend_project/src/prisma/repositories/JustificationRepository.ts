@@ -67,6 +67,13 @@ export default class JustificationRepository extends BaseRepository {
         cpf: true
       },
     },
+    reviewer:{
+      select: {
+        email: true,
+        full_name: true,
+        cpf: true
+      },
+    }
   }
 
   async findJustificationsByProjectId(

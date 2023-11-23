@@ -61,6 +61,7 @@ export default class UserService {
         userId: foundUser.user_id,
         full_name: foundUser.full_name,
         email: foundUser.email,
+        cpf: foundUser.cpf
       },
       JWT_SECRET,
       { expiresIn: "1d" }

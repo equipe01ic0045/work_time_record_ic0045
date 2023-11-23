@@ -145,6 +145,7 @@ export default class ProjectRepository extends BaseRepository {
           },
         },
         open_check_in: true,
+        role: true,
       },
     });
   }
@@ -214,11 +215,8 @@ export default class ProjectRepository extends BaseRepository {
     });
   }
 
-  async deleteUserInProject(
-    userId: number,
-    projectId: number
-  ): Promise<user_project_role | null> {
-    return this.client.user_project_role.delete({
+  async deleteUserInProject(userId: number, projectId: number) {
+    const deletedUserRole = await this.client.user_project_role.delete({
       where: {
         user_id_project_id: {
           user_id: userId,
@@ -226,5 +224,16 @@ export default class ProjectRepository extends BaseRepository {
         },
       },
     });
+
+    await this.client.project.update({
+      where: {
+        project_id: projectId,
+      },
+      data: {
+        users_count: { decrement: 1 },
+      },
+    });
+
+    return deletedUserRole
   }
 }

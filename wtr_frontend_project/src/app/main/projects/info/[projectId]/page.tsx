@@ -1,17 +1,18 @@
 "use client";
 
 import HeaderBox from "@/components/global/HeaderBox";
-import ProjectCard, { Project, ProjectError } from "@/components/projects/ProjectCard";
+import ProjectCard, {
+  Project,
+  ProjectError,
+} from "@/components/projects/ProjectCard";
 import ProjectService from "@/services/ProjectService";
 import ProjectInfo from "@/types/ProjectInfo";
 import {
   Box,
   Button,
   Card,
-  CardBody,
   CardHeader,
   Heading,
-  Input,
   Link,
   Modal,
   ModalCloseButton,
@@ -19,9 +20,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Stack,
-  StackDivider,
-  Textarea,
   useToast,
 } from "@chakra-ui/react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -79,14 +77,14 @@ export default function ProjectInfo({ params }: any) {
   const projectId = Number(parameters.projectId);
   const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
   const [errors, setErrors] = useState<ProjectError>({
-    project_name: '',
-    location_required: '',
-    commercial_time_required: '',
-    timezone: '',
-    location: '',
-    commercial_time_start: '',
-    commercial_time_end: '',
-    project_description: '',
+    project_name: "",
+    location_required: "",
+    commercial_time_required: "",
+    timezone: "",
+    location: "",
+    commercial_time_start: "",
+    commercial_time_end: "",
+    project_description: "",
   });
   const toast = useToast();
 
@@ -95,7 +93,9 @@ export default function ProjectInfo({ params }: any) {
     setProjectInfo({ ...projectInfo, [name]: value });
   }
 
-  async function updateProjectHandler(projectInfo : Project) : Promise<ProjectError>{
+  async function updateProjectHandler(
+    projectInfo: Project
+  ): Promise<ProjectError> {
     const editProject = {
       projectId,
       projectName: projectInfo?.project_name,
@@ -103,52 +103,52 @@ export default function ProjectInfo({ params }: any) {
       timezone: projectInfo?.timezone,
       location: projectInfo?.location,
       commercialTimeStart: projectInfo?.commercial_time_start,
-      commercialTimeEnd: projectInfo?.commercial_time_end
-    }
-    const erros : ProjectError = {
-      project_name: '',
-      location_required: '',
-      commercial_time_required: '',
-      timezone: '',
-      location: '',
-      commercial_time_start: '',
-      commercial_time_end: '',
-      project_description: '',
+      commercialTimeEnd: projectInfo?.commercial_time_end,
     };
-    try{
-        const response = await projectService.updateProject(editProject);
-        toast({
-          title: "Projeto Atualizado",
-          description: "",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-          position: "top-right",
-        });
-        setOpenEdit(false);
-        return erros
-      }
-      catch(error : any){
-        toast({
-          title: "Falha ao Atualizar Projeto",
-          description: "",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-          position: "top-right",
-        });
-        
-        const data = error?.response?.data;
-        const fieldErrors = data?.data?.errors;
-        if (fieldErrors)
-          fieldErrors.forEach((error: any) => erros[error.path as keyof (typeof erros)] = error.msg);
-        if(data?.message && data?.message == "project already exists."){
-          erros.project_name = 'Já existe um projeto com este nome!';
-        }
-        setOpenEdit(false);
-        return (erros);
-    }
+    const erros: ProjectError = {
+      project_name: "",
+      location_required: "",
+      commercial_time_required: "",
+      timezone: "",
+      location: "",
+      commercial_time_start: "",
+      commercial_time_end: "",
+      project_description: "",
+    };
+    try {
+      const response = await projectService.updateProject(editProject);
+      toast({
+        title: "Projeto Atualizado",
+        description: "",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+      setOpenEdit(false);
+      return erros;
+    } catch (error: any) {
+      toast({
+        title: "Falha ao Atualizar Projeto",
+        description: "",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
 
+      const data = error?.response?.data;
+      const fieldErrors = data?.data?.errors;
+      if (fieldErrors)
+        fieldErrors.forEach(
+          (error: any) => (erros[error.path as keyof typeof erros] = error.msg)
+        );
+      if (data?.message && data?.message == "project already exists.") {
+        erros.project_name = "Já existe um projeto com este nome!";
+      }
+      setOpenEdit(false);
+      return erros;
+    }
   }
 
   function deleteProjectHandler() {
@@ -240,72 +240,18 @@ export default function ProjectInfo({ params }: any) {
               <Link href={`${projectId}/collaborators`}>Usuarios</Link>
             </Button>
           </Box>
-          {/* <CardBody>
-            <Stack divider={<StackDivider />} spacing='4'>
-              <Box style={styleBox}>
-                <Heading size="xs" textTransform="uppercase">
-                  Fuso Horario
-                </Heading>
-                <Input
-                  name="timezone"
-                  onChange={inputHandler}
-                  value={projectInfo?.timezone}
-                />
-              </Box>
-              <Box style={styleBox}>
-                <Heading size="xs" textTransform="uppercase">
-                  Localização
-                </Heading>
-                <Input
-                  name="location"
-                  onChange={inputHandler}
-                  value={projectInfo?.location}
-                />
-              </Box>
-              <Box style={styleBox}>
-                <Heading size="xs" textTransform="uppercase">
-                  Tempo Comercial ( Inicio )
-                </Heading>
-                <Input
-                  name="commercial_time_start"
-                  type="number"
-                  onChange={inputHandler}
-                  value={projectInfo?.commercial_time_start}
-                />
-              </Box>
-              <Box style={styleBox}>
-                <Heading size="xs" textTransform="uppercase">
-                  Tempo Comercial ( Final )
-                </Heading>
-                <Input
-                  name="commercial_time_end"
-                  type="number"
-                  onChange={inputHandler}
-                  value={projectInfo?.commercial_time_end}
-                />
-              </Box>
-              <Box style={styleBox}>
-                <Heading size="xs" textTransform="uppercase">
-                  Descrição
-                </Heading>
-                <Textarea
-                  name="project_description"
-                  value={projectInfo?.project_description}
-                  onChange={inputHandler}
-                  placeholder="Coloque alguma descrição do projeto"
-                  size="sm"
-                />
-              </Box>
-            </Stack>
-          </CardBody> */}
-          {projectInfo ? <ProjectCard 
-          onSubmit={updateProjectHandler} 
-          project={projectInfo as Project} 
-          setRecord={setProjectInfo} 
-          requireName={false}
-          errors={errors}
-          setErrors={setErrors}
-          /> : 'Carregando...'}
+          {projectInfo ? (
+            <ProjectCard
+              onSubmit={updateProjectHandler}
+              project={projectInfo as Project}
+              setRecord={setProjectInfo}
+              requireName={false}
+              errors={errors}
+              setErrors={setErrors}
+            />
+          ) : (
+            "Carregando..."
+          )}
         </Card>
       </Box>
       {/* MODAL DELETE */}
@@ -348,8 +294,10 @@ export default function ProjectInfo({ params }: any) {
             </Button>
             <Button
               colorScheme="orange"
-              variant='solid'
-              onClick={async () => setErrors(await updateProjectHandler(projectInfo as Project))}
+              variant="solid"
+              onClick={async () =>
+                setErrors(await updateProjectHandler(projectInfo as Project))
+              }
             >
               Confirma
             </Button>
