@@ -138,7 +138,7 @@ export default function RegistrationComponent() {
           <Input
             placeholder="Nome Completo"
             type="text"
-            name="fullName"
+            name="full_name"
             value={newUser.full_name}
             onChange={inputHandler}
             bgColor="Lavender"
