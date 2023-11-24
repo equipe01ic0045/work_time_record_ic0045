@@ -14,8 +14,8 @@ import {
 export type Project = {
   project_name: string;
   project_description: string;
-  location_required: boolean;
-  commercial_time_required: boolean;
+  locationRequired: boolean;
+  commercialTimeRequired: boolean;
   timezone: string;
   location: string;
   commercial_time_start: number;

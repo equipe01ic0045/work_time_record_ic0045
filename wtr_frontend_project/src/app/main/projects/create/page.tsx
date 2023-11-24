@@ -104,7 +104,7 @@ export default function ProjectInfo({ params }: any) {
       <ProjectCard 
       onSubmit={registerNewProject} 
       project={_newProject} 
-      setRecord={_setNewProject} 
+      setProject={_setNewProject} 
       requireName={true}
           errors={errors}
           setErrors={setErrors}/>
