@@ -216,15 +216,8 @@ export default function ProjectInfo({ params }: any) {
             <Heading size="md">{projectInfo?.project_name}</Heading>
           </CardHeader>
           <Box padding="1em" display="flex" flexDirection="row" gap="1em">
-            <Button
-              leftIcon={deleteIcon}
-              colorScheme="red"
-              onClick={() => {
-                setOpenDlete(true);
-              }}
-            >
-              {" "}
-              Deletar Projeto
+            <Button leftIcon={userIcon} colorScheme="blue">
+              <Link href={`/main/projects/info/${projectId}/collaborators`}>Usuarios</Link>
             </Button>
             <Button
               leftIcon={editIcon}
@@ -236,8 +229,15 @@ export default function ProjectInfo({ params }: any) {
               {" "}
               Editar Projeto
             </Button>
-            <Button leftIcon={userIcon} colorScheme="blue">
-              <Link href={`${projectId}/collaborators`}>Usuarios</Link>
+            <Button
+              leftIcon={deleteIcon}
+              colorScheme="red"
+              onClick={() => {
+                setOpenDlete(true);
+              }}
+            >
+              {" "}
+              Deletar Projeto
             </Button>
           </Box>
           {/* <CardBody>
