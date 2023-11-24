@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, HStack, Link } from "@chakra-ui/react";
+import { Box, Button, HStack, Link, Input, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ProjectService from "@/services/ProjectService";
 import HeaderBox from "@/components/global/HeaderBox";
@@ -11,6 +11,7 @@ import ProjectUsers from "@/types/ProjectUsers";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { currentMonthYear, secondsToHoursMinutes } from "@/utils/date_utils";
+import { useAuth } from "@/components/auth/AuthContext";
 
 declare module "jspdf" {
   interface jsPDF {
@@ -19,13 +20,15 @@ declare module "jspdf" {
 }
 
 export default function CollaboratosPage({ params }: any) {
+  const { user } = useAuth();
   const projectService = new ProjectService();
   const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
   const [collaboratorList, setCollaboratorList] = useState<ProjectUsers[]>([]);
+  const [reportMonth, setReportMonth] = useState<string>(currentMonthYear());
+
   const urlParameters = useParams();
   const projectId = Number(urlParameters.projectId);
-  const projectIdString = urlParameters.projectId;
-  
+
   useEffect(() => {
     projectService
       .getProjectInfo(params.projectId)
@@ -33,14 +36,16 @@ export default function CollaboratosPage({ params }: any) {
         setProjectInfo(response);
       })
       .catch((error) => {});
+  }, []);
 
+  useEffect(() => {
     projectService
-      .getProjectUsers(projectId)
+      .getProjectUsers(projectId, reportMonth)
       .then((response) => {
         setCollaboratorList(response);
       })
       .catch((error) => {});
-  }, []);
+  }, [reportMonth]);
 
   const plusIcon = (
     <svg
@@ -68,16 +73,29 @@ export default function CollaboratosPage({ params }: any) {
     "FUNÇÃO",
     "HORAS/SEMANA",
     "HORAS REGISTRADAS",
-    "HORAS PENDENTES "
+    "HORAS PENDENTES ",
   ];
 
-
   function PDFReport() {
-    const reportTitle = `${projectInfo?.project_name} ${currentMonthYear()}`
+    const reportTitle = `${projectInfo?.project_name} ${reportMonth}`;
     const doc = new jsPDF();
 
-    doc.text(`Relatório de horas ${reportTitle}`, 10, 10);
+    doc.setFontSize(18);
+    doc.text(
+      `Relatório de horas   ${reportMonth}                                           Ponto Certo IC`,
+      5,
+      10
+    );
+
+    doc.setFontSize(10);
+    doc.text(`Projeto: ${projectInfo?.project_name}`, 5, 20);
+    doc.text(`Mês de execício: ${reportMonth}`, 5, 25);
+    doc.text(`emitido por: ${user?.full_name} ( cpf: ${user?.cpf} )`, 5, 30);
+    doc.text(`data de emissão: ${new Date().toLocaleDateString()}`, 5, 35);
+
     doc.autoTable({
+      startY: 40,
+      startX: 5,
       head: [tableHeaderRow],
       body: collaboratorList.map((row) => [
         row.user.full_name,
@@ -90,6 +108,12 @@ export default function CollaboratosPage({ params }: any) {
           4 * row.hours_per_week * 60 * 60 - row.elapsed_time_sum
         ),
       ]),
+      margin: { top: 0, left: 5, right: 5, bottom: 0 },
+      styles: { fontSize: 10 },
+      headStyles: {
+        fontSize: 7,
+        fillColor: [77, 71, 195],
+      },
     });
 
     // Save the PDF
@@ -139,7 +163,7 @@ export default function CollaboratosPage({ params }: any) {
             <Link
               my={8}
               style={{ justifyContent: "flex-start" }}
-              href={`/main/projects/add-collaborator/project/${projectIdString}`}
+              href={`/main/projects/add-collaborator/project/${projectId}`}
             >
               <Button
                 gap={"10px"}
@@ -153,14 +177,27 @@ export default function CollaboratosPage({ params }: any) {
               </Button>
             </Link>
 
-            <Button
-              textColor={"#FFFFFF"}
-              colorScheme="purple"
-              bgColor="#4D47C3"
-              onClick={PDFReport}
-            >
-              Gerar relatório
-            </Button>
+            <HStack>
+              <Text fontWeight={"bold"}>Mês de exercício:</Text>
+
+              <Box bg="#F0EFFF" rounded="md" padding={2} marginRight={2}>
+                <Input
+                  bg="white"
+                  type="month"
+                  value={reportMonth}
+                  onChange={(e) => setReportMonth(e.target.value)}
+                />
+              </Box>
+
+              <Button
+                textColor={"#FFFFFF"}
+                colorScheme="purple"
+                bgColor="#4D47C3"
+                onClick={PDFReport}
+              >
+                Gerar relatório
+              </Button>
+            </HStack>
           </HStack>
 
           <Box width="100%" borderWidth="1px" bg="#F0EFFF">

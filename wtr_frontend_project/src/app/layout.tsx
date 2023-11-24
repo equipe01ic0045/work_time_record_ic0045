@@ -19,7 +19,7 @@ export default function RootLayout({
   });
 
   return (
-    <html lang="en">
+    <html lang="pt">
       <head />
       <body>
         <div className="root">

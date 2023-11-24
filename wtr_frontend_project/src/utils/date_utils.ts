@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
 export function formatDate(date: Date | string | undefined) {
-  return dayjs(date).format("DD/MM/YYYY hh:mm");
+  return dayjs(date).format("HH:mm DD/MM/YYYY");
 }
 
 export function clockDate(date: Date | string | undefined) {
@@ -22,5 +22,34 @@ export function currentMonthYear() {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
-  return `${currentMonth}-${currentYear}`;
+  return `${currentYear}-${currentMonth}`;
+}
+
+export function monthRange(month?:string) {
+  let date:Date
+  if(month){
+    date = new Date(`${month}-1`)
+  }else{
+    date = new Date()
+  }
+
+  const firstDayOfMonth = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    1
+  );
+  const lastDayOfMonth = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    0,
+    23,
+    59,
+    59,
+    999
+  );
+
+  return {
+    from: firstDayOfMonth,
+    to: lastDayOfMonth,
+  };
 }

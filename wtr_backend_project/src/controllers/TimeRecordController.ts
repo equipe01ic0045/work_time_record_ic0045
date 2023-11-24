@@ -4,7 +4,6 @@ import { NextFunction, Response } from "express";
 import { timeRecordService } from "../services";
 import {
   DataRetrievedResponse,
-  ErrorResponse,
   ResourceCreatedResponse,
   ResourceUpdatedResponse,
 } from "../types/responses";
@@ -16,11 +15,25 @@ export default class TimeRecordController extends BaseController {
     next: NextFunction
   ) {
     const { project_id } = req.params;
+    const { from, to } = req.query;
 
     try {
+      let fromTimestamp: Date | undefined = undefined
+      let toTimestamp: Date | undefined = undefined
+
+      if (typeof from === 'string') {
+        fromTimestamp = new Date(from);
+      }
+      
+      if (typeof to === 'string') {
+        toTimestamp = new Date(to);
+      }
+
       const timeRecords = await timeRecordService.getUserTimeRecordsInProject(
         req.user!.userId,
-        parseInt(project_id)
+        parseInt(project_id),
+        fromTimestamp,
+        toTimestamp
       );
       new DataRetrievedResponse().send(res, timeRecords);
     } catch (error) {
@@ -80,9 +93,7 @@ export default class TimeRecordController extends BaseController {
     try {
       let checkInTimestamp: Date = new Date(check_in_timestamp);
 
-      console.log(project_id,
-      check_in_timestamp,
-      user_message)
+      console.log(project_id, check_in_timestamp, user_message);
 
       await timeRecordService.detailedCheckIn(
         req.user!.userId,

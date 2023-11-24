@@ -5,13 +5,11 @@ import ProjectService from "@/services/ProjectService";
 import TimeRecordService from "@/services/TimeRecordService";
 import ProjectInfo from "@/types/ProjectInfo";
 import { TimeRecord } from "@/types/TimeRecordInfoData";
-import { Icon, Search2Icon } from "@chakra-ui/icons";
+import { Search2Icon } from "@chakra-ui/icons";
 import {
   Box,
-  Button,
   Flex,
   HStack,
-  Heading,
   IconButton,
   Input,
   Link,
@@ -24,9 +22,9 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function Page({ params }: any) {
+export default function TimeRecordsHistory({ params }: any) {
   const [timeRecords, setTimeRecords] = useState<TimeRecord[]>([]);
   const [fromDate, setFromDate] = useState<string>(
     dayjs().startOf("month").format("YYYY-MM-DD")
@@ -36,37 +34,33 @@ export default function Page({ params }: any) {
   );
   const [isLoadingSearch, setIsLoadingSearch] = useState<boolean>(false);
   const toast = useToast();
-  const timeRecordService = useMemo(() => new TimeRecordService(), []);
+
+  const fetchData = async () => {
+    setIsLoadingSearch(true);
+    try {
+      const data = await TimeRecordService.getTimeRecords(
+        params.projectId,
+        fromDate,
+        toDate
+      );
+      setTimeRecords(data.results);
+    } catch (e) {
+      toast({
+        title: "Erro ao carregar registros",
+        description: "Não foi possível carregar os registros do projeto.",
+        duration: 3000,
+        status: "error",
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+    setIsLoadingSearch(false);
+
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await timeRecordService.getTimeRecords(params.projectId);
-        setTimeRecords(data.results);
-      } catch (e) {
-        toast({
-          title: "Erro ao carregar registros",
-          description: "Não foi possível carregar os registros do projeto.",
-          duration: 3000,
-          status: "error",
-          isClosable: true,
-          position: "top-right",
-        });
-      }
-    };
-
     fetchData();
-  }, [params.projectId, timeRecordService, toast]);
-
-  const filterByDate = async () => {
-    setIsLoadingSearch(true);
-
-    // TODO: implementar filtro por data
-    // const data = await timeRecordService.getTimeRecords(params.projectId, fromDate, toDate);
-
-    // setTimeRecords(data.results);
-    setIsLoadingSearch(false);
-  };
+  }, [params.projectId]);
 
   const projectService = new ProjectService();
   const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
@@ -124,14 +118,13 @@ export default function Page({ params }: any) {
               <Input
                 bg="white"
                 type="date"
-                width="min-content"
                 value={fromDate}
                 onChange={(e) => setFromDate(e.target.value)}
               />
+
               <Input
                 bg="white"
                 type="date"
-                width="min-content"
                 value={toDate}
                 onChange={(e) => setToDate(e.target.value)}
               />
@@ -142,21 +135,12 @@ export default function Page({ params }: any) {
                 icon={<Search2Icon />}
                 size="md"
                 isLoading={isLoadingSearch}
-                onClick={filterByDate}
+                onClick={fetchData}
               />
             </HStack>
-            <Button
-              size="lg"
-              fontSize="xs"
-              bg="#4D47C3"
-              colorScheme="#4D47C3"
-              textTransform={"uppercase"}
-            >
-              Gerar Relatório
-            </Button>
           </Flex>
 
-          <Table>
+          <Table marginBottom={10}>
             <Thead bg={"#4D47C3"}>
               <Tr>
                 <Th textColor={"white"}>ID</Th>

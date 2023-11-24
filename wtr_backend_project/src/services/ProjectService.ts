@@ -173,7 +173,12 @@ export default class ProjectService {
     return userProjects;
   }
 
-  async getProjectUsers(userId: number, projectId: number) {
+  async getProjectUsers(
+    userId: number,
+    projectId: number,
+    from?: Date,
+    to?: Date
+  ) {
     const foundUser = await this.projectRepository.findUserProjectRole(
       userId,
       projectId
@@ -184,27 +189,37 @@ export default class ProjectService {
         projectId
       );
 
-      const currentDate = new Date();
-      const firstDayOfMonth = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        1
-      );
-      const lastDayOfMonth = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() + 1,
-        0,
-        23,
-        59,
-        59,
-        999
-      );
+      let fromData: Date;
+      let toData: Date;
+
+      if (from && to) {
+        fromData = from;
+        toData = to;
+      } else {
+        const currentDate = new Date();
+
+        fromData = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          1
+        );
+
+        toData = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 1,
+          0,
+          23,
+          59,
+          59,
+          999
+        );
+      }
 
       const elapsedTimeCounts =
         await this.timeRecordRepository.getUsersElapsedTime(
           projectId,
-          firstDayOfMonth,
-          lastDayOfMonth
+          fromData,
+          toData
         );
 
       const projectUsersInfo = projectUsers.map((item1) => {

@@ -68,11 +68,7 @@ export default class TimeRecordsRepository extends BaseRepository {
     return updatedTimeRecord;
   }
 
-  async getUsersElapsedTime(
-    project_id: number,
-    from: Date,
-    to: Date
-  ) {
+  async getUsersElapsedTime(project_id: number, from: Date, to: Date) {
     const elapsedTimeSum = await this.client.time_record.groupBy({
       by: ["user_id"],
       _sum: {
@@ -85,11 +81,11 @@ export default class TimeRecordsRepository extends BaseRepository {
           lte: to,
         },
         time_record_justification: {
-          every:{
+          every: {
             status: {
               not: "PENDING",
             },
-          }
+          },
         },
       },
     });
@@ -102,11 +98,20 @@ export default class TimeRecordsRepository extends BaseRepository {
 
     return userElapsedTimeSum;
   }
-  async getUserTimeRecordsInProject(user_id: number, project_id: number) {
+  async getUserTimeRecordsInProject(
+    user_id: number,
+    project_id: number,
+    from?: Date,
+    to?: Date
+  ) {
     return this.client.time_record.findMany({
       where: {
         user_id,
         project_id,
+        check_in_timestamp: {
+          gte: from,
+          lte: to,
+        },
       },
       orderBy: {
         check_in_timestamp: "desc",
@@ -197,7 +202,7 @@ export default class TimeRecordsRepository extends BaseRepository {
                 check_out_timestamp: true,
               },
             },
-            location:true
+            location: true,
           },
         },
         open_check_in: true,

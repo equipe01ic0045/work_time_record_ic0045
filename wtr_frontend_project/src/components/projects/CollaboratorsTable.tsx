@@ -114,7 +114,7 @@ export default function CollaboratorsTable({
                         collaborator.elapsed_time_sum
                     )}
                   </Td>
-                  {userIsManager ? (
+                  {userIsManager && collaborator.user_id !== user?.userId ? (
                     <Td>
                       <IconButton
                         aria-label="Remove user from project"

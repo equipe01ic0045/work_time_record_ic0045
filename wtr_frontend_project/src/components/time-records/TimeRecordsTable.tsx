@@ -156,7 +156,7 @@ export default function TimeRecordsTable({
             <Th textColor={"white"}>ÚLTIMO CHECKIN</Th>
             <Th textColor={"white"}>ÚLTIMO CHECKOUT</Th>
             <Th textColor={"white"}>REGISTRAR</Th>
-            <Th textColor={"white"}>REGISTROS FEITOS</Th>
+            <Th textColor={"white"}>HISTÓRICO DE REGISTROS</Th>
           </Tr>
         </Thead>
         <Tbody>
