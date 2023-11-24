@@ -23,8 +23,8 @@ function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
   );
   const [recordNextAction, setRecordNextAction] = useState<string | null>();
   
-  const [checkin,setCheckin] = useState<Date|string| null>(projectData.project.time_records[0].check_in_timestamp)
-  const [checkout,setCheckout] = useState<Date|string| null>(projectData.project.time_records[0].check_out_timestamp)
+  const [checkin,setCheckin] = useState<Date|string| null>(projectData?.project.time_records[0]?.check_in_timestamp)
+  const [checkout,setCheckout] = useState<Date|string| null>(projectData?.project.time_records[0]?.check_out_timestamp)
   
   const toast = useToast();
 
