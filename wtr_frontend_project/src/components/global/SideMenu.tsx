@@ -1,17 +1,11 @@
 "use client";
-import { Box, Button, Image } from "@chakra-ui/react";
-import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
-import Link from "next/link";
-import React, { useState } from "react";
-import { cookies } from 'next/headers';
-import { useRouter } from "next/navigation";
-import { FiLogOut } from "react-icons/fi";
+import React from "react";
+import { Box, Button, Link, Text } from "@chakra-ui/react";
+import { useAuth } from "../auth/AuthContext";
 
 export default function SideMenu() {
+  const { user, logout } = useAuth();
 
-
-  const router = useRouter()
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const iconCase = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -35,16 +29,15 @@ export default function SideMenu() {
   );
 
   const iconLogout = (
-    <svg xmlns="http://www.w3.org/2000/svg" height="36" viewBox="0 -960 960 960" width="36">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="36"
+      viewBox="0 -960 960 960"
+      width="36"
+    >
       <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
     </svg>
   );
-
-  const iconUser = (
-    <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
-      <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z" />
-    </svg>
-  )
 
   const pages = [
     {
@@ -64,15 +57,9 @@ export default function SideMenu() {
       name: "Logout",
       link: "/auth",
       icon: iconLogout,
-      onClick: logoutHandler,
+      onClick: logout,
     },
   ];
-
-  function logoutHandler() {
-    document.cookie = `token=; expires=${new Date()}; path=/;`
-    router.push('auth/')
-
-  }
 
   return (
     <Box
@@ -86,26 +73,31 @@ export default function SideMenu() {
       minW={"fit-content"}
       width={"15%"}
       flexWrap={"wrap"}
-      
     >
-      <Box
-        background='white'
-        borderRadius='50%'
-        padding='0.5em'
-        _hover={{
-          cursor:'pointer',
-          background:'gray.200'
-        }}
-      >
-        {iconUser}
+      <Box>
+        <Text>
+          <Link fontWeight="bold" href={"/main/profile/" + user?.userId}>
+            {user?.full_name}
+          </Link>
+        </Text>
+
+        <Text>email: {user?.email}</Text>
+        <Text>cpf: {user?.cpf}</Text>
       </Box>
-      <Box 
-      height="1px" 
-      backgroundColor={"black"} 
-      width="100%" margin="10px 0 20px 0"></Box>
+
+      <Box
+        height="1px"
+        backgroundColor={"black"}
+        width="100%"
+        margin="10px 0 20px 0"
+      ></Box>
       {pages.map((item) => {
         return (
-          <Link key={item.id} href={`${item.link}`} onClick={item.onClick ?? (() => { })}>
+          <Link
+            key={item.id}
+            href={`${item.link}`}
+            onClick={item.onClick ?? (() => {})}
+          >
             <Button
               bg={"white"}
               borderRadius={"5px"}
@@ -125,6 +117,5 @@ export default function SideMenu() {
         );
       })}
     </Box>
-
   );
 }

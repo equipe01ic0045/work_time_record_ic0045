@@ -1,7 +1,11 @@
 "use client";
 import HeaderBox from "@/components/global/HeaderBox";
 import JustificationService from "@/services/JustificationService";
-import { JustificationInfoManager } from "@/types/TimeRecordInfoData";
+import {
+  JustificationInfoManager,
+  statusLangMapping,
+} from "@/types/TimeRecordInfoData";
+import { clockDate, formatDate } from "@/utils/date_utils";
 import { DownloadIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -10,8 +14,10 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Divider,
   HStack,
   Heading,
+  Input,
   Select,
   SimpleGrid,
   Text,
@@ -31,7 +37,8 @@ export default function JustificationInfoManagerPage() {
 
   const [reviewStatus, setReviewStatus] = useState("");
   const [reviewerMessage, setReviewerMessage] = useState<string>("");
-  const [documentBlob, setdocumentBlob] = useState<Blob>();
+  const [reviewerNewTimeStamp, setReviewerNewTimeStamp] = useState<Date>();
+  const [documentBlob, setdocumentBlob] = useState<Blob | null>();
 
   useEffect(() => {
     JustificationService.getJustificationData(
@@ -40,12 +47,20 @@ export default function JustificationInfoManagerPage() {
     )
       .then((justificationData) => {
         setJustification(justificationData);
+        setReviewerNewTimeStamp(
+          justificationData.justification_type == "CHECKIN"
+            ? justificationData.time_record.check_in_timestamp
+            : justificationData.time_record.check_out_timestamp
+        );
         try {
-          const document = JustificationService.getDocument(
-            justificationData.project_id,
-            justificationData.justification_id
-          );
-          return document;
+          if (justificationData.justification_document.justification_id) {
+            const document = JustificationService.getDocument(
+              justificationData.project_id,
+              justificationData.justification_id
+            );
+            return document;
+          }
+          return null;
         } catch (error) {
           console.error("Error fetching document:", error);
         }
@@ -72,14 +87,18 @@ export default function JustificationInfoManagerPage() {
     JustificationService.sendReviewData(
       Number(params.projectId),
       Number(params.justificationId),
-      { status: reviewStatus, reviewer_message: reviewerMessage }
+      {
+        status: reviewStatus,
+        reviewer_message: reviewerMessage,
+        new_timestamp: reviewerNewTimeStamp,
+      }
     );
     router.push(`/main/projects/info/${params.projectId}/justifications`);
   }
 
   return (
     <Box width={"100%"}>
-      <HeaderBox title={`Justificativa ${params.justificationId}`} />
+      <HeaderBox title={`Justificativas / ${params.justificationId}`} />
 
       <HStack margin={10}>
         <Box w="100%">
@@ -99,8 +118,9 @@ export default function JustificationInfoManagerPage() {
                 </Box>
                 <Box>
                   <Text fontWeight="bold">Usuario</Text>
-                  <Text>nome: {justification?.user.full_name}</Text>
-                  <Text>cpf: {justification?.user.cpf}</Text>
+                  <Text>Nome: {justification?.user.full_name}</Text>
+                  <Text>Email: {justification?.user.email}</Text>
+                  <Text>CPF: {justification?.user.cpf}</Text>
                 </Box>
                 <Box>
                   <Text fontWeight="bold">Tipo de Justificativa</Text>
@@ -109,21 +129,44 @@ export default function JustificationInfoManagerPage() {
                 <Box>
                   <Text fontWeight="bold">Registro</Text>
                   <Text>
-                    checkin: {justification?.time_record.check_in_timestamp}
+                    Check-in:{" "}
+                    {formatDate(justification?.time_record.check_in_timestamp)}
                   </Text>
                   <Text>
-                    checkout: {justification?.time_record.check_out_timestamp}
+                    Check-out:{" "}
+                    {formatDate(justification?.time_record.check_out_timestamp)}
                   </Text>
                 </Box>
                 <Box>
                   <Text fontWeight="bold">Status</Text>
-                  <Text>{justification?.status}</Text>
+                  <Text>
+                    {justification
+                      ? statusLangMapping[justification?.status]
+                      : ""}
+                  </Text>
                 </Box>
               </SimpleGrid>
+
               <Box marginTop={20} w="100%">
                 <Text fontWeight="bold">Mensagem de Justificativa</Text>
                 <Text>{justification?.user_message}</Text>
               </Box>
+
+              {justification?.status !== "PENDING" ? (
+                <Box marginTop={10}>
+                  <Divider marginBottom={5} />
+                  <Box>
+                    <Text fontWeight="bold">Revisado por</Text>
+                    <Text>{justification?.reviewer.full_name}</Text>
+                    <Text>Email: {justification?.reviewer.email}</Text>
+                    <Text>CPF: {justification?.reviewer.cpf}</Text>
+                  </Box>
+                  <Box marginTop={5} w="100%">
+                    <Text fontWeight="bold">Mensagem do Revisor</Text>
+                    <Text>{justification?.reviewer_message}</Text>
+                  </Box>
+                </Box>
+              ) : null}
             </CardBody>
             <CardFooter>
               <VStack>
@@ -140,55 +183,81 @@ export default function JustificationInfoManagerPage() {
                     Baixar documento
                   </Button>
                 </Tooltip>
-                <Text>criado em: {justification?.created_at}</Text>
+                <Text>criado em: {formatDate(justification?.created_at)}</Text>
               </VStack>
             </CardFooter>
           </Card>
         </Box>
 
-        <Box w="100%">
-          <Card backgroundColor="#e3a300">
-            <CardHeader>
-              <Text fontWeight="bold" marginBottom={4} fontSize={20}>
-                Revisar Justificativa
-              </Text>
+        {justification?.status == "PENDING" ? (
+          <Box w="100%">
+            <Card backgroundColor="#e3a300">
+              <CardHeader>
+                <Text fontWeight="bold" marginBottom={4} fontSize={20}>
+                  Revisar Justificativa
+                </Text>
+                <HStack>
+                  <Box>
+                    <Text fontWeight="bold">Status</Text>
+                    <Select
+                      width={200}
+                      placeholder="Aprovar/Rejeitar"
+                      size="lg"
+                      bg="white"
+                      value={reviewStatus}
+                      onChange={(e) => setReviewStatus(e.target.value)}
+                    >
+                      <option value="APPROVED">Aprovar</option>
+                      <option value="DENIED">Rejeitar</option>
+                    </Select>
+                  </Box>
 
-              <Select
-                placeholder="Aprovar/Rejeitar"
-                size="lg"
-                bg="white"
-                value={reviewStatus}
-                onChange={(e) => setReviewStatus(e.target.value)}
-              >
-                <option value="APPROVED">Aprovar</option>
-                <option value="DENIED">Rejeitar</option>
-              </Select>
-            </CardHeader>
-            <CardBody>
-              <Text fontWeight="bold" marginBottom={4}>
-                Mensagem
-              </Text>
-              <Textarea
-                aria-labelledby="reviewer message"
-                variant="filled"
-                bg="white"
-                _hover={{ bg: "white" }}
-                minHeight={100}
-                value={reviewerMessage}
-                onChange={(e) => setReviewerMessage(e.target.value)}
-              />
-            </CardBody>
-            <CardFooter>
-              <Button
-                colorScheme="black"
-                backgroundColor={"black"}
-                onClick={submitReview}
-              >
-                Enviar
-              </Button>
-            </CardFooter>
-          </Card>
-        </Box>
+                  {reviewStatus == "DENIED" ? (
+                    <Box>
+                      <Text fontWeight="bold">
+                        Correção do horário registrado
+                      </Text>
+                      <Input
+                        placeholder="Select Date and Time"
+                        size="lg"
+                        variant="filled"
+                        bg="white"
+                        type="datetime-local"
+                        value={clockDate(reviewerNewTimeStamp)}
+                        onChange={(e) =>
+                          setReviewerNewTimeStamp(new Date(e.target.value))
+                        }
+                      />
+                    </Box>
+                  ) : null}
+                </HStack>
+              </CardHeader>
+              <CardBody>
+                <Text fontWeight="bold" marginBottom={4}>
+                  Mensagem
+                </Text>
+                <Textarea
+                  aria-labelledby="reviewer message"
+                  variant="filled"
+                  bg="white"
+                  _hover={{ bg: "white" }}
+                  minHeight={100}
+                  value={reviewerMessage}
+                  onChange={(e) => setReviewerMessage(e.target.value)}
+                />
+              </CardBody>
+              <CardFooter>
+                <Button
+                  colorScheme="black"
+                  backgroundColor={"black"}
+                  onClick={submitReview}
+                >
+                  Enviar
+                </Button>
+              </CardFooter>
+            </Card>
+          </Box>
+        ) : null}
       </HStack>
     </Box>
   );

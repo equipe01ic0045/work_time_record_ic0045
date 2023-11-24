@@ -169,10 +169,24 @@ export default class ProjectController extends BaseController {
     next: NextFunction
   ) {
     const { project_id } = req.params;
+    const { from, to } = req.query;
+
     try {
+      let fromTimestamp: Date | undefined = undefined
+      let toTimestamp: Date | undefined = undefined
+
+      if (typeof from === 'string') {
+        fromTimestamp = new Date(from);
+      }
+      
+      if (typeof to === 'string') {
+        toTimestamp = new Date(to);
+      }
       const projectUsers = await projectService.getProjectUsers(
         req.user!.userId,
-        parseInt(project_id)
+        parseInt(project_id),
+        fromTimestamp,
+        toTimestamp
       );
       new DataRetrievedResponse().send(res, projectUsers);
     } catch (error) {

@@ -19,7 +19,7 @@ export default function RegistrationComponent() {
   const toast = useToast();
   const [newUser, setNewUser] = useState({
 
-    fullName: "",
+    full_name: "",
     cpf: "",
     email: "",
     confirmEmail: "",
@@ -139,7 +139,7 @@ export default function RegistrationComponent() {
             placeholder="Nome Completo"
             type="text"
             name="fullName"
-            value={newUser.fullName}
+            value={newUser.full_name}
             onChange={inputHandler}
             bgColor="Lavender"
             color="blueviolet"

@@ -4,10 +4,11 @@ import { Box, Button, Text, Input, useToast } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { FaGoogle, FaFacebookF, FaGithub } from 'react-icons/fa';
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { useAuth } from "@/components/auth/AuthContext";
 
 export default function LoginComponent() {
+  const { login } = useAuth();
   const toast = useToast();
   const router = useRouter();
   const [user, setUser] = useState({
@@ -27,6 +28,7 @@ export default function LoginComponent() {
     userService
       .loginUser(user)
       .then((response) => {
+        login()
         router.push("/main/projects");
       })
       .catch((error) => {
@@ -38,7 +40,7 @@ export default function LoginComponent() {
           isClosable: true,
           position: "top-right",
         });
-        return
+        return;
       });
   }
 
@@ -49,15 +51,12 @@ export default function LoginComponent() {
       alignItems="center"
       gap="0.5em"
       p="0.5em"
-      w="100%">
-      <Text
-        fontSize="6xl"
-        color="blueviolet">
+      w="100%"
+    >
+      <Text fontSize="6xl" color="blueviolet">
         Ponto Certo
       </Text>
-      <Box
-        display="flex"
-        flexDirection="column">
+      <Box display="flex" flexDirection="column">
         <Input
           placeholder="email"
           type="email"
@@ -71,7 +70,7 @@ export default function LoginComponent() {
         <Box position="relative" mt="1em">
           <Input
             placeholder="senha"
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             name="password"
             value={user.password}
             onChange={inputHandler}
@@ -85,42 +84,35 @@ export default function LoginComponent() {
             top="50%"
             transform="translateY(-50%)"
             cursor="pointer"
-            onClick={() =>
-              setShowPassword(!showPassword)}>
+            zIndex={"999999"}
+            onClick={() => setShowPassword(!showPassword)}
+          >
             {showPassword ? <ViewOffIcon /> : <ViewIcon />}
           </Box>
-        </Box>
-        <Box
-          display="flex"
-          justifyContent="flex-end"
-          alignItems="flex-end"
-          mt="1em"
-          gap='1em'
-          >
-            <Text fontSize="sm">
-              Perdeu a senha?
-            </Text>
-          <Link
-            href="auth/password-recovery">
-            <Text 
-            color='blue'
-            fontSize="sm"
-            >
-              Clique Aqui
-            </Text>
-          </Link>
         </Box>
         <Button
           bg="blueviolet"
           color="white"
           onClick={loginHandler}
-          w="100%" mt="1em">
+          w="100%"
+          mt="1em"
+        >
           Entrar
         </Button>
-        <Box display="flex" flexDirection="column" gap="0.5em" alignItems="center" mt="1em">
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap="0.5em"
+          alignItems="center"
+          mt="1em"
+        >
           <Box display="flex" flexDirection="row" gap="1em">
             <Text fontSize="sm">Não é registrado ?</Text>
-            <Link href="auth/register"><Text fontSize="sm" color="blue">Registre-se</Text></Link>
+            <Link href="auth/register">
+              <Text fontSize="sm" color="blue">
+                Registre-se
+              </Text>
+            </Link>
           </Box>
         </Box>
       </Box>

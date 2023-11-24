@@ -49,18 +49,23 @@ export default class UserService {
           "email and password do not match any existing account."
         );
       }
-      return jwt.sign(
-        {
-          userId: foundUser.user_id,
-          full_name: foundUser.full_name,
-          email: foundUser.email,
-        },
-        JWT_SECRET,
-        { expiresIn: "1d" }
-      );
+      return this._signJWT(foundUser);
     } else {
       throw new NotFoundError("user");
     }
+  }
+
+  _signJWT(foundUser : Omit<user, "password">) : string{
+    return jwt.sign(
+      {
+        userId: foundUser.user_id,
+        full_name: foundUser.full_name,
+        email: foundUser.email,
+        cpf: foundUser.cpf
+      },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
   }
 
   async loggedUser(token: string) {
@@ -96,7 +101,7 @@ export default class UserService {
     return foundUser;
   }
 
-  async getUsersByName(full_name: string): Promise<Omit<user, "password">[]> {
+  async getUsersByName(full_name?: string): Promise<Omit<user, "password">[]> {
     const foundUsers = await this.userRepository.findUsersByName(full_name);
     if (!foundUsers) {
       throw new NotFoundError("user");
@@ -105,20 +110,25 @@ export default class UserService {
     return foundUsers;
   }
 
+  // User might want to just change name or just e-mail without changing password, so password should be optional.
+  // All other fields are not optional because they will be sent with the fetch request, even if they're unchanged.
+  // That's not true for the password because it is stored as a hash on the db, so the front-end can't send the previous password to the function
   async updateUser(
     userId: number,
     fullName: string,
     email: string,
-    password: string
+    cpf: string,
+    password?: string,
   ) {
     const foundUser = await this.userRepository.findUserByUserId(userId);
     if (!foundUser) {
       throw new NotFoundError("user");
     }
+    if(password !== undefined)
+      password = await bcrypt.hash(password, JWT_DEFAULT_SALT_ROUNDS);
+    
+    const updatedUser = await this.userRepository.updateUser(userId, fullName, email, cpf, password);
 
-    const hashedPassword = await bcrypt.hash(password, JWT_DEFAULT_SALT_ROUNDS);
-    await this.userRepository.updateUser(userId, fullName, hashedPassword, email);
-
-    return await this.authenticateUser(email, password);
+    return await this._signJWT(updatedUser);
   }
 }

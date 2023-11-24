@@ -26,7 +26,12 @@ export default class TimeRecordService {
     this.allowedMimeTypes = ["application/pdf"];
   }
 
-  async getUserTimeRecordsInProject(userId: number, projectId: number) {
+  async getUserTimeRecordsInProject(
+    userId: number,
+    projectId: number,
+    from?: Date,
+    to?: Date
+  ) {
     const foundUserProjectRole =
       await this.projectsRepository.findUserProjectRole(userId, projectId);
     if (!foundUserProjectRole) {
@@ -35,7 +40,9 @@ export default class TimeRecordService {
 
     return this.timeRecordsRepository.getUserTimeRecordsInProject(
       userId,
-      projectId
+      projectId,
+      from,
+      to
     );
   }
 

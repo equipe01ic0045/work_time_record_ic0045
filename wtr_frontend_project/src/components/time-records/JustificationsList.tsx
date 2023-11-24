@@ -11,7 +11,8 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { JustificationInfoManager } from "@/types/TimeRecordInfoData";
+import { JustificationInfoManager, statusLangMapping } from "@/types/TimeRecordInfoData";
+import { formatDate } from "@/utils/date_utils";
 
 function JustificationRow({
   justificationData,
@@ -29,13 +30,13 @@ function JustificationRow({
       <Td>{justificationData.justification_type}</Td>
 
       {justificationData.time_record.check_in_timestamp ? (
-        <Td>{justificationData.time_record.check_in_timestamp}</Td>
+        <Td>{formatDate(justificationData.time_record.check_in_timestamp)}</Td>
       ) : (
         <Td>--</Td>
       )}
 
       {justificationData.time_record.check_out_timestamp ? (
-        <Td>{justificationData.time_record.check_out_timestamp}</Td>
+        <Td>{formatDate(justificationData.time_record.check_out_timestamp)}</Td>
       ) : (
         <Td>--</Td>
       )}
@@ -46,6 +47,8 @@ function JustificationRow({
           ? "Sim"
           : "Não"}
       </Td>
+
+      <Td>{statusLangMapping[justificationData.status]}</Td>
 
       <Td>
         <Link href={`justifications/${justificationData.justification_id}`}>
@@ -77,6 +80,7 @@ export default function JustificationListTable({
             <Th textColor={"white"}>CHECKOUT</Th>
             <Th textColor={"white"}>MENSAGEM</Th>
             <Th textColor={"white"}>DOCUMENTO</Th>
+            <Th textColor={"white"}>STATUS</Th>
             <Th textColor={"white"}>REVISAR</Th>
           </Tr>
         </Thead>
