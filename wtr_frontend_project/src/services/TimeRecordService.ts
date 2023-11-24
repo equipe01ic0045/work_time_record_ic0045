@@ -5,7 +5,6 @@ import {
   DetailedTimeRecordData,
   SimpleTimeRecordData,
 } from "@/types/TimeRecordData";
-import fs from "fs";
 
 export default class TimeRecordService {
   async getTimeRecords(projectId: number): Promise<PaginationData<TimeRecord>> {

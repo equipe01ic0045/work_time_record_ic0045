@@ -190,6 +190,29 @@
  *         description: Unauthorized. User is not authenticated.
  */
 
+
+/**
+ * @swagger
+ * /projects/{project_id}:
+ *   get:
+ *     summary: gets a project info
+ *     tags: [Projects]
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: project_id
+ *         required: true
+ *         description: The ID of the project.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Successfully retrieved the project info.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
 /**
  * @swagger
  * /projects/{project_id}/users:

@@ -81,6 +81,7 @@ model time_record {
   project_id                Int
   check_in_timestamp        DateTime                    @default(now())
   check_out_timestamp       DateTime?
+  elapsed_time              Int?
   location                  String?
   created_at                DateTime                    @default(now())
   updated_at                DateTime                    @default(now())

@@ -103,11 +103,6 @@ export default class ProjectRepository extends BaseRepository {
       where: {
         project_id: projectId,
       },
-      include: {
-        owner: {
-          select: { email: true },
-        },
-      },
     });
   }
 
@@ -234,6 +229,6 @@ export default class ProjectRepository extends BaseRepository {
       },
     });
 
-    return deletedUserRole
+    return deletedUserRole;
   }
 }

@@ -15,12 +15,17 @@ import { TimeRecordListData } from "@/types/ProjectListData";
 import { useEffect, useState } from "react";
 import TimeRecordService from "@/services/TimeRecordService";
 import { SimpleTimeRecordData } from "@/types/TimeRecordData";
+import { formatDate } from "@/utils/date_utils";
 
 function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
   const [hasOpenCheckIn, setHasOpenCheckIn] = useState<boolean>(
     projectData.open_check_in
   );
   const [recordNextAction, setRecordNextAction] = useState<string | null>();
+  
+  const [checkin,setCheckin] = useState<Date|string| null>(projectData.project.time_records[0].check_in_timestamp)
+  const [checkout,setCheckout] = useState<Date|string| null>(projectData.project.time_records[0].check_out_timestamp)
+  
   const toast = useToast();
 
   useEffect(() => {
@@ -37,17 +42,19 @@ function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
       const simpleTimeRecord: SimpleTimeRecordData = {
         project_id,
         timestamp: new Date(),
-        location: "salvador bahia",
+        location: projectData.project.location,
       };
 
       if (hasOpenCheckIn) {
         await timeRecordService.simpleCheckOut(simpleTimeRecord);
+        setCheckout(simpleTimeRecord.timestamp)
       } else {
         await timeRecordService.simpleCheckIn(simpleTimeRecord);
+        setCheckin(simpleTimeRecord.timestamp)
+        setCheckout(null)
       }
 
       setHasOpenCheckIn(!hasOpenCheckIn);
-
       toast({
         title: "Registro feito com sucesso!",
         status: "success",
@@ -72,20 +79,23 @@ function ProjectRow({ projectData }: { projectData: TimeRecordListData }) {
       borderColor="gray.300"
     >
       <Td>{projectData.project.project_name}</Td>
-      <Td><Link href={'/main/profile/'+projectData.project.owner.user_id}>{projectData.project.owner.full_name}</Link></Td>
+      <Td>
+        <Link href={"/main/profile/" + projectData.project.owner.user_id}>
+          {projectData.project.owner.full_name}
+        </Link>
+      </Td>
 
-      {projectData.project.time_records[0] ? (
-        <>
-          <Td>{projectData.project.time_records[0].check_in_timestamp}</Td>
-          <Td>{projectData.project.time_records[0].check_out_timestamp}</Td>
-        </>
+      {checkin ? (
+        <Td>{formatDate(checkin)}</Td>
       ) : (
-        <>
-          <Td>--</Td>
-          <Td>--</Td>
-        </>
+        <Td>--</Td>
       )}
 
+      {checkout ? (
+        <Td>{formatDate(checkout)}</Td>
+      ) : (
+        <Td>--</Td>
+      )}
 
       <Td>
         <HStack gap={2}>

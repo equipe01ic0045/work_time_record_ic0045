@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/components/auth/AuthContext";
 import HeaderBox from "@/components/global/HeaderBox";
 import ProjectCard, {
   Project,
@@ -22,18 +23,13 @@ import {
   ModalOverlay,
   useToast,
 } from "@chakra-ui/react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ProjectInfo({ params }: any) {
   const [isOpenDelete, setOpenDlete] = useState(false);
   const [isOpenEdit, setOpenEdit] = useState(false);
-
-  const styleBox = {
-    display: "flex",
-    "flex-direction": "column",
-    gap: "1em",
-  };
+  const { user } = useAuth();
 
   const deleteIcon = (
     <svg
@@ -88,11 +84,6 @@ export default function ProjectInfo({ params }: any) {
   });
   const toast = useToast();
 
-  function inputHandler(event: any) {
-    const { name, value } = event.target;
-    setProjectInfo({ ...projectInfo, [name]: value });
-  }
-
   async function updateProjectHandler(
     projectInfo: Project
   ): Promise<ProjectError> {
@@ -116,7 +107,7 @@ export default function ProjectInfo({ params }: any) {
       project_description: "",
     };
     try {
-      const response = await projectService.updateProject(editProject);
+      await projectService.updateProject(editProject);
       toast({
         title: "Projeto Atualizado",
         description: "",
@@ -217,16 +208,6 @@ export default function ProjectInfo({ params }: any) {
           </CardHeader>
           <Box padding="1em" display="flex" flexDirection="row" gap="1em">
             <Button
-              leftIcon={deleteIcon}
-              colorScheme="red"
-              onClick={() => {
-                setOpenDlete(true);
-              }}
-            >
-              {" "}
-              Deletar Projeto
-            </Button>
-            <Button
               leftIcon={editIcon}
               colorScheme="orange"
               onClick={() => {
@@ -239,12 +220,26 @@ export default function ProjectInfo({ params }: any) {
             <Button leftIcon={userIcon} colorScheme="blue">
               <Link href={`${projectId}/collaborators`}>Usuarios</Link>
             </Button>
+
+            {projectInfo && projectInfo?.owner_id == user?.userId ? (
+              <Button
+                leftIcon={deleteIcon}
+                colorScheme="red"
+                onClick={() => {
+                  setOpenDlete(true);
+                }}
+              >
+                {" "}
+                Deletar Projeto
+              </Button>
+            ) : null}
+
           </Box>
           {projectInfo ? (
             <ProjectCard
               onSubmit={updateProjectHandler}
               project={projectInfo as Project}
-              setRecord={setProjectInfo}
+              setProject={setProjectInfo}
               requireName={false}
               errors={errors}
               setErrors={setErrors}

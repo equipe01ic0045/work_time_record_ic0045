@@ -6,14 +6,17 @@ import {
   ConflictError,
   NotFoundError,
 } from "../types/errors";
+import TimeRecordsRepository from "../prisma/repositories/TimeRecordsRepository";
 
 export default class ProjectService {
   private projectRepository: ProjectRepository;
   private userRepository: UserRepository;
+  private timeRecordRepository: TimeRecordsRepository;
 
   constructor() {
     this.projectRepository = new ProjectRepository();
     this.userRepository = new UserRepository();
+    this.timeRecordRepository = new TimeRecordsRepository();
   }
 
   async createProject(
@@ -180,18 +183,57 @@ export default class ProjectService {
       const projectUsers = await this.projectRepository.findUsersByProjectId(
         projectId
       );
-      return projectUsers;
+
+      const currentDate = new Date();
+      const firstDayOfMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        1
+      );
+      const lastDayOfMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + 1,
+        0,
+        23,
+        59,
+        59,
+        999
+      );
+
+      const elapsedTimeCounts =
+        await this.timeRecordRepository.getUsersElapsedTime(
+          projectId,
+          firstDayOfMonth,
+          lastDayOfMonth
+        );
+
+      const projectUsersInfo = projectUsers.map((item1) => {
+        let foundElapsedTime = elapsedTimeCounts.find(
+          (item2) => item2.user_id === item1.user.user_id
+        );
+        if (!foundElapsedTime) {
+          foundElapsedTime = {
+            user_id: item1.user.user_id,
+            elapsed_time_sum: 0,
+          };
+        }
+        return {
+          ...item1,
+          ...foundElapsedTime,
+        };
+      });
+
+      return projectUsersInfo;
     } else {
       throw new AuthorizationError();
     }
   }
 
   async deleteUser(admin_id: number, project_id: number, user_id: number) {
-
     const foundAdminUserProjectRole =
       await this.projectRepository.findUserProjectRole(admin_id, project_id, [
         "ADMIN",
-        "MANAGER"
+        "MANAGER",
       ]);
 
     const userToBeDeletedRole =

@@ -5,6 +5,7 @@ import {
   JustificationInfoManager,
   statusLangMapping,
 } from "@/types/TimeRecordInfoData";
+import { clockDate, formatDate } from "@/utils/date_utils";
 import { DownloadIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -13,8 +14,10 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Divider,
   HStack,
   Heading,
+  Input,
   Select,
   SimpleGrid,
   Text,
@@ -34,6 +37,7 @@ export default function JustificationInfoManagerPage() {
 
   const [reviewStatus, setReviewStatus] = useState("");
   const [reviewerMessage, setReviewerMessage] = useState<string>("");
+  const [reviewerNewTimeStamp, setReviewerNewTimeStamp] = useState<Date>();
   const [documentBlob, setdocumentBlob] = useState<Blob | null>();
 
   useEffect(() => {
@@ -43,6 +47,11 @@ export default function JustificationInfoManagerPage() {
     )
       .then((justificationData) => {
         setJustification(justificationData);
+        setReviewerNewTimeStamp(
+          justificationData.justification_type == "CHECKIN"
+            ? justificationData.time_record.check_in_timestamp
+            : justificationData.time_record.check_out_timestamp
+        );
         try {
           if (justificationData.justification_document.justification_id) {
             const document = JustificationService.getDocument(
@@ -78,7 +87,11 @@ export default function JustificationInfoManagerPage() {
     JustificationService.sendReviewData(
       Number(params.projectId),
       Number(params.justificationId),
-      { status: reviewStatus, reviewer_message: reviewerMessage }
+      {
+        status: reviewStatus,
+        reviewer_message: reviewerMessage,
+        new_timestamp: reviewerNewTimeStamp,
+      }
     );
     router.push(`/main/projects/info/${params.projectId}/justifications`);
   }
@@ -105,9 +118,9 @@ export default function JustificationInfoManagerPage() {
                 </Box>
                 <Box>
                   <Text fontWeight="bold">Usuario</Text>
-                  <Text>nome: {justification?.user.full_name}</Text>
-                  <Text>email: {justification?.user.email}</Text>
-                  <Text>cpf: {justification?.user.cpf}</Text>
+                  <Text>Nome: {justification?.user.full_name}</Text>
+                  <Text>Email: {justification?.user.email}</Text>
+                  <Text>CPF: {justification?.user.cpf}</Text>
                 </Box>
                 <Box>
                   <Text fontWeight="bold">Tipo de Justificativa</Text>
@@ -116,10 +129,12 @@ export default function JustificationInfoManagerPage() {
                 <Box>
                   <Text fontWeight="bold">Registro</Text>
                   <Text>
-                    checkin: {justification?.time_record.check_in_timestamp}
+                    Check-in:{" "}
+                    {formatDate(justification?.time_record.check_in_timestamp)}
                   </Text>
                   <Text>
-                    checkout: {justification?.time_record.check_out_timestamp}
+                    Check-out:{" "}
+                    {formatDate(justification?.time_record.check_out_timestamp)}
                   </Text>
                 </Box>
                 <Box>
@@ -138,12 +153,13 @@ export default function JustificationInfoManagerPage() {
               </Box>
 
               {justification?.status !== "PENDING" ? (
-                <Box marginTop={20}>
+                <Box marginTop={10}>
+                  <Divider marginBottom={5} />
                   <Box>
                     <Text fontWeight="bold">Revisado por</Text>
                     <Text>{justification?.reviewer.full_name}</Text>
-                    <Text>email: {justification?.reviewer.email}</Text>
-                    <Text>cpf: {justification?.reviewer.cpf}</Text>
+                    <Text>Email: {justification?.reviewer.email}</Text>
+                    <Text>CPF: {justification?.reviewer.cpf}</Text>
                   </Box>
                   <Box marginTop={5} w="100%">
                     <Text fontWeight="bold">Mensagem do Revisor</Text>
@@ -167,7 +183,7 @@ export default function JustificationInfoManagerPage() {
                     Baixar documento
                   </Button>
                 </Tooltip>
-                <Text>criado em: {justification?.created_at}</Text>
+                <Text>criado em: {formatDate(justification?.created_at)}</Text>
               </VStack>
             </CardFooter>
           </Card>
@@ -180,17 +196,41 @@ export default function JustificationInfoManagerPage() {
                 <Text fontWeight="bold" marginBottom={4} fontSize={20}>
                   Revisar Justificativa
                 </Text>
+                <HStack>
+                  <Box>
+                    <Text fontWeight="bold">Status</Text>
+                    <Select
+                      width={200}
+                      placeholder="Aprovar/Rejeitar"
+                      size="lg"
+                      bg="white"
+                      value={reviewStatus}
+                      onChange={(e) => setReviewStatus(e.target.value)}
+                    >
+                      <option value="APPROVED">Aprovar</option>
+                      <option value="DENIED">Rejeitar</option>
+                    </Select>
+                  </Box>
 
-                <Select
-                  placeholder="Aprovar/Rejeitar"
-                  size="lg"
-                  bg="white"
-                  value={reviewStatus}
-                  onChange={(e) => setReviewStatus(e.target.value)}
-                >
-                  <option value="APPROVED">Aprovar</option>
-                  <option value="DENIED">Rejeitar</option>
-                </Select>
+                  {reviewStatus == "DENIED" ? (
+                    <Box>
+                      <Text fontWeight="bold">
+                        Correção do horário registrado
+                      </Text>
+                      <Input
+                        placeholder="Select Date and Time"
+                        size="lg"
+                        variant="filled"
+                        bg="white"
+                        type="datetime-local"
+                        value={clockDate(reviewerNewTimeStamp)}
+                        onChange={(e) =>
+                          setReviewerNewTimeStamp(new Date(e.target.value))
+                        }
+                      />
+                    </Box>
+                  ) : null}
+                </HStack>
               </CardHeader>
               <CardBody>
                 <Text fontWeight="bold" marginBottom={4}>

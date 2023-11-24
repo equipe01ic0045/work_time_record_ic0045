@@ -138,7 +138,9 @@
  *              status:
  *                type: string
  *                enum: ["APPROVED", "DENIED", "CANCELLED"]
- *              manager_message:
+ *              reviewer_message:
+ *                type: string
+ *              new_timestamp:
  *                type: string
  *     responses:
  *      '200':

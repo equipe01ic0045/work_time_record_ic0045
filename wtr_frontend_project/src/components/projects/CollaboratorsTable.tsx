@@ -1,6 +1,6 @@
 "use client";
 import ProjectService from "@/services/ProjectService";
-import CollaboratorListData from "@/types/CollaboratorListData";
+import ProjectUsers from "@/types/ProjectUsers";
 import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Table,
@@ -10,33 +10,29 @@ import {
   Th,
   Td,
   TableContainer,
-  Button,
   useToast,
   IconButton,
   Link,
 } from "@chakra-ui/react";
 import { useAuth } from "../auth/AuthContext";
 import { useEffect, useState } from "react";
+import { secondsToHoursMinutes } from "@/utils/date_utils";
 
 export default function CollaboratorsTable({
   collaboratorList,
   projectId,
+  tableRows
 }: {
-  collaboratorList: CollaboratorListData[];
+  collaboratorList: ProjectUsers[];
   projectId: number;
+  tableRows: string[]
 }) {
   const { user } = useAuth();
   const [userIsManager, setUserIsManager] = useState<boolean>(false);
   const toast = useToast();
   const projectService = new ProjectService();
-  const tableHeaderRow = [
-    "NOME",
-    "CPF",
-    "EMAIL",
-    "FUNÇÃO",
-    "HORAS/SEMANA",
-    "EXCLUIR",
-  ];
+
+  const tableHeaderRow = [...tableRows, "EXCLUIR"]
 
   const deleteUserInProject = async (userId: number) => {
     try {
@@ -62,12 +58,14 @@ export default function CollaboratorsTable({
   };
 
   function checkIfuserIsManager() {
-    for (let collaborator of collaboratorList) {
-      if (collaborator.user.user_id == user?.userId) {
-        if (collaborator.role !== "USER") {
-          return true;
+    if (collaboratorList) {
+      for (let collaborator of collaboratorList) {
+        if (collaborator.user.user_id == user?.userId) {
+          if (collaborator.role !== "USER") {
+            return true;
+          }
+          break;
         }
-        break;
       }
     }
     return false;
@@ -95,7 +93,7 @@ export default function CollaboratorsTable({
         </Thead>
         <Tbody>
           {collaboratorList ? (
-            collaboratorList.map((collaborator: CollaboratorListData) => {
+            collaboratorList.map((collaborator: ProjectUsers) => {
               return (
                 <Tr key={collaborator.user.user_id}>
                   <Td>
@@ -107,6 +105,15 @@ export default function CollaboratorsTable({
                   <Td>{collaborator.user.email}</Td>
                   <Td>{collaborator.role}</Td>
                   <Td>{collaborator.hours_per_week}</Td>
+                  <Td>
+                    {secondsToHoursMinutes(collaborator.elapsed_time_sum)}
+                  </Td>
+                  <Td>
+                    {secondsToHoursMinutes(
+                      4 * collaborator.hours_per_week * 60 * 60 -
+                        collaborator.elapsed_time_sum
+                    )}
+                  </Td>
                   {userIsManager ? (
                     <Td>
                       <IconButton

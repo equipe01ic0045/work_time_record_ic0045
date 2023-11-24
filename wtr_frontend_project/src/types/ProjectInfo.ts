@@ -2,9 +2,7 @@ export default interface ProjectInfo {
   project_id?: number | undefined;
   project_name?: string | undefined;
   project_description?: string | undefined
-  owner?: {
-    email?:string | undefined
-  };
+  owner_id?: number
   location_required?: boolean;
   location?: string | undefined;
   timezone?: string | undefined;

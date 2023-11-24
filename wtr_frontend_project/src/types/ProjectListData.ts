@@ -35,6 +35,7 @@ export interface TimeRecordListData {
       email: string;
     };
     time_records: TimeRecordSnippet[];
+    location: string
   };
   open_check_in: boolean;
 }

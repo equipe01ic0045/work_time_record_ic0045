@@ -90,20 +90,6 @@ export default function LoginComponent() {
             {showPassword ? <ViewOffIcon /> : <ViewIcon />}
           </Box>
         </Box>
-        <Box
-          display="flex"
-          justifyContent="flex-end"
-          alignItems="flex-end"
-          mt="1em"
-          gap="1em"
-        >
-          <Text fontSize="sm">Perdeu a senha?</Text>
-          <Link href="auth/password-recovery">
-            <Text color="blue" fontSize="sm">
-              Clique Aqui
-            </Text>
-          </Link>
-        </Box>
         <Button
           bg="blueviolet"
           color="white"

@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { JustificationInfoManager, statusLangMapping } from "@/types/TimeRecordInfoData";
+import { formatDate } from "@/utils/date_utils";
 
 function JustificationRow({
   justificationData,
@@ -29,13 +30,13 @@ function JustificationRow({
       <Td>{justificationData.justification_type}</Td>
 
       {justificationData.time_record.check_in_timestamp ? (
-        <Td>{justificationData.time_record.check_in_timestamp}</Td>
+        <Td>{formatDate(justificationData.time_record.check_in_timestamp)}</Td>
       ) : (
         <Td>--</Td>
       )}
 
       {justificationData.time_record.check_out_timestamp ? (
-        <Td>{justificationData.time_record.check_out_timestamp}</Td>
+        <Td>{formatDate(justificationData.time_record.check_out_timestamp)}</Td>
       ) : (
         <Td>--</Td>
       )}

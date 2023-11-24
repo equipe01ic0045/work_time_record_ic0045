@@ -1,21 +1,31 @@
 "use client";
-import { Box, Button, Link, useToast } from "@chakra-ui/react";
+import { Box, Button, HStack, Link } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ProjectService from "@/services/ProjectService";
 import HeaderBox from "@/components/global/HeaderBox";
 import ProjectInfo from "@/types/ProjectInfo";
 import CollaboratorsTable from "@/components/projects/CollaboratorsTable";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import ProjectUsers from "@/types/ProjectUsers";
 
-export default function GerenciarColaborador({ params }: any) {
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { currentMonthYear, secondsToHoursMinutes } from "@/utils/date_utils";
+
+declare module "jspdf" {
+  interface jsPDF {
+    autoTable: (options: any) => jsPDF;
+  }
+}
+
+export default function CollaboratosPage({ params }: any) {
   const projectService = new ProjectService();
-  const toast = useToast();
   const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
-  const [collaboratorList, setCollaboratorList] = useState<any>();
+  const [collaboratorList, setCollaboratorList] = useState<ProjectUsers[]>([]);
   const urlParameters = useParams();
   const projectId = Number(urlParameters.projectId);
   const projectIdString = urlParameters.projectId;
-
+  
   useEffect(() => {
     projectService
       .getProjectInfo(params.projectId)
@@ -50,6 +60,41 @@ export default function GerenciarColaborador({ params }: any) {
       <defs></defs>
     </svg>
   );
+
+  const tableHeaderRow = [
+    "NOME",
+    "CPF",
+    "EMAIL",
+    "FUNÇÃO",
+    "HORAS/SEMANA",
+    "HORAS REGISTRADAS",
+    "HORAS PENDENTES "
+  ];
+
+
+  function PDFReport() {
+    const reportTitle = `${projectInfo?.project_name} ${currentMonthYear()}`
+    const doc = new jsPDF();
+
+    doc.text(`Relatório de horas ${reportTitle}`, 10, 10);
+    doc.autoTable({
+      head: [tableHeaderRow],
+      body: collaboratorList.map((row) => [
+        row.user.full_name,
+        row.user.cpf,
+        row.user.email,
+        row.role,
+        row.hours_per_week,
+        secondsToHoursMinutes(row.elapsed_time_sum),
+        secondsToHoursMinutes(
+          4 * row.hours_per_week * 60 * 60 - row.elapsed_time_sum
+        ),
+      ]),
+    });
+
+    // Save the PDF
+    doc.save(`${reportTitle}.pdf`);
+  }
 
   return (
     <>
@@ -88,28 +133,41 @@ export default function GerenciarColaborador({ params }: any) {
           bg="white"
           marginLeft="5vh"
           zIndex={0}
-          width="80%"
+          width="85%"
         >
-          <Link
-            my={8}
-            style={{ justifyContent: "flex-start" }}
-            href={`/main/projects/add-collaborator/project/${projectIdString}`}
-          >
+          <HStack justifyContent={"space-between"}>
+            <Link
+              my={8}
+              style={{ justifyContent: "flex-start" }}
+              href={`/main/projects/add-collaborator/project/${projectIdString}`}
+            >
+              <Button
+                gap={"10px"}
+                fontSize={"2em"}
+                textColor={"#FFFFFF"}
+                colorScheme="purple"
+                bgColor="#4D47C3"
+              >
+                {plusIcon}
+                NOVO COLABORADOR
+              </Button>
+            </Link>
+
             <Button
-              gap={"10px"}
-              fontSize={"2em"}
               textColor={"#FFFFFF"}
               colorScheme="purple"
               bgColor="#4D47C3"
+              onClick={PDFReport}
             >
-              {plusIcon}
-              NOVO COLABORADOR
+              Gerar relatório
             </Button>
-          </Link>
-          <Box maxW="1000px" width="100%" borderWidth="1px" bg="#F0EFFF">
+          </HStack>
+
+          <Box width="100%" borderWidth="1px" bg="#F0EFFF">
             <CollaboratorsTable
               projectId={projectId}
               collaboratorList={collaboratorList}
+              tableRows={tableHeaderRow}
             />
           </Box>
         </Box>
