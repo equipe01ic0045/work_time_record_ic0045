@@ -44,6 +44,26 @@ export default class UserController extends BaseController {
     }
   }
 
+
+  async getUsers(request: Request, response: Response, next: NextFunction) {
+    try {
+      const usersList = await userService.getUserList()
+      const parsedList = usersList.map((user) => {
+        return {
+          user_id: user.user_id,
+          full_name: user.full_name,
+          cpf: user.cpf,
+          email: user.email,
+        }
+      })
+      new DataRetrievedResponse().send(response, parsedList)
+    }
+    catch (error) {
+      next(error)
+    }
+  }
+
+
   async getUser(req: Request, res: Response, next: NextFunction) {
     const { user_id } = req.params;
     try {
@@ -75,7 +95,7 @@ export default class UserController extends BaseController {
     const { full_name } = req.body;
     try {
       const users = await userService.getUsersByName(full_name);
-      res.json({users});
+      res.json({ users });
     } catch (error) {
       next(error);
     }

@@ -107,7 +107,7 @@ export default class UserRoutes extends BaseRoutes {
       body("cpf")
         .isNumeric()
         .isLength({ min: 11, max: 11 })
-        .withMessage("CPF deve ter exatamente 11 caracteres."), 
+        .withMessage("CPF deve ter exatamente 11 caracteres."),
       body("password")
         .optional()
         .isLength({ min: 8 })
@@ -146,9 +146,22 @@ export default class UserRoutes extends BaseRoutes {
      */
     this._router.post(
       "/byName",
+      body("full_name")
+        .isString()
+        .withMessage("Nome completo inválido")
+        .isLength({ min: 1 })
+        .withMessage("Insira o nome completo"),
       this.validate,
       this.controller.getUsersByName
     );
+
+
+    this._router.post(
+      "/all",
+      body(),
+      this.validate,
+      this.controller.getUsers
+    )
 
     return this._router;
   }
