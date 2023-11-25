@@ -9,12 +9,10 @@ import {
   useToast,
   FormLabel,
   InputGroup,
-  InputRightElement,
   InputRightAddon
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function RegistrationComponent() {
   const router = useRouter();
@@ -208,8 +206,8 @@ export default function RegistrationComponent() {
           />
           <InputRightAddon
             cursor='pointer'
-            onClick={showPasswordHandler}
-            children={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+            onClick={showConfirmPasswordHandler}
+            children={showConfirmPassword ? <ViewOffIcon /> : <ViewIcon />}
           />
         </InputGroup>
         <Button

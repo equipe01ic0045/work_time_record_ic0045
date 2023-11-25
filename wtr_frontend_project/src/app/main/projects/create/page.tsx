@@ -5,16 +5,7 @@ import HeaderBox from "@/components/global/HeaderBox";
 import ProjectInfo from "@/types/ProjectInfo";
 import {
   Box,
-  Button,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputRightElement,
   Link,
-  Checkbox,
-  Textarea,
-  FormControl,
-  FormErrorMessage
 } from "@chakra-ui/react";
 import { useState } from "react";
 import ProjectService from "@/services/ProjectService";
