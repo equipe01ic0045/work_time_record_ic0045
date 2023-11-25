@@ -1,17 +1,27 @@
 "use client";
 import UserService from "@/services/UserService";
-import { Box, Button, Text, Input, useToast } from "@chakra-ui/react";
+import { 
+  Box, 
+  Button, 
+  Text, 
+  Input, 
+  useToast 
+} from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { 
+  ViewIcon, 
+  ViewOffIcon 
+} from "@chakra-ui/icons";
 import { useAuth } from "@/components/auth/AuthContext";
+import UserLogin from "@/types/UserLoginData";
 
 export default function LoginComponent() {
   const { login } = useAuth();
   const toast = useToast();
   const router = useRouter();
-  const [user, setUser] = useState({
+  const [user, setUser] = useState<UserLogin>({
     email: "",
     password: "",
   });
@@ -24,24 +34,23 @@ export default function LoginComponent() {
     setUser({ ...user, [name]: value });
   }
 
-  function loginHandler() {
-    userService
-      .loginUser(user)
-      .then((response) => {
-        login()
-        router.push("/main/projects");
-      })
-      .catch((error) => {
-        toast({
-          title: "Login Invalido",
-          description: "",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-          position: "top-right",
-        });
-        return;
+  async function loginHandler() {
+    try {
+      await userService.loginUser(user)
+      login()
+      router.push("/main/projects");
+    }
+    catch {
+      toast({
+        title: "Login Invalido",
+        description: "",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
       });
+      return
+    }
   }
 
   return (
@@ -58,7 +67,7 @@ export default function LoginComponent() {
       </Text>
       <Box display="flex" flexDirection="column">
         <Input
-          placeholder="email"
+          placeholder="usuario@mail.com"
           type="email"
           name="email"
           value={user.email}
@@ -69,7 +78,7 @@ export default function LoginComponent() {
         />
         <Box position="relative" mt="1em">
           <Input
-            placeholder="senha"
+            placeholder="123abc"
             type={showPassword ? "text" : "password"}
             name="password"
             value={user.password}

@@ -19,7 +19,7 @@ export default function RegistrationComponent() {
   const toast = useToast();
   const [newUser, setNewUser] = useState({
 
-    full_name: "",
+    fullName: "",
     cpf: "",
     email: "",
     confirmEmail: "",
@@ -46,66 +46,55 @@ export default function RegistrationComponent() {
     setNewUser({ ...newUser, [name]: value });
   }
 
-  function registerHandler() {
-    console.log(newUser)
-    if (newUser.email === newUser.confirmEmail && newUser.password === newUser.confirmPassword) {
-      userService
-        .registerUser(newUser)
-        .then((response) => {
-          if (response.status === 201) {
-            toast({
-              title: "Usuário Registrado",
-              status: "success",
-              duration: 3000,
-              isClosable: true,
-              position: "top-right",
-            });
-            router.push("/auth");
-          }
+  async function registerHandler() {
 
-        })
-        .catch((error) => {
-          if (error.response.status === 409) {
-            toast({
-              title: "Email ou CPF já Registrado",
-              status: "warning",
-              duration: 3000,
-              isClosable: true,
-              position: "top-right",
-            });
-            return
-          }
-          if (error.response.status === 400) {
-            toast({
-              title: "Senha com 8 caracteres mínimos",
-              status: "warning",
-              duration: 3000,
-              isClosable: true,
-              position: "top-right",
-            });
-            return
-          }
-          else {
-            toast({
-              title: "Falha no Registro",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-              position: "top-right",
-            });
-            return
-          }
+    try {
 
+      if (newUser.email === newUser.confirmEmail && newUser.password === newUser.confirmPassword) {
+        await userService.registerUser(newUser)
+        toast({
+          title: "Usuário Registrado",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
         });
-    } else {
-      toast({
-        title: "Dados Inválidos",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top-right",
-      });
+        router.push("/auth");
+        return
+      }
+
     }
+    catch (error: any) {
+      if (error.response.status === 409) {
+        toast({
+          title: "Email ou CPF já Registrado",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+        return
+      }
+
+      if (error.response.status === 400) {
+        toast({
+          title: "Senha com 8 caracteres mínimos",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+        return
+      }
+    }
+    toast({
+      title: "Falha no Registro",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+      position: "top-right",
+    });
+    return
   }
 
   return (
@@ -114,16 +103,15 @@ export default function RegistrationComponent() {
       flexDirection="column"
       alignItems="center"
       justifyContent="start"
-      gap="0.5em" p="0.5em" w="100%">
-      <Text fontSize="6xl" color="blueviolet">
+      gap="0.5em"
+      p="0.5em"
+      w="100%">
+      <Text fontSize="5xl" color="blueviolet">
         Ponto Certo
       </Text>
-
-      <Box display="flex" flexDirection="column" gap="0.5em" alignItems="center">
-        <Text fontSize="2xl" color="blueviolet">
-          Inscreva-se
-        </Text>
-      </Box>
+      <Text fontSize="2xl" color="blueviolet">
+        Inscreva-se
+      </Text>
       <Box
         display="flex"
         flexDirection="column"
@@ -132,14 +120,13 @@ export default function RegistrationComponent() {
         <InputGroup
           display='flex'
           flexDirection='column'
-          gap='0.5em'
         >
           <FormLabel>Nome Completo</FormLabel>
           <Input
             placeholder="Nome Completo"
             type="text"
-            name="full_name"
-            value={newUser.full_name}
+            name="fullName"
+            value={newUser.fullName}
             onChange={inputHandler}
             bgColor="Lavender"
             color="blueviolet"
@@ -148,7 +135,6 @@ export default function RegistrationComponent() {
         <InputGroup
           display='flex'
           flexDirection='column'
-          gap='0.5em'
         >
           <FormLabel>CPF</FormLabel>
           <Input
@@ -164,7 +150,6 @@ export default function RegistrationComponent() {
         <InputGroup
           display='flex'
           flexDirection='column'
-          gap='0.5em'
         >
           <FormLabel >Email</FormLabel>
           <Input
@@ -179,7 +164,6 @@ export default function RegistrationComponent() {
         <InputGroup
           display='flex'
           flexDirection='column'
-          gap='0.5em'
         >
           <FormLabel>Confirmar Email</FormLabel>
           <Input
