@@ -59,9 +59,9 @@ export default function UserUpdate({ params }: any) {
       password: "",
     };
     try {
-      const response = await userService.updateUser(projectInfo);
+      await userService.updateUser(projectInfo);
       toast({
-        title: "Projeto Atualizado",
+        title: "Dados Atualizados",
         description: "",
         status: "success",
         duration: 3000,
@@ -71,7 +71,7 @@ export default function UserUpdate({ params }: any) {
       return erros;
     } catch (error: any) {
       toast({
-        title: "Falha ao Atualizar Projeto",
+        title: "Falha ao Atualizar Dados",
         description: "",
         status: "error",
         duration: 3000,

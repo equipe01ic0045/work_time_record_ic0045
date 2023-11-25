@@ -69,6 +69,10 @@ export default function Projects() {
           textColor={"#FFFFFF"}
           fontSize={"2em"}
           onClick={() => router.push("/main/projects/create")}
+          _hover={{
+            transition: '0.5s',
+            transform:'scale(1.05)'
+          }}
         >
           {svgCreate} NOVO PROJETO
         </Button>

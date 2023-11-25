@@ -1,35 +1,27 @@
+import UserLoginService from "@/types/service-types/UserLoginService";
 import axios from "./axios";
-
-export interface loginUser {
-  email: string;
-  password: string;
-}
-
-export interface registerUser {
-  full_name: String,
-  cpf: String
-  email: string;
-  password: string;
-}
+import UserRegisterService from "@/types/service-types/UserRegisterService";
 
 export default class UserService {
 
-  public registerUser(registerUser: registerUser) {
-    return axios.post("/register", registerUser);
+  public registerUser(user: UserRegisterService) {
+    const newUser = {
+      full_name: user.fullName,
+      cpf: user.cpf,
+      email: user.email,
+      password: user.password
+    }
+    return axios.post("/register", newUser);
 
   }
-  
-  public updateUser(registerUser: Omit<registerUser,'password'> & {password?: string}) {
-    return axios.put("/user/edit", registerUser);
+
+  public updateUser(user: Omit<UserLoginService, 'password'> & { password?: string }) {
+    return axios.put("/user/edit", user);
 
   }
 
-  public loginUser(loginUser: loginUser) {
-    return axios.post("/login", loginUser);
-  }
-
-  public passwordRecoveryUser(cpf: number) {
-
+  public loginUser(user: UserLoginService) {
+    return axios.post("/login", user);
   }
 
   public getUser(userId: number) {

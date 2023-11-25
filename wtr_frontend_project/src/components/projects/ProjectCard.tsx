@@ -1,5 +1,7 @@
 "use client";
 
+import ProjectCreateData from "@/types/ProjectCreateData";
+import ProjectCreateError from "@/types/ProjectCreateError";
 import {
   Box,
   Button,
@@ -14,8 +16,8 @@ import {
 export type Project = {
   project_name: string;
   project_description: string;
-  location_required: boolean;
-  commercial_time_required: boolean;
+  locationRequired: boolean;
+  commercialTimeRequired: boolean;
   timezone: string;
   location: string;
   commercial_time_start: number;
@@ -35,12 +37,12 @@ export type ProjectError = {
 type ProjectCardProps<T> = {
   project: T;
   setProject: (record: T) => void;
-  onSubmit: (record: T) => Promise<ProjectError>;
+  onSubmit: (record: T) => Promise<ProjectCreateError>;
   requireName?: boolean;
   errors: ProjectError;
   setErrors: (e: ProjectError) => void;
 };
-export default function ProjectCard(props: ProjectCardProps<Project>) {
+export default function ProjectCard(props: ProjectCardProps<ProjectCreateData>) {
   function inputHandler(event: any) {
     const { name, value } = event.target;
     props.setProject({ ...props.project, [name]: value });
