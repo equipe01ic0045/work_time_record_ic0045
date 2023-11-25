@@ -14,13 +14,22 @@ import {
     Tr,
     Link
 } from "@chakra-ui/react";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
 
-export default function CollaboratorFullList({ collaboratorFullList }: any) {
+export default function CollaboratorFullList(
+    { 
+        collaboratorFullList,
+        setSelectedUser 
+    }: any) {
 
     function cpfHandler(cpf: string) {
         const cpfParsed = `${cpf.slice(0, 3)}.${cpf.slice(3, 6)}.${cpf.slice(6, 9)}-${cpf.slice(9)}`
         return cpfParsed
     }
+
+    // const [selectedUser, setSelectedUser] = useState()
 
     return (
         <TableContainer>
@@ -44,7 +53,20 @@ export default function CollaboratorFullList({ collaboratorFullList }: any) {
                                         </Td>
                                         <Td>{collaborator.email}</Td>
                                         <Td>{cpfHandler(collaborator.cpf)}</Td>
-                                        <Td>{'something'}</Td>
+                                        <Td>
+                                            <Button
+                                                size="sm"
+                                                ml={2}
+                                                colorScheme={"green"}
+                                                onClick={() => {
+                                                    setSelectedUser(collaborator);
+                                                }}>
+                                                <FontAwesomeIcon
+                                                    icon={faEdit}
+                                                    style={{ marginRight: '4px', color: '#F0EFFF' }} />
+                                                Selecionar
+                                            </Button>
+                                        </Td>
                                     </Tr>
                                 )
                             })
