@@ -1,5 +1,6 @@
 "use client";
 import UserService from "@/services/UserService";
+import { ViewOffIcon, ViewIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -8,7 +9,8 @@ import {
   useToast,
   FormLabel,
   InputGroup,
-  InputRightElement
+  InputRightElement,
+  InputRightAddon
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -138,7 +140,7 @@ export default function RegistrationComponent() {
         >
           <FormLabel>CPF</FormLabel>
           <Input
-            placeholder="cpf"
+            placeholder="999.999.999-99"
             type="number"
             name="cpf"
             value={newUser.cpf}
@@ -153,7 +155,7 @@ export default function RegistrationComponent() {
         >
           <FormLabel >Email</FormLabel>
           <Input
-            placeholder="email"
+            placeholder="usuario@mail.com"
             type="email"
             name="email"
             value={newUser.email}
@@ -167,7 +169,7 @@ export default function RegistrationComponent() {
         >
           <FormLabel>Confirmar Email</FormLabel>
           <Input
-            placeholder="Confirmar Email"
+            placeholder="usuario@mail.com"
             type="email"
             name="confirmEmail"
             value={newUser.confirmEmail}
@@ -181,34 +183,34 @@ export default function RegistrationComponent() {
           <Input
             id="password"
             name="password"
-            placeholder="Senha"
+            placeholder="123abc"
             type={showPassword ? 'text' : 'password'}
             onChange={inputHandler}
             bgColor="Lavender"
             color="blueviolet"
           />
-          <InputRightElement>
-            <Button onClick={showPasswordHandler}>
-              {showPassword ? <FaEye /> : <FaEyeSlash />}
-            </Button>
-          </InputRightElement>
+          <InputRightAddon
+            cursor='pointer'
+            onClick={showPasswordHandler}
+            children={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+          />
         </InputGroup>
         <FormLabel>Confirmar Senha</FormLabel>
         <InputGroup>
           <Input
             id="confirmPassword"
             name="confirmPassword"
-            placeholder="Confirmar Senha"
+            placeholder="123abc"
             type={showConfirmPassword ? 'text' : 'password'}
             onChange={inputHandler}
             bgColor="Lavender"
             color="blueviolet"
           />
-          <InputRightElement>
-            <Button onClick={showConfirmPasswordHandler}>
-              {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-            </Button>
-          </InputRightElement>
+          <InputRightAddon
+            cursor='pointer'
+            onClick={showPasswordHandler}
+            children={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+          />
         </InputGroup>
         <Button
           mt={4}

@@ -1,21 +1,23 @@
 "use client";
 import UserService from "@/services/UserService";
-import { 
-  Box, 
-  Button, 
-  Text, 
-  Input, 
-  useToast 
+import {
+  Box,
+  Button,
+  Text,
+  Input,
+  useToast,
+  InputGroup,
+  InputRightAddon
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { 
-  ViewIcon, 
-  ViewOffIcon 
+import {
+  ViewIcon,
+  ViewOffIcon
 } from "@chakra-ui/icons";
 import { useAuth } from "@/components/auth/AuthContext";
-import UserLogin from "@/types/UserLoginData";
+import UserLogin from "@/types/UserLogin";
 
 export default function LoginComponent() {
   const { login } = useAuth();
@@ -32,6 +34,10 @@ export default function LoginComponent() {
   function inputHandler(event: any) {
     const { name, value } = event.target;
     setUser({ ...user, [name]: value });
+  }
+
+  function showPasswordHandler() {
+    setShowPassword(!showPassword)
   }
 
   async function loginHandler() {
@@ -65,7 +71,11 @@ export default function LoginComponent() {
       <Text fontSize="6xl" color="blueviolet">
         Ponto Certo
       </Text>
-      <Box display="flex" flexDirection="column">
+      <Box 
+      display="flex" 
+      flexDirection="column"
+      gap='0.5em'
+      >
         <Input
           placeholder="usuario@mail.com"
           type="email"
@@ -76,7 +86,7 @@ export default function LoginComponent() {
           color="blueviolet"
           mt="1em"
         />
-        <Box position="relative" mt="1em">
+        <InputGroup>
           <Input
             placeholder="123abc"
             type={showPassword ? "text" : "password"}
@@ -85,20 +95,13 @@ export default function LoginComponent() {
             onChange={inputHandler}
             bgColor="Lavender"
             color="blueviolet"
-            paddingRight="40px"
           />
-          <Box
-            position="absolute"
-            right="10px"
-            top="50%"
-            transform="translateY(-50%)"
-            cursor="pointer"
-            zIndex={"999999"}
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <ViewOffIcon /> : <ViewIcon />}
-          </Box>
-        </Box>
+          <InputRightAddon
+            cursor='pointer'
+            onClick={showPasswordHandler}
+            children={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+          />
+        </InputGroup>
         <Button
           bg="blueviolet"
           color="white"
