@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import UserService from "@/services/UserService";
 import { EditIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { User } from "@/types/User";
+import { useAuth } from "@/components/auth/AuthContext";
 
 type k = keyof User;
 export type UserUpdateError = {
@@ -23,10 +24,11 @@ export type UserUpdateError = {
 };
 
 export default function UserUpdate({ params }: any) {
+  const { user } = useAuth();
   const userService = new UserService();
   const toast = useToast();
 
-  const [user, setUser] = useState<User>();
+  const [profileUser, setUser] = useState<User>();
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<UserUpdateError>({
     user_id: "",
@@ -112,7 +114,7 @@ export default function UserUpdate({ params }: any) {
         }
       />
       <Box padding={"1em"}>
-        {user ? (
+        {profileUser ? (
           <Box display="flex" flexDirection="column" gap="1em" padding="1em">
             {keys.map(([key, label], i) => (
               <FormControl key={i} isInvalid={errors[key] ? true : false}>
@@ -124,9 +126,10 @@ export default function UserUpdate({ params }: any) {
                     name={key}
                     bgColor="Lavender"
                     color="blueviolet"
-                    value={user[key]}
+                    isReadOnly={!user || user.userId !== profileUser.user_id}
+                    value={profileUser[key]}
                     onChange={(ev) =>
-                      setUser({ ...user, [key]: ev.target.value })
+                      setUser({ ...profileUser, [key]: ev.target.value })
                     }
                   />
                 </InputGroup>
@@ -134,48 +137,55 @@ export default function UserUpdate({ params }: any) {
               </FormControl>
             ))}
 
-            <FormControl isInvalid={errors["password"] ? true : false}>
-              <InputGroup display="flex" flexDirection="column" gap="0.5em">
-                <FormLabel key="0">{"Senha (Opcional)"}</FormLabel>
-                <Box position="relative">
-                  <Input
-                    placeholder="Senha"
-                    type={showPassword ? "text" : "password"}
-                    name={"password"}
-                    bgColor="Lavender"
-                    color="blueviolet"
-                    value={user["password"]}
-                    autoComplete="one-time-code"
-                    onChange={(ev) =>
-                      setUser({ ...user, ["password"]: ev.target.value })
-                    }
-                  />
-                  <Box
-                    position="absolute"
-                    right="10px"
-                    top="50%"
-                    transform="translateY(-50%)"
-                    zIndex={"999999"}
-                    cursor="pointer"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                  </Box>
-                </Box>
-              </InputGroup>
-              <FormErrorMessage>{errors["password"]}</FormErrorMessage>
-            </FormControl>
+            {user && user.userId == profileUser.user_id ? (
+              <>
+                <FormControl isInvalid={errors["password"] ? true : false}>
+                  <InputGroup display="flex" flexDirection="column" gap="0.5em">
+                    <FormLabel key="0">{"Senha (Opcional)"}</FormLabel>
+                    <Box position="relative">
+                      <Input
+                        placeholder="Senha"
+                        type={showPassword ? "text" : "password"}
+                        name={"password"}
+                        bgColor="Lavender"
+                        color="blueviolet"
+                        value={profileUser["password"]}
+                        autoComplete="one-time-code"
+                        onChange={(ev) =>
+                          setUser({
+                            ...profileUser,
+                            ["password"]: ev.target.value,
+                          })
+                        }
+                      />
+                      <Box
+                        position="absolute"
+                        right="10px"
+                        top="50%"
+                        transform="translateY(-50%)"
+                        zIndex={"999999"}
+                        cursor="pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                      </Box>
+                    </Box>
+                  </InputGroup>
+                  <FormErrorMessage>{errors["password"]}</FormErrorMessage>
+                </FormControl>
 
-            <Button
-              leftIcon={<EditIcon />}
-              colorScheme="orange"
-              onClick={async () => {
-                setErrors(await updateUserHandler(user));
-              }}
-            >
-              {" "}
-              Editar Usuário
-            </Button>
+                <Button
+                  leftIcon={<EditIcon />}
+                  colorScheme="orange"
+                  onClick={async () => {
+                    setErrors(await updateUserHandler(profileUser));
+                  }}
+                >
+                  {" "}
+                  Editar Usuário
+                </Button>
+              </>
+            ) : null}
           </Box>
         ) : (
           "Loading..."
