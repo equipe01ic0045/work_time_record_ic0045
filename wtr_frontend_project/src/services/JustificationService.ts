@@ -1,3 +1,4 @@
+import { JustificationInfoManager } from "@/types/TimeRecordInfoData";
 import axios from "./axios";
 
 export default class JustificationService {
@@ -27,7 +28,7 @@ export default class JustificationService {
   static async getJustificationData(
     project_id: number,
     justification_id: number
-  ) {
+  ): Promise<JustificationInfoManager> {
     const response = await axios.get(
       `/projects/justification/${project_id}/record/${justification_id}`
     );
@@ -47,7 +48,33 @@ export default class JustificationService {
       `/projects/justification/${project_id}/record/${justification_id}/review`,
       data
     );
-    console.log(response);
     return response;
+  }
+
+  static async sendJustification({
+    projectId,
+    timeRecordId,
+    userMessage,
+    justificationType,
+    justificationFile,
+    timestamp,
+  }: {
+    projectId: number;
+    timeRecordId: number;
+    userMessage: string;
+    justificationType: 'CHECKIN' | 'CHECKOUT';
+    justificationFile?: File;
+    timestamp: Date;
+  }) {
+    return axios.post(
+      `/projects/justification/${projectId}`,
+      {
+        time_record_id: timeRecordId,
+        user_message: userMessage,
+        justification_type: justificationType,
+        justification_file: justificationFile,
+        timestamp: timestamp.toISOString(),
+      }
+    );
   }
 }

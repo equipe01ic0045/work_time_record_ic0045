@@ -11,3 +11,6 @@ export type JustificationData = {
 
 export type DetailedTimeRecordData = SimpleTimeRecordData & JustificationData;
 
+export type CreatedJustificationData = DetailedTimeRecordData & {
+  justification_id: number;
+};

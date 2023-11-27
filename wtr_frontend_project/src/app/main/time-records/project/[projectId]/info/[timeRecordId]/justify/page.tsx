@@ -1,42 +1,75 @@
 'use client';
 import HeaderBox from "@/components/global/HeaderBox";
 import RecordCard from "@/components/time-records/RecordCard";
-import TimeRecordService from "@/services/TimeRecordService";
-import { Justification } from "@/types/TimeRecordData";
+import JustificationService from "@/services/JustificationService";
+import { DetailedTimeRecordData } from "@/types/TimeRecordData";
+import { JustificationInfoManager } from "@/types/TimeRecordInfoData";
 import { Box, VStack, useToast } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 export default function Page({
   params,
   searchParams,
 }: {
   params: { projectId: number, timeRecordId: number }
-  searchParams: { type: 'check-in' | 'check-out', datetime: string }
+  searchParams: { justificationId: number }
 }) {
   const router = useRouter();
   const toast = useToast();
 
-  const [justifyData, setJustifyData] = useState<Justification>({
-    description: '',
-    document: null,
-    date: new Date(searchParams.datetime),
+  const [justification, setJustification] = useState<JustificationInfoManager>();
+  const [justifyData, setJustifyData] = useState<DetailedTimeRecordData>({
+    user_message: '',
+    project_id: params.projectId,
+    timestamp: new Date(),
   });
+
+  useEffect(() => {
+    const projectId = params.projectId;
+    const justificationId = searchParams.justificationId;
+
+    if (projectId && justificationId) {
+      JustificationService.getJustificationData(projectId, justificationId)
+        .then((data) => {
+          setJustification(data);
+          setJustifyData((value) => ({
+            ...value,
+            user_message: data.user_message,
+            timestamp: new Date(data.timestamp!),
+          }))
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [params.projectId, searchParams.justificationId]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const timeRecordService = new TimeRecordService();
 
-    setJustifyData({ ...justifyData, date: new Date() });
+    setJustifyData({ ...justifyData! });
+
+    const commonData = {
+      projectId: params.projectId,
+      timeRecordId: params.timeRecordId,
+      justificationFile: justifyData!.justification_file,
+      userMessage: justifyData!.user_message,
+      timestamp: justifyData!.timestamp,
+    };
 
     try {
-      if (searchParams.type === 'check-out') {
-        // TODO: add checkout justification
-        throw new Error('Check-out justification not implemented yet.');
+      if (justification?.justification_type === "CHECKOUT") {
+        await JustificationService.sendJustification({
+          ...commonData,
+          justificationType: 'CHECKOUT',
+        });
       } else {
-        // TODO: add checkin justification
-        throw new Error('Check-in justification not implemented yet.');
+        await JustificationService.sendJustification({
+          ...commonData,
+          justificationType: 'CHECKIN',
+        });
       }
 
       toast({
@@ -79,10 +112,9 @@ export default function Page({
           gap={"2em"}
         >
           <RecordCard
-            record={justifyData}
+            record={justifyData!}
             setRecord={setJustifyData}
-            projectId={params.projectId}
-            requireDescription
+            requireUserMessage
           />
         </Box>
       </form>
