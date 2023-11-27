@@ -2,11 +2,9 @@
 
 import { useAuth } from "@/components/auth/AuthContext";
 import HeaderBox from "@/components/global/HeaderBox";
-import ProjectCard, {
-  Project,
-  ProjectError,
-} from "@/components/projects/ProjectCard";
+import ProjectCard from "@/components/projects/ProjectCard";
 import ProjectService from "@/services/ProjectService";
+import { Project, ProjectError } from "@/types/ProjectCreate";
 import ProjectInfo from "@/types/ProjectInfo";
 import {
   Box,
@@ -208,32 +206,35 @@ export default function ProjectInfo({ params }: any) {
           </CardHeader>
           <Box padding="1em" display="flex" flexDirection="row" gap="1em">
             <Button leftIcon={userIcon} colorScheme="blue">
-              <Link href={`/main/projects/info/${projectId}/collaborators`}>Usuarios</Link>
+              <Link href={`/main/projects/info/${projectId}/collaborators`}>
+                Usuarios
+              </Link>
             </Button>
-            <Button
-              leftIcon={editIcon}
-              colorScheme="orange"
-              onClick={() => {
-                setOpenEdit(true);
-              }}
-            >
-              {" "}
-              Editar Projeto
-            </Button>
-
             {projectInfo && projectInfo?.owner_id == user?.userId ? (
-              <Button
-                leftIcon={deleteIcon}
-                colorScheme="red"
-                onClick={() => {
-                  setOpenDlete(true);
-                }}
-              >
-                {" "}
-                Deletar Projeto
-              </Button>
-            ) : null}
+              <>
+                <Button
+                  leftIcon={editIcon}
+                  colorScheme="orange"
+                  onClick={() => {
+                    setOpenEdit(true);
+                  }}
+                >
+                  {" "}
+                  Editar Projeto
+                </Button>
 
+                <Button
+                  leftIcon={deleteIcon}
+                  colorScheme="red"
+                  onClick={() => {
+                    setOpenDlete(true);
+                  }}
+                >
+                  {" "}
+                  Deletar Projeto
+                </Button>
+              </>
+            ) : null}
           </Box>
           {projectInfo ? (
             <ProjectCard
@@ -243,6 +244,7 @@ export default function ProjectInfo({ params }: any) {
               requireName={false}
               errors={errors}
               setErrors={setErrors}
+              readOnly={true}
             />
           ) : (
             "Carregando..."
