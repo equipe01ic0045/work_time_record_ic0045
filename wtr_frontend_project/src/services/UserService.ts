@@ -46,4 +46,14 @@ export default class UserService {
 
     return result.data.users
   }
+
+  public async getUsersAll() {
+    const result = await axios.post(
+      '/user/all',
+      {},
+      { withCredentials: true }
+    )
+
+    return result.data.data
+  }
 }
