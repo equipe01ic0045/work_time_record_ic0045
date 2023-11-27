@@ -13,6 +13,7 @@ import {
   Checkbox,
   FormControl,
   FormErrorMessage,
+  Select,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ProjectService from "@/services/ProjectService";
@@ -212,17 +213,20 @@ export default function AddColaboratorPage() {
               </Button>
             </Box>
           </InputGroup>
-          <Checkbox
-            isChecked={addUser.userRole == "ADMIN"}
-            onChange={(ev) =>
-              setAddUser({
-                ...addUser,
-                userRole: addUser.userRole == "ADMIN" ? "USER" : "ADMIN",
-              })
-            }
+
+          <Select
+            name="userRole"
+            bgColor="Lavender"
+            color="blueviolet"
+            placeholder="Selecione um cargo"
+            value={addUser.userRole}
+            onChange={inputHandler}
           >
-            ADMIN
-          </Checkbox>
+            <option value="USER">Usuário</option>
+
+            <option value="ADMIN">Administrador</option>
+          </Select>
+
           <InputGroup display="flex" flexDirection="column" gap="0.5em">
             <FormControl
               isInvalid={erros["user_hours_per_week"] ? true : false}

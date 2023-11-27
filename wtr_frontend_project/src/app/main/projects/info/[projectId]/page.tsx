@@ -244,7 +244,7 @@ export default function ProjectInfo({ params }: any) {
               requireName={false}
               errors={errors}
               setErrors={setErrors}
-              readOnly={true}
+              readOnly={user?.userId !== projectInfo.owner_id}
             />
           ) : (
             "Carregando..."

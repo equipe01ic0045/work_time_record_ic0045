@@ -38,7 +38,7 @@ export default function CollaboratorsTable({
   const router = useRouter();
   const projectService = new ProjectService();
 
-  const tableHeaderRow = [...tableRows, "EXCLUIR", "ATUALIZAR"];
+  const tableHeaderRow = [...tableRows, "ATUALIZAR", "EXCLUIR"];
 
   let managerColumns: string[] = [
     "EXCLUIR",
@@ -133,7 +133,7 @@ export default function CollaboratorsTable({
                   <Td>{collaborator.role}</Td>
                   <Td>{collaborator.hours_per_week}</Td>
 
-                  {userIsManager && collaborator.user_id !== user?.userId ? (
+                  {userIsManager ? (
                     <>
                       <Td>
                         {secondsToHoursMinutes(collaborator.elapsed_time_sum)}
@@ -145,31 +145,38 @@ export default function CollaboratorsTable({
                         )}
                       </Td>
 
-                      <Td>
-                        <IconButton
-                          aria-label="Remove user from project"
-                          colorScheme="red"
-                          size={"lg"}
-                          onClick={() => {
-                            deleteUserInProject(collaborator.user.user_id ?? 0);
-                          }}
-                          icon={<DeleteIcon />}
-                        ></IconButton>
-                      </Td>
+                      {collaborator.user_id !== user?.userId ? (
+                        <>
+                          <Td>
+                            <IconButton
+                              aria-label="Remove user from project"
+                              colorScheme="orange"
+                              size={"lg"}
+                              onClick={() => {
+                                updateUserInProject(
+                                  collaborator.user.user_id ?? 0
+                                );
+                              }}
+                              icon={<EditIcon />}
+                            ></IconButton>
+                          </Td>
+
+                          <Td>
+                            <IconButton
+                              aria-label="Remove user from project"
+                              colorScheme="red"
+                              size={"lg"}
+                              onClick={() => {
+                                deleteUserInProject(
+                                  collaborator.user.user_id ?? 0
+                                );
+                              }}
+                              icon={<DeleteIcon />}
+                            ></IconButton>
+                          </Td>
+                        </>
+                      ) : null}
                     </>
-                  ) : null}
-                  {userIsManager && collaborator.user_id !== user?.userId ? (
-                    <Td>
-                      <IconButton
-                        aria-label="Remove user from project"
-                        colorScheme="orange"
-                        size={"lg"}
-                        onClick={() => {
-                          updateUserInProject(collaborator.user.user_id ?? 0);
-                        }}
-                        icon={<EditIcon />}
-                      ></IconButton>
-                    </Td>
                   ) : null}
                 </Tr>
               );

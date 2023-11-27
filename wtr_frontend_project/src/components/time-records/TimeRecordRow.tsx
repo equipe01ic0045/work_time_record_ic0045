@@ -1,11 +1,4 @@
-import {
-  HStack,
-  Icon,
-  IconButton,
-  Td,
-  Text,
-  Tr,
-} from "@chakra-ui/react";
+import { HStack, Icon, IconButton, Td, Text, Tr } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -43,9 +36,9 @@ const EditButton = ({
       color="white"
       isDisabled={isDisabled}
       onClick={(e) => {
-        const justificationIdQueryString = justificationId ?
-          `&justificationId=${justificationId}`
-          : '';
+        const justificationIdQueryString = justificationId
+          ? `&justificationId=${justificationId}`
+          : "";
 
         router.push(
           `info/${timeRecordId}/justify?type=${type}${justificationIdQueryString}`
@@ -87,7 +80,9 @@ export default function TimeRecordRow({
           <EditButton
             router={router}
             timeRecordId={record.time_record_id}
-            isDisabled={checkInJustification && checkInJustification.status !== "DENIED"}
+            isDisabled={
+              checkInJustification && checkInJustification.status !== "PENDING"
+            }
             justificationId={checkInJustification?.justification_id}
             type="CHECKIN"
           />
@@ -103,7 +98,10 @@ export default function TimeRecordRow({
             <EditButton
               router={router}
               timeRecordId={record.time_record_id}
-              isDisabled={checkOutJustification && checkOutJustification.status !== "DENIED"}
+              isDisabled={
+                checkOutJustification &&
+                checkOutJustification.status !== "PENDING"
+              }
               type="CHECKOUT"
             />
             {checkOutJustification && (
