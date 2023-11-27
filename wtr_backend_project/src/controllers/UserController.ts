@@ -47,7 +47,8 @@ export default class UserController extends BaseController {
 
   async getUsers(request: Request, response: Response, next: NextFunction) {
     try {
-      const usersList = await userService.getUserList()
+      const usersList = await userService.getUserList();
+      
       const parsedList = usersList.map((user) => {
         return {
           user_id: user.user_id,
@@ -92,9 +93,9 @@ export default class UserController extends BaseController {
   }
 
   async getUsersByName(req: Request, res: Response, next: NextFunction) {
-    const { full_name } = req.body;
+    const { full_name, project_id } = req.body;
     try {
-      const users = await userService.getUsersByName(full_name);
+      const users = await userService.getUsersByName(project_id, full_name);
       res.json({ users });
     } catch (error) {
       next(error);

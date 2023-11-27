@@ -401,7 +401,14 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
         .withMessage("role invalida"),
       body("user_hours_per_week")
         .isInt()
-        .withMessage("horas de trabalho deve ser numero inteiro"),
+        .withMessage("Horas de trabalho deve ser numero inteiro")
+        .custom((v : string)=> {
+          const _v = parseInt(v);
+          if(_v <= 0 || _v > 24*7){
+            throw "As horas por semanais devem ser entre 1 e "+(24*7);
+          }
+          return true;
+        }),
     ];
 
     this._router.post(

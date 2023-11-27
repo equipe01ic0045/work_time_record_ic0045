@@ -37,10 +37,10 @@ export default class UserService {
 
     return result.data.data
   }
-  public async getUsersByName(full_name: string) {
+  public async getUsersByName(project_id : number, full_name: string) {
     const result = await axios.post(
       '/user/byName',
-      { full_name },
+      {project_id,  full_name },
       { withCredentials: true, }
     )
 
