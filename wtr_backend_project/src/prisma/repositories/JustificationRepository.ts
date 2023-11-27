@@ -90,8 +90,8 @@ export default class JustificationRepository extends BaseRepository {
         },
       },
       orderBy: {
-        created_at: "desc"
-      }
+        created_at: "desc",
+      },
     });
   }
 
@@ -182,12 +182,40 @@ export default class JustificationRepository extends BaseRepository {
       query.time_record.update.check_out_timestamp = new_timestamp;
     }
 
-    return this.client.time_record_justification.update({
+    const updatedJustification =
+      await this.client.time_record_justification.update({
+        where: {
+          justification_id,
+        },
+        data: query,
+      });
+
+    const time_record_to_update = await this.client.time_record.findUnique({
       where: {
-        justification_id,
+        time_record_id: updatedJustification.time_record_id,
       },
-      data: query,
     });
+
+    if (
+      time_record_to_update &&
+      time_record_to_update.check_in_timestamp &&
+      time_record_to_update.check_out_timestamp
+    ) {
+      const elapsed_time = Math.floor(
+        (time_record_to_update.check_out_timestamp.getTime() -
+          time_record_to_update.check_in_timestamp.getTime()) /
+          1000
+      );
+
+      await this.client.time_record.update({
+        where: { time_record_id: time_record_to_update.time_record_id },
+        data: {
+          elapsed_time,
+        },
+      });
+    }
+
+    return updatedJustification;
   }
 
   async findJustificationDocument(justification_id: number) {
