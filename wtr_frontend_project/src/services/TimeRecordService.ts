@@ -96,4 +96,33 @@ export default class TimeRecordService {
     const result = await axios.get("/projects/time-records/info/list/user");
     return result.data.data;
   }
+
+  static async updateTimeRecord({
+    timeRecordId,
+    checkInTimestamp,
+    checkOutTimestamp,
+    userMessage,
+    reviewerMessage,
+    status = "PENDING",
+    justificationFile,
+  }: {
+    timeRecordId: number;
+    checkInTimestamp?: Date;
+    checkOutTimestamp?: Date;
+    userMessage: string;
+    reviewerMessage?: string;
+    status?: string;
+    justificationFile?: File;
+  }) {
+    const response = await axios.put(`/projects/time-records/info/${timeRecordId}`, {
+      check_in_timestamp: checkInTimestamp,
+      check_out_timestamp: checkOutTimestamp,
+      user_message: userMessage,
+      reviewer_message: reviewerMessage,
+      status: status,
+      justification_file: justificationFile,
+    });
+    
+    return response.data.data;
+  }
 }

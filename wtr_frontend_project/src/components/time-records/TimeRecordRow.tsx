@@ -25,11 +25,13 @@ const EditButton = ({
   timeRecordId,
   justificationId,
   isDisabled,
+  type,
 }: {
   timeRecordId: number;
   router: any;
   isDisabled?: boolean;
-  justificationId?: number,
+  justificationId?: number;
+  type: string;
 }) => {
   return (
     <IconButton
@@ -42,11 +44,11 @@ const EditButton = ({
       isDisabled={isDisabled}
       onClick={(e) => {
         const justificationIdQueryString = justificationId ?
-          `justificationId=${justificationId}`
+          `&justificationId=${justificationId}`
           : '';
 
         router.push(
-          `info/${timeRecordId}/justify?${justificationIdQueryString}`
+          `info/${timeRecordId}/justify?type=${type}${justificationIdQueryString}`
         );
       }}
     />
@@ -87,6 +89,7 @@ export default function TimeRecordRow({
             timeRecordId={record.time_record_id}
             isDisabled={checkInJustification && checkInJustification.status !== "DENIED"}
             justificationId={checkInJustification?.justification_id}
+            type="CHECKIN"
           />
           {checkInJustification && (
             <JustificationStatusIcon status={checkInJustification.status} />
@@ -101,6 +104,7 @@ export default function TimeRecordRow({
               router={router}
               timeRecordId={record.time_record_id}
               isDisabled={checkOutJustification && checkOutJustification.status !== "DENIED"}
+              type="CHECKOUT"
             />
             {checkOutJustification && (
               <JustificationStatusIcon status={checkOutJustification.status} />

@@ -85,6 +85,7 @@ export default function DetailedTimeRecordRegisterPage({
           <RecordCard
             record={newRecord}
             setRecord={setRecord}
+            isExpanded
           />
         </Box>
       </form>

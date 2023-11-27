@@ -2,6 +2,7 @@
 import HeaderBox from "@/components/global/HeaderBox";
 import RecordCard from "@/components/time-records/RecordCard";
 import JustificationService from "@/services/JustificationService";
+import TimeRecordService from "@/services/TimeRecordService";
 import { DetailedTimeRecordData } from "@/types/TimeRecordData";
 import { JustificationInfoManager } from "@/types/TimeRecordInfoData";
 import { Box, VStack, useToast } from "@chakra-ui/react";
@@ -14,12 +15,11 @@ export default function Page({
   searchParams,
 }: {
   params: { projectId: number, timeRecordId: number }
-  searchParams: { justificationId: number }
+  searchParams: { justificationId: number, type: "CHECKIN" | "CHECKOUT" }
 }) {
   const router = useRouter();
   const toast = useToast();
 
-  const [justification, setJustification] = useState<JustificationInfoManager>();
   const [justifyData, setJustifyData] = useState<DetailedTimeRecordData>({
     user_message: '',
     project_id: params.projectId,
@@ -33,18 +33,19 @@ export default function Page({
     if (projectId && justificationId) {
       JustificationService.getJustificationData(projectId, justificationId)
         .then((data) => {
-          setJustification(data);
           setJustifyData((value) => ({
             ...value,
             user_message: data.user_message,
-            timestamp: new Date(data.timestamp!),
+            timestamp: searchParams.type === "CHECKIN"
+              ? new Date(data.time_record.check_in_timestamp)
+              : new Date(data.time_record.check_out_timestamp!),
           }))
         })
         .catch((error) => {
           console.error(error);
         });
     }
-  }, [params.projectId, searchParams.justificationId]);
+  }, [params.projectId, searchParams.type, searchParams.justificationId]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -56,19 +57,18 @@ export default function Page({
       timeRecordId: params.timeRecordId,
       justificationFile: justifyData!.justification_file,
       userMessage: justifyData!.user_message,
-      timestamp: justifyData!.timestamp,
     };
 
     try {
-      if (justification?.justification_type === "CHECKOUT") {
-        await JustificationService.sendJustification({
+      if (searchParams.type === "CHECKOUT") {
+        await TimeRecordService.updateTimeRecord({
           ...commonData,
-          justificationType: 'CHECKOUT',
+          checkOutTimestamp: justifyData!.timestamp,
         });
       } else {
-        await JustificationService.sendJustification({
+        await TimeRecordService.updateTimeRecord({
           ...commonData,
-          justificationType: 'CHECKIN',
+          checkInTimestamp: justifyData!.timestamp,
         });
       }
 
