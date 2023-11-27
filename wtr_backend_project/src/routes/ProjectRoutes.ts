@@ -333,7 +333,6 @@ const validators = [
     .withMessage("Descricao do projeto requerida"),
   body("location")
     .isString()
-    .custom((value: string) => /^[a-zA-z ]+$/.test(value))
     .withMessage(
       "Localização deve conter apenas letras maiúsculas, minúsculas e espaço."
     ),

@@ -7,17 +7,14 @@ import {
   Input,
   useToast,
   InputGroup,
-  InputRightAddon
+  InputRightAddon,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import {
-  ViewIcon,
-  ViewOffIcon
-} from "@chakra-ui/icons";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/components/auth/AuthContext";
-import UserLogin from "@/types/UserLogin";
+import { UserLogin } from "@/types/User";
 
 export default function LoginComponent() {
   const { login } = useAuth();
@@ -37,16 +34,15 @@ export default function LoginComponent() {
   }
 
   function showPasswordHandler() {
-    setShowPassword(!showPassword)
+    setShowPassword(!showPassword);
   }
 
   async function loginHandler() {
     try {
-      await userService.loginUser(user)
-      login()
+      await userService.loginUser(user);
+      login();
       router.push("/main/projects");
-    }
-    catch {
+    } catch {
       toast({
         title: "Login Invalido",
         description: "",
@@ -55,7 +51,7 @@ export default function LoginComponent() {
         isClosable: true,
         position: "top-right",
       });
-      return
+      return;
     }
   }
 
@@ -71,11 +67,7 @@ export default function LoginComponent() {
       <Text fontSize="6xl" color="blueviolet">
         Ponto Certo
       </Text>
-      <Box 
-      display="flex" 
-      flexDirection="column"
-      gap='0.5em'
-      >
+      <Box display="flex" flexDirection="column" gap="0.5em">
         <Input
           placeholder="usuario@mail.com"
           type="email"
@@ -97,7 +89,7 @@ export default function LoginComponent() {
             color="blueviolet"
           />
           <InputRightAddon
-            cursor='pointer'
+            cursor="pointer"
             onClick={showPasswordHandler}
             children={showPassword ? <ViewOffIcon /> : <ViewIcon />}
           />

@@ -1,7 +1,11 @@
 "use client";
 
-import ProjectCreateData from "@/types/ProjectCreateData";
-import ProjectCreateError from "@/types/ProjectCreateError";
+import LocationService from "@/services/LocationService";
+import { Project, ProjectError, TimezoneOption } from "@/types/ProjectCreate";
+import {
+  getFormatedNumberTime,
+  getFormattedCommercialTime,
+} from "@/utils/date_utils";
 import {
   Box,
   Button,
@@ -11,66 +15,49 @@ import {
   Textarea,
   FormControl,
   FormErrorMessage,
+  Select,
 } from "@chakra-ui/react";
 
-export type Project = {
-  project_name: string;
-  project_description: string;
-  locationRequired: boolean;
-  commercialTimeRequired: boolean;
-  timezone: string;
-  location: string;
-  commercial_time_start: number;
-  commercial_time_end: number;
-};
-export type ProjectError = {
-  project_name: string;
-  location_required: string;
-  commercial_time_required: string;
-  timezone: string;
-  location: string;
-  commercial_time_start: string;
-  commercial_time_end: string;
-  project_description: string;
-};
+import moment from "moment-timezone";
+import { useEffect, useState } from "react";
 
 type ProjectCardProps<T> = {
   project: T;
   setProject: (record: T) => void;
-  onSubmit: (record: T) => Promise<ProjectCreateError>;
+  onSubmit: (record: T) => Promise<ProjectError>;
   requireName?: boolean;
   errors: ProjectError;
   setErrors: (e: ProjectError) => void;
 };
-export default function ProjectCard(props: ProjectCardProps<ProjectCreateData>) {
+
+export default function ProjectCard(props: ProjectCardProps<Project>) {
+  const [timezones, setTimezones] = useState<TimezoneOption[]>([]);
+  const [locations, setLocations] = useState<string[]>([]);
+
+  useEffect(() => {
+    const brazilTimezones = moment.tz.zonesForCountry("BR").map((tz) => ({
+      label: tz,
+      value: tz,
+    }));
+
+    setTimezones(brazilTimezones);
+
+    LocationService.getCities().then((locations) => {
+      setLocations(locations);
+    });
+  }, []);
+
   function inputHandler(event: any) {
     const { name, value } = event.target;
     props.setProject({ ...props.project, [name]: value });
   }
 
-  function formatToTwoDigits(num: number): string {
-    let integerStr = num.toString();
-    while (integerStr.length < 2) {
-      integerStr = "0" + integerStr;
-    }
-    return integerStr;
-  }
-
-  function getFormattedCommercialTime(commercialTime: number): string {
-    const hour = Math.floor(commercialTime / 60); // result without floor is float
-    const minute = commercialTime % 60;
-    return `${formatToTwoDigits(hour)}:${formatToTwoDigits(minute)}`;
-  }
-  function getFormatedNumberTime(commercialTime: string) {
-    return commercialTime
-      .split(":")
-      .map((n: string) => parseInt(n))
-      .reduce((p: number, c: number) => c + p * 60);
-  }
-
   function timeHandler(event: any) {
     const { name, value } = event.target;
-    props.setProject({ ...props.project, [name]: getFormatedNumberTime(value) });
+    props.setProject({
+      ...props.project,
+      [name]: getFormatedNumberTime(value),
+    });
   }
 
   function textAreaHandler(event: any) {
@@ -104,15 +91,22 @@ export default function ProjectCard(props: ProjectCardProps<ProjectCreateData>) 
       <FormControl isInvalid={props.errors.timezone ? true : false}>
         <InputGroup display="flex" flexDirection="column" gap="0.5em">
           <FormLabel>Fuso Horário</FormLabel>
-          <Input
-            placeholder="America/Bahia"
-            type="text"
+
+          <Select
             name="timezone"
             bgColor="Lavender"
             color="blueviolet"
+            placeholder="Selecione um Fuso Horário"
             value={props.project.timezone}
             onChange={inputHandler}
-          />
+          >
+            {timezones.map((timezone) => (
+              <option key={timezone.value} value={timezone.value}>
+                {timezone.label}
+              </option>
+            ))}
+          </Select>
+
           <FormErrorMessage>{props.errors.timezone}</FormErrorMessage>
         </InputGroup>
       </FormControl>
@@ -120,15 +114,22 @@ export default function ProjectCard(props: ProjectCardProps<ProjectCreateData>) 
       <FormControl isInvalid={props.errors.location ? true : false}>
         <InputGroup display="flex" flexDirection="column" gap="0.5em">
           <FormLabel>Localização</FormLabel>
-          <Input
-            placeholder="BA"
-            type="text"
+
+          <Select
             name="location"
             bgColor="Lavender"
             color="blueviolet"
             value={props.project.location}
+            placeholder="Selecione uma Cidade"
             onChange={inputHandler}
-          />
+          >
+            {locations.map((location) => (
+              <option key={location} value={location}>
+                {location}
+              </option>
+            ))}
+          </Select>
+
           <FormErrorMessage>{props.errors.location}</FormErrorMessage>
         </InputGroup>
       </FormControl>
@@ -137,7 +138,7 @@ export default function ProjectCard(props: ProjectCardProps<ProjectCreateData>) 
         isInvalid={props.errors.commercial_time_start ? true : false}
       >
         <InputGroup display="flex" flexDirection="column" gap="0.5em">
-          <FormLabel>Tempo Comercial ( Inicio )</FormLabel>
+          <FormLabel>Horário Comercial ( Inicio )</FormLabel>
           <Input
             placeholder="08:00"
             type="time"
@@ -157,7 +158,7 @@ export default function ProjectCard(props: ProjectCardProps<ProjectCreateData>) 
 
       <FormControl isInvalid={props.errors.commercial_time_end ? true : false}>
         <InputGroup display="flex" flexDirection="column" gap="0.5em">
-          <FormLabel>Tempo Comercial ( Final )</FormLabel>
+          <FormLabel>Horário Comercial ( Final )</FormLabel>
           <Input
             placeholder="17:00"
             type="time"
