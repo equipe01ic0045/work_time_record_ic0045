@@ -35,6 +35,10 @@ export default class UserRepository extends BaseRepository {
     });
   }
 
+  async findManyUsers() :Promise<Omit<user, "password">[] | null> {
+    return this.client.user.findMany()
+  }
+
   async findUserByUserId(
     user_id: number
   ): Promise<Omit<user, "password"> | null> {
@@ -53,9 +57,9 @@ export default class UserRepository extends BaseRepository {
     });
   }
   async findUsersByName(
-    full_name: string
+    full_name?: string
   ): Promise<Omit<user, "password">[]> {
-    return this.client.user.findMany({ where: { full_name: {contains: full_name, mode: 'insensitive'} } });
+    return (full_name !== undefined) ? this.client.user.findMany({ where: { full_name: {contains: full_name, mode: 'insensitive'} } }) : this.client.user.findMany();
   }
 
   async findUserByEmail(email: string): Promise<user | null> {
@@ -97,14 +101,16 @@ export default class UserRepository extends BaseRepository {
   async updateUser(
     user_id: number,
     full_name: string,
-    password: string,
-    email: string
+    email: string,
+    cpf: string,
+    password?: string,
   ) {
     return this.client.user.update({
       where: { user_id },
       data: {
         full_name,
-        password,
+        ...(password != undefined ? {password} : {}), // Password is optional
+        cpf,
         email,
       },
       select: this.findUserFields,

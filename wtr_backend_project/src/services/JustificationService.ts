@@ -44,7 +44,7 @@ export default class JustificationService {
     fileName: string,
     fileType: string,
     documentFile: Buffer,
-    justificationType: JustificationType,
+    justificationType: JustificationType
   ) {
     if (!this.allowedMimeTypes.includes(fileType)) {
       throw new ValidationError(
@@ -153,7 +153,8 @@ export default class JustificationService {
     reviewerId: number,
     justificationId: number,
     status: JustificationReviewStatus,
-    reviewerMessage: string
+    reviewerMessage: string,
+    newTimestamp?: Date
   ) {
     const foundUserProjectRole =
       await this.projectsRepository.findUserProjectRole(reviewerId, projectId, [
@@ -176,7 +177,8 @@ export default class JustificationService {
         justificationId,
         reviewerId,
         status,
-        reviewerMessage
+        reviewerMessage,
+        newTimestamp
       );
 
     return updatedTimeJustification;

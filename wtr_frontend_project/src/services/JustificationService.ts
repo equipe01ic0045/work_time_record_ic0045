@@ -37,12 +37,17 @@ export default class JustificationService {
   static async sendReviewData(
     project_id: number,
     justification_id: number,
-    data: { status: string; reviewer_message: string }
+    data: {
+      status: string;
+      reviewer_message: string;
+      new_timestamp?: Date;
+    }
   ) {
     const response = await axios.post(
-      `/projects/justification/${project_id}/record/${justification_id}/review`,data
+      `/projects/justification/${project_id}/record/${justification_id}/review`,
+      data
     );
-    console.log(response)
-    return response
+    console.log(response);
+    return response;
   }
 }

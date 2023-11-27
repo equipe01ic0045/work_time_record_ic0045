@@ -13,7 +13,6 @@ import {
 } from "@chakra-ui/react";
 import { EmailIcon } from "@chakra-ui/icons";
 
-// Note: o Owner é simplesmente o primeiro admin do projeto no banco
 export default function ProjectsTable({
   projectsList,
 }: {
@@ -41,6 +40,16 @@ export default function ProjectsTable({
     return integerStr;
   }
 
+  function CheckifUserHasManagerRole() {
+    for (let projectData of projectsList) {
+      if (projectData.role && projectData.role != "USER") {
+        return true;
+      }
+    }
+    return false;
+  }
+  const hasManagerRole = CheckifUserHasManagerRole();
+
   function getFormattedCommercialTime(commercialTime: number): string {
     const hour = Math.floor(commercialTime / 60);
     const minute = commercialTime % 60;
@@ -56,7 +65,9 @@ export default function ProjectsTable({
             <Th textColor={"white"}>PROPRIETÁRIO</Th>
             <Th textColor={"white"}>HORÁRIO COMERCIAL</Th>
             <Th textColor={"white"}>COLABORADORES</Th>
-            <Th textColor={"white"}>Justificativas</Th>
+            {hasManagerRole ? (
+              <Th textColor={"white"}>Justificativas</Th>
+            ) : null}
           </Tr>
         </Thead>
         <Tbody>
@@ -96,7 +107,13 @@ export default function ProjectsTable({
                     </Button>
                   </Link>
                 </Td>
-                <Td>{projectData.project.owner.full_name}</Td>
+                <Td>
+                  <Link
+                    href={"/main/profile/" + projectData.project.owner.user_id}
+                  >
+                    {projectData.project.owner.full_name}
+                  </Link>
+                </Td>
                 <Td>{commercialTimeFormat}</Td>
                 <Td>
                   <Link
@@ -119,31 +136,38 @@ export default function ProjectsTable({
                   </Link>
                 </Td>
 
-                <Td>
-                  <Link
-                    href={`/main/projects/info/${projectData.project.project_id}/justifications`}
-                  >
-                    <Button
-                      width={"auto"}
-                      minWidth={"100px"}
-                      display="flex"
-                      flexDirection={"row"}
-                      alignItems={"center"}
-                      justifyContent={"space-around"}
-                      color={"#FFFFFF"}
-                      colorScheme="white"
-                      bgColor={
-                        projectData.project._count.time_record_justification > 0
-                          ? "#fa7b05"
-                          : "#4D47C3"
-                      }
-                    >
-                      <EmailIcon boxSize={6} marginRight={3} />{" "}
-                      {projectData.project._count.time_record_justification}{" "}
-                      pendentes
-                    </Button>
-                  </Link>
-                </Td>
+                {hasManagerRole ? (
+                  <Td>
+                    {projectData.role && projectData.role != "USER" ? (
+                      <Link
+                        href={`/main/projects/info/${projectData.project.project_id}/justifications`}
+                      >
+                        <Button
+                          width={"auto"}
+                          minWidth={"100px"}
+                          display="flex"
+                          flexDirection={"row"}
+                          alignItems={"center"}
+                          justifyContent={"space-around"}
+                          color={"#FFFFFF"}
+                          colorScheme="white"
+                          bgColor={
+                            projectData.project._count
+                              .time_record_justification > 0
+                              ? "#fa7b05"
+                              : "#4D47C3"
+                          }
+                        >
+                          <EmailIcon boxSize={6} marginRight={3} />{" "}
+                          {projectData.project._count.time_record_justification}{" "}
+                          pendentes
+                        </Button>
+                      </Link>
+                    ) : (
+                      ""
+                    )}
+                  </Td>
+                ) : null}
               </Tr>
             );
           })}

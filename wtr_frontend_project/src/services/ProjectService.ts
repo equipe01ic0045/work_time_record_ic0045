@@ -3,6 +3,7 @@ import { AxiosResponse } from "axios";
 import axios from "./axios";
 import ProjectUsers from "@/types/ProjectUsers";
 import ProjectInfo from "@/types/ProjectInfo";
+import { monthRange } from "@/utils/date_utils";
 
 export interface registerProject {
   project_name?: string;
@@ -50,8 +51,11 @@ export default class ProjectService {
     return result.data.data as ProjectInfo;
   }
 
-  public async getProjectUsers(projectId: number) {
-    const result = await axios.get("projects/" + projectId + "/users");
+  public async getProjectUsers(projectId: number, month?: string) {
+    const dateRange = monthRange(month);
+    const result = await axios.get(
+      `projects/${projectId}/users?from=${dateRange.from}&to=${dateRange.to}`
+    );
     return result.data.data as ProjectUsers[];
   }
 

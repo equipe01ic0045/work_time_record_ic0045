@@ -5,11 +5,16 @@ import {
   DetailedTimeRecordData,
   SimpleTimeRecordData,
 } from "@/types/TimeRecordData";
-import fs from "fs";
 
 export default class TimeRecordService {
-  async getTimeRecords(projectId: number): Promise<PaginationData<TimeRecord>> {
-    const { data } = await axios.get(`/projects/time-records/${projectId}`);
+  static async getTimeRecords(
+    projectId: number,
+    from?: string,
+    to?: string
+  ): Promise<PaginationData<TimeRecord>> {
+    const { data } = await axios.get(
+      `/projects/time-records/${projectId}?from=${from}&to=${to}`
+    );
 
     return {
       page: 1,
@@ -87,9 +92,8 @@ export default class TimeRecordService {
     return data.data;
   }
 
-  async getUserProjectTimeRecordsInfo(){
+  async getUserProjectTimeRecordsInfo() {
     const result = await axios.get("/projects/time-records/info/list/user");
     return result.data.data;
   }
-
 }

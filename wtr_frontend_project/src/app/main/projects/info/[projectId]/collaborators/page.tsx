@@ -1,21 +1,33 @@
 "use client";
-import { Box, Button, Link, useToast } from "@chakra-ui/react";
+import { Box, Button, HStack, Link, Input, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ProjectService from "@/services/ProjectService";
 import HeaderBox from "@/components/global/HeaderBox";
 import ProjectInfo from "@/types/ProjectInfo";
 import CollaboratorsTable from "@/components/projects/CollaboratorsTable";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import ProjectUsers from "@/types/ProjectUsers";
 
-export default function GerenciarColaborador({ params }: any) {
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { currentMonthYear, secondsToHoursMinutes } from "@/utils/date_utils";
+import { useAuth } from "@/components/auth/AuthContext";
+
+declare module "jspdf" {
+  interface jsPDF {
+    autoTable: (options: any) => jsPDF;
+  }
+}
+
+export default function CollaboratosPage({ params }: any) {
+  const { user } = useAuth();
   const projectService = new ProjectService();
-  const toast = useToast();
-  const router = useRouter();
   const [projectInfo, setProjectInfo] = useState<ProjectInfo>();
-  const [collaboratorList, setCollaboratorList] = useState<any>();
+  const [collaboratorList, setCollaboratorList] = useState<ProjectUsers[]>([]);
+  const [reportMonth, setReportMonth] = useState<string>(currentMonthYear());
+
   const urlParameters = useParams();
   const projectId = Number(urlParameters.projectId);
-  const projectIdString = urlParameters.projectId;
 
   useEffect(() => {
     projectService
@@ -24,14 +36,16 @@ export default function GerenciarColaborador({ params }: any) {
         setProjectInfo(response);
       })
       .catch((error) => {});
+  }, []);
 
+  useEffect(() => {
     projectService
-      .getProjectUsers(projectId)
+      .getProjectUsers(projectId, reportMonth)
       .then((response) => {
         setCollaboratorList(response);
       })
       .catch((error) => {});
-  }, []);
+  }, [reportMonth]);
 
   const plusIcon = (
     <svg
@@ -51,6 +65,60 @@ export default function GerenciarColaborador({ params }: any) {
       <defs></defs>
     </svg>
   );
+
+  const tableHeaderRow = [
+    "NOME",
+    "CPF",
+    "EMAIL",
+    "FUNÇÃO",
+    "HORAS/SEMANA",
+    "HORAS REGISTRADAS",
+    "HORAS PENDENTES ",
+  ];
+
+  function PDFReport() {
+    const reportTitle = `${projectInfo?.project_name} ${reportMonth}`;
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text(
+      `Relatório de horas   ${reportMonth}                                           Ponto Certo IC`,
+      5,
+      10
+    );
+
+    doc.setFontSize(10);
+    doc.text(`Projeto: ${projectInfo?.project_name}`, 5, 20);
+    doc.text(`Mês de execício: ${reportMonth}`, 5, 25);
+    doc.text(`emitido por: ${user?.full_name} ( cpf: ${user?.cpf} )`, 5, 30);
+    doc.text(`data de emissão: ${new Date().toLocaleDateString()}`, 5, 35);
+
+    doc.autoTable({
+      startY: 40,
+      startX: 5,
+      head: [tableHeaderRow],
+      body: collaboratorList.map((row) => [
+        row.user.full_name,
+        row.user.cpf,
+        row.user.email,
+        row.role,
+        row.hours_per_week,
+        secondsToHoursMinutes(row.elapsed_time_sum),
+        secondsToHoursMinutes(
+          4 * row.hours_per_week * 60 * 60 - row.elapsed_time_sum
+        ),
+      ]),
+      margin: { top: 0, left: 5, right: 5, bottom: 0 },
+      styles: { fontSize: 10 },
+      headStyles: {
+        fontSize: 7,
+        fillColor: [77, 71, 195],
+      },
+    });
+
+    // Save the PDF
+    doc.save(`${reportTitle}.pdf`);
+  }
 
   return (
     <>
@@ -89,28 +157,54 @@ export default function GerenciarColaborador({ params }: any) {
           bg="white"
           marginLeft="5vh"
           zIndex={0}
-          width="80%"
+          width="85%"
         >
-          <Link
-            my={8}
-            style={{ justifyContent: "flex-start" }}
-            href={`/main/projects/add-collaborator/project/${projectIdString}`}
-          >
-            <Button
-              gap={"10px"}
-              fontSize={"2em"}
-              textColor={"#FFFFFF"}
-              colorScheme="purple"
-              bgColor="#4D47C3"
+          <HStack justifyContent={"space-between"}>
+            <Link
+              my={8}
+              style={{ justifyContent: "flex-start" }}
+              href={`/main/projects/add-collaborator/project/${projectId}`}
             >
-              {plusIcon}
-              NOVO COLABORADOR
-            </Button>
-          </Link>
-          <Box maxW="1000px" width="100%" borderWidth="1px" bg="#F0EFFF">
+              <Button
+                gap={"10px"}
+                fontSize={"2em"}
+                textColor={"#FFFFFF"}
+                colorScheme="purple"
+                bgColor="#4D47C3"
+              >
+                {plusIcon}
+                NOVO COLABORADOR
+              </Button>
+            </Link>
+
+            <HStack>
+              <Text fontWeight={"bold"}>Mês de exercício:</Text>
+
+              <Box bg="#F0EFFF" rounded="md" padding={2} marginRight={2}>
+                <Input
+                  bg="white"
+                  type="month"
+                  value={reportMonth}
+                  onChange={(e) => setReportMonth(e.target.value)}
+                />
+              </Box>
+
+              <Button
+                textColor={"#FFFFFF"}
+                colorScheme="purple"
+                bgColor="#4D47C3"
+                onClick={PDFReport}
+              >
+                Gerar relatório
+              </Button>
+            </HStack>
+          </HStack>
+
+          <Box width="100%" borderWidth="1px" bg="#F0EFFF">
             <CollaboratorsTable
               projectId={projectId}
               collaboratorList={collaboratorList}
+              tableRows={tableHeaderRow}
             />
           </Box>
         </Box>

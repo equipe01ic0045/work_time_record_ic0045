@@ -1,4 +1,3 @@
-import { JustificationReviewStatus, JustificationType } from "@prisma/client";
 import BaseRepository from "./abstract/BaseRepository";
 
 export default class TimeRecordsRepository extends BaseRepository {
@@ -36,13 +35,22 @@ export default class TimeRecordsRepository extends BaseRepository {
   }
 
   async checkoutTimeRecord(time_record_id: number, check_out_timestamp: Date) {
-    const openTimeRecord = await this.client.time_record.update({
-      where: {
-        time_record_id,
-        check_out_timestamp: null,
-      },
+    const timeRecord = await this.client.time_record.findUnique({
+      where: { time_record_id },
+    });
+
+    const elapsed_time = Math.floor(
+      (check_out_timestamp.getTime() -
+        timeRecord!.check_in_timestamp.getTime()) /
+        1000
+    );
+
+    // Update the time record
+    const updatedTimeRecord = await this.client.time_record.update({
+      where: { time_record_id },
       data: {
         check_out_timestamp,
+        elapsed_time,
         updated_at: new Date(),
       },
     });
@@ -50,21 +58,60 @@ export default class TimeRecordsRepository extends BaseRepository {
     await this.client.user_project_role.update({
       where: {
         user_id_project_id: {
-          user_id: openTimeRecord.user_id,
-          project_id: openTimeRecord.project_id,
+          user_id: updatedTimeRecord.user_id,
+          project_id: updatedTimeRecord.project_id,
         },
       },
       data: { open_check_in: false },
     });
 
-    return openTimeRecord;
+    return updatedTimeRecord;
   }
 
-  async getUserTimeRecordsInProject(user_id: number, project_id: number) {
+  async getUsersElapsedTime(project_id: number, from: Date, to: Date) {
+    const elapsedTimeSum = await this.client.time_record.groupBy({
+      by: ["user_id"],
+      _sum: {
+        elapsed_time: true,
+      },
+      where: {
+        project_id,
+        updated_at: {
+          gte: from,
+          lte: to,
+        },
+        time_record_justification: {
+          every: {
+            status: {
+              not: "PENDING",
+            },
+          },
+        },
+      },
+    });
+
+    // The result will be an array with the sum of elapsed_time for each specified user
+    const userElapsedTimeSum = elapsedTimeSum.map((user) => ({
+      user_id: user.user_id,
+      elapsed_time_sum: user._sum?.elapsed_time || 0,
+    }));
+
+    return userElapsedTimeSum;
+  }
+  async getUserTimeRecordsInProject(
+    user_id: number,
+    project_id: number,
+    from?: Date,
+    to?: Date
+  ) {
     return this.client.time_record.findMany({
       where: {
         user_id,
         project_id,
+        check_in_timestamp: {
+          gte: from,
+          lte: to,
+        },
       },
       orderBy: {
         check_in_timestamp: "desc",
@@ -118,7 +165,7 @@ export default class TimeRecordsRepository extends BaseRepository {
   async updateTimeRecord(
     time_record_id: number,
     check_in_timestamp?: Date,
-    check_out_timestamp?: Date,
+    check_out_timestamp?: Date
   ) {
     return this.client.time_record.update({
       where: { time_record_id },
@@ -140,6 +187,7 @@ export default class TimeRecordsRepository extends BaseRepository {
             project_name: true,
             owner: {
               select: {
+                user_id: true,
                 full_name: true,
                 email: true,
               },
@@ -154,6 +202,7 @@ export default class TimeRecordsRepository extends BaseRepository {
                 check_out_timestamp: true,
               },
             },
+            location: true,
           },
         },
         open_check_in: true,

@@ -192,6 +192,28 @@
 
 /**
  * @swagger
+ * /projects/{project_id}:
+ *   get:
+ *     summary: gets a project info
+ *     tags: [Projects]
+ *     security:
+ *       - CookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: project_id
+ *         required: true
+ *         description: The ID of the project.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Successfully retrieved the project info.
+ *       '401':
+ *         description: Unauthorized. User is not authenticated.
+ */
+
+/**
+ * @swagger
  * /projects/{project_id}/users:
  *   get:
  *     summary: Get the users of a project
@@ -203,6 +225,18 @@
  *         name: project_id
  *         required: true
  *         description: The ID of the project.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: from
+ *         required: false
+ *         description: Start date for time records (YYYY-MM-DD).
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: to
+ *         required: false
+ *         description: End date for time records (YYYY-MM-DD).
  *         schema:
  *           type: string
  *     responses:
@@ -292,7 +326,7 @@ const validators = [
     .withMessage("Nome do projeto requerido")
     .custom((value: string) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
     .withMessage(
-      'Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen'
+      "Nomes de projeto devem ter apenas letras minúsculas e números separados por hífen"
     ),
   body("project_description")
     .isString()
@@ -300,9 +334,13 @@ const validators = [
   body("location")
     .isString()
     .custom((value: string) => /^[a-zA-z ]+$/.test(value))
-    .withMessage("Localização deve conter apenas letras maiúsculas, minúsculas e espaço."),
-  body('commercial_time_end')
-    .custom((value, {req}) => parseInt(value) > req.body.commercial_time_start)
+    .withMessage(
+      "Localização deve conter apenas letras maiúsculas, minúsculas e espaço."
+    ),
+  body("commercial_time_end")
+    .custom(
+      (value, { req }) => parseInt(value) > req.body.commercial_time_start
+    )
     .withMessage("O horario fim deve ser maior que o horario começo."),
 ];
 export default class ProjectRoutes extends ProjectRelatedRoutes {
@@ -333,9 +371,7 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
         body("project_id")
           .notEmpty()
           .custom((value: string) => /^[0-9]+$/.test(value))
-          .withMessage(
-            'ID do projeto inválido'
-          ),
+          .withMessage("ID do projeto inválido"),
       ],
       this.validate,
       this.controller.deleteProject
@@ -381,9 +417,9 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
       this.validate,
       this.controller.updateUserRole
     );
-    
-    
-    this._router.delete("/:project_id/:user_id",
+
+    this._router.delete(
+      "/:project_id/:user_id",
       [
         ...this.projectIdValidation,
         param("user_id")
@@ -394,7 +430,6 @@ export default class ProjectRoutes extends ProjectRelatedRoutes {
       this.validate,
       this.controller.deleteUser
     );
-
 
     return this._router;
   }

@@ -46,28 +46,34 @@ export default class JustificationRepository extends BaseRepository {
     });
   }
 
-  
   private justificationOutData = {
-    time_record:{
-      select:{
+    time_record: {
+      select: {
         check_in_timestamp: true,
-        check_out_timestamp: true
-      }
+        check_out_timestamp: true,
+      },
     },
-    justification_document:{
-      select:{
-        justification_id: true
-      }
+    justification_document: {
+      select: {
+        justification_id: true,
+      },
     },
     user: {
       select: {
         user_id: true,
         email: true,
         full_name: true,
-        cpf: true
+        cpf: true,
       },
     },
-  }
+    reviewer: {
+      select: {
+        email: true,
+        full_name: true,
+        cpf: true,
+      },
+    },
+  };
 
   async findJustificationsByProjectId(
     project_id: number,
@@ -83,6 +89,9 @@ export default class JustificationRepository extends BaseRepository {
           in: status as JustificationReviewStatus[],
         },
       },
+      orderBy: {
+        created_at: "desc"
+      }
     });
   }
 
@@ -126,12 +135,12 @@ export default class JustificationRepository extends BaseRepository {
         reviewer_message,
         status,
         updated_at: new Date(),
-        justification_document:{
-          update:{
+        justification_document: {
+          update: {
             file_name,
-            document_file
-          }
-        }
+            document_file,
+          },
+        },
       },
     });
   }
@@ -140,22 +149,44 @@ export default class JustificationRepository extends BaseRepository {
     justification_id: number,
     reviewer_id: number,
     status: JustificationReviewStatus,
-    reviewer_message: string
+    reviewer_message: string,
+    new_timestamp?: Date
   ) {
+    const justification =
+      await this.client.time_record_justification.findUnique({
+        where: { justification_id },
+      });
+
+    const query: any = {
+      reviewer: {
+        connect: {
+          user_id: reviewer_id,
+        },
+      },
+      status,
+      reviewer_message,
+      updated_at: new Date(),
+      time_record: {
+        update: {
+          check_in_timestamp: undefined,
+          check_out_timestamp: undefined,
+        },
+      },
+    };
+
+    if (justification!.justification_type === JustificationType.CHECKIN) {
+      query.time_record.update.check_in_timestamp = new_timestamp;
+    } else if (
+      justification!.justification_type === JustificationType.CHECKOUT
+    ) {
+      query.time_record.update.check_out_timestamp = new_timestamp;
+    }
+
     return this.client.time_record_justification.update({
       where: {
         justification_id,
       },
-      data: {
-        reviewer: {
-          connect: {
-            user_id: reviewer_id,
-          },
-        },
-        status,
-        reviewer_message,
-        updated_at: new Date(),
-      },
+      data: query,
     });
   }
 

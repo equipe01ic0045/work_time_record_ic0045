@@ -1,39 +1,27 @@
+import UserLoginService from "@/types/service-types/UserLoginService";
 import axios from "./axios";
-
-export interface loginUser {
-  email: string;
-  password: string;
-}
-
-export interface registerUser {
-  fullName: String,
-  cpf: String
-  email: string;
-  confirmEmail: string;
-  password: string;
-  confirmPassword: string;
-}
+import UserRegisterService from "@/types/service-types/UserRegisterService";
 
 export default class UserService {
 
-  public registerUser(registerUser: registerUser) {
-
+  public registerUser(user: UserRegisterService) {
     const newUser = {
-      full_name: registerUser.fullName,
-      cpf: registerUser.cpf,
-      password: registerUser.password,
-      email: registerUser.email
+      full_name: user.fullName,
+      cpf: user.cpf,
+      email: user.email,
+      password: user.password
     }
     return axios.post("/register", newUser);
 
   }
 
-  public loginUser(loginUser: loginUser) {
-    return axios.post("/login", loginUser);
+  public updateUser(user: Omit<UserLoginService, 'password'> & { password?: string }) {
+    return axios.put("/user/edit", user);
+
   }
 
-  public passwordRecoveryUser(cpf: number) {
-
+  public loginUser(user: UserLoginService) {
+    return axios.post("/login", user);
   }
 
   public getUser(userId: number) {
@@ -57,5 +45,15 @@ export default class UserService {
     )
 
     return result.data.users
+  }
+
+  public async getUsersAll() {
+    const result = await axios.post(
+      '/user/all',
+      {},
+      { withCredentials: true }
+    )
+
+    return result.data.data
   }
 }

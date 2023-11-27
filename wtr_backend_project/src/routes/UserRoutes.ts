@@ -77,13 +77,16 @@ export default class UserRoutes extends BaseRoutes {
      *             properties:
      *               full_name:
      *                  type: string
+     *               cpf:
+     *                 type: string
      *               email:
      *                 type: string
      *               password:
      *                 type: string
      *             example:
      *                 full_name: "Pedro Chaves de Carvalho"
-     *                 email: "teste@email.com"
+     *                 email: "tests@email.com"
+     *                 cpf: "12345675623"
      *                 password: "12345678"
      *     responses:
      *       '201':
@@ -101,9 +104,15 @@ export default class UserRoutes extends BaseRoutes {
         .isLength({ min: 1 })
         .withMessage("Insira o nome completo"),
       body("email").isEmail().withMessage("Email inválido"),
+      body("cpf")
+        .isNumeric()
+        .isLength({ min: 11, max: 11 })
+        .withMessage("CPF deve ter exatamente 11 caracteres."),
       body("password")
+        .optional()
         .isLength({ min: 8 })
         .withMessage("Senha deve ter pelo menos 8 caracteres."),
+
       this.validate,
       this.controller.updateUser
     );
@@ -145,6 +154,14 @@ export default class UserRoutes extends BaseRoutes {
       this.validate,
       this.controller.getUsersByName
     );
+
+
+    this._router.post(
+      "/all",
+      body(),
+      this.validate,
+      this.controller.getUsers
+    )
 
     return this._router;
   }
