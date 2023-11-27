@@ -86,7 +86,7 @@ model time_record {
   created_at                DateTime                    @default(now())
   updated_at                DateTime                    @default(now())
   user                      user                        @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  project                   project                     @relation(fields: [project_id], references: [project_id])
+  project                   project                     @relation(fields: [project_id], references: [project_id], onDelete: Cascade)
   time_record_justification time_record_justification[]
 }
 
@@ -106,7 +106,7 @@ model time_record_justification {
   user                   user                      @relation(name: "time_record_justification_user_fk", fields: [user_id], references: [user_id])
   reviewer               user?                     @relation(name: "time_record_justification_reviewer_fk", fields: [reviewer_id], references: [user_id])
   time_record            time_record               @relation(fields: [time_record_id], references: [time_record_id])
-  project                project                   @relation(fields: [project_id], references: [project_id])
+  project                project                   @relation(fields: [project_id], references: [project_id], onDelete: Cascade)
 
   @@unique([justification_id, reviewer_id])
   @@unique([time_record_id, justification_type])

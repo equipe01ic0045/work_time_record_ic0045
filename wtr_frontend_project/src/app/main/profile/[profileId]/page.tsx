@@ -14,31 +14,21 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import UserService from "@/services/UserService";
-import { useRouter } from "next/navigation";
 import { EditIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-
-export type User = {
-  user_id: number;
-  cpf: string;
-  email: string;
-  full_name: string;
-  password?: string;
-  created_at?: string;
-  updated_at?: string;
-};
+import { User } from "@/types/User";
 
 type k = keyof User;
-export type ProjectError = {
+export type UserUpdateError = {
   [key in k]: string;
 };
+
 export default function UserUpdate({ params }: any) {
   const userService = new UserService();
   const toast = useToast();
 
-  const [edit, setEdit] = useState<boolean>(false);
   const [user, setUser] = useState<User>();
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<ProjectError>({
+  const [errors, setErrors] = useState<UserUpdateError>({
     user_id: "",
     cpf: "",
     email: "",
@@ -48,8 +38,10 @@ export default function UserUpdate({ params }: any) {
     password: "",
   });
 
-  async function updateUserHandler(projectInfo: User): Promise<ProjectError> {
-    const erros: ProjectError = {
+  async function updateUserHandler(
+    projectInfo: User
+  ): Promise<UserUpdateError> {
+    const erros: UserUpdateError = {
       user_id: "",
       cpf: "",
       email: "",
@@ -93,57 +85,14 @@ export default function UserUpdate({ params }: any) {
             "Já existe um usuário com estes dados.";
         }
       }
-      console.error(data?.message);
       return erros;
     }
   }
 
-  async function getProjectInfo() {
-    const projectInfoDataR = await fetch(
-      "http://localhost:5000/user/" + params.profileId,
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    );
-
-    const projectInfoDataJSON = await projectInfoDataR.json();
-    const projectInfoData = projectInfoDataJSON.data;
-    const info = { ...projectInfoData };
-    setUser(info);
-
-    const splits = document.cookie.split("=");
-    if (splits.length > 1) {
-      const parsed = parseJwt(document.cookie.split("=")[1]);
-      setParsedJWT(parsed);
-      const ed = parsed.userId == "" + info?.user_id;
-      console.log(parsed.userId, info?.user_id);
-      setEdit(ed);
-    } else {
-      window.location.href = "/auth";
-    }
-  }
-
-  function parseJwt(token: string) {
-    var base64Url = token.split(".")[1];
-    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    var jsonPayload = decodeURIComponent(
-      window
-        .atob(base64)
-        .split("")
-        .map(function (c) {
-          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-        })
-        .join("")
-    );
-
-    return JSON.parse(jsonPayload);
-  }
-
-  const [parsedJWT, setParsedJWT] = useState<{ [key: string]: string }>({});
-
   useEffect(() => {
-    getProjectInfo();
+    UserService.getUser(params.profileId).then((user) => {
+      setUser(user);
+    });
   }, []);
 
   const keys: [keyof User, string][] = [
@@ -170,7 +119,7 @@ export default function UserUpdate({ params }: any) {
                 <InputGroup display="flex" flexDirection="column" gap="0.5em">
                   <FormLabel key="0">{label}</FormLabel>
                   <Input
-                    placeholder="Nome do Projeto"
+                    placeholder={label}
                     type="text"
                     name={key}
                     bgColor="Lavender"
@@ -185,58 +134,48 @@ export default function UserUpdate({ params }: any) {
               </FormControl>
             ))}
 
-            {edit ? (
-              <FormControl isInvalid={errors["password"] ? true : false}>
-                <InputGroup display="flex" flexDirection="column" gap="0.5em">
-                  <FormLabel key="0">{"Senha (Opcional)"}</FormLabel>
-                  <Box position="relative">
-                    <Input
-                      placeholder="Nome do Projeto"
-                      type={showPassword ? "text" : "password"}
-                      name={"password"}
-                      bgColor="Lavender"
-                      color="blueviolet"
-                      value={user["password"]}
-                      autoComplete="one-time-code"
-                      onChange={(ev) =>
-                        setUser({ ...user, ["password"]: ev.target.value })
-                      }
-                    />
-                    <Box
-                      position="absolute"
-                      right="10px"
-                      top="50%"
-                      transform="translateY(-50%)"
-                      zIndex={"999999"}
-                      cursor="pointer"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                    </Box>
+            <FormControl isInvalid={errors["password"] ? true : false}>
+              <InputGroup display="flex" flexDirection="column" gap="0.5em">
+                <FormLabel key="0">{"Senha (Opcional)"}</FormLabel>
+                <Box position="relative">
+                  <Input
+                    placeholder="Senha"
+                    type={showPassword ? "text" : "password"}
+                    name={"password"}
+                    bgColor="Lavender"
+                    color="blueviolet"
+                    value={user["password"]}
+                    autoComplete="one-time-code"
+                    onChange={(ev) =>
+                      setUser({ ...user, ["password"]: ev.target.value })
+                    }
+                  />
+                  <Box
+                    position="absolute"
+                    right="10px"
+                    top="50%"
+                    transform="translateY(-50%)"
+                    zIndex={"999999"}
+                    cursor="pointer"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <ViewOffIcon /> : <ViewIcon />}
                   </Box>
-                </InputGroup>
-                <FormErrorMessage>{errors["password"]}</FormErrorMessage>
-              </FormControl>
-            ) : (
-              ""
-            )}
-            {/*
-             */}
+                </Box>
+              </InputGroup>
+              <FormErrorMessage>{errors["password"]}</FormErrorMessage>
+            </FormControl>
 
-            {edit ? (
-              <Button
-                leftIcon={<EditIcon/>}
-                colorScheme="orange"
-                onClick={async () => {
-                  setErrors(await updateUserHandler(user));
-                }}
-              >
-                {" "}
-                Editar Usuário
-              </Button>
-            ) : (
-              ""
-            )}
+            <Button
+              leftIcon={<EditIcon />}
+              colorScheme="orange"
+              onClick={async () => {
+                setErrors(await updateUserHandler(user));
+              }}
+            >
+              {" "}
+              Editar Usuário
+            </Button>
           </Box>
         ) : (
           "Loading..."

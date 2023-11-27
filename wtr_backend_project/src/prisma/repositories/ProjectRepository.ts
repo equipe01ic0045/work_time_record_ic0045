@@ -66,14 +66,12 @@ export default class ProjectRepository extends BaseRepository {
 
     return project;
   }
-  async deleteProject(projectId: number): Promise<boolean> {
+  async deleteProject(projectId: number): Promise<void> {
     await this.client.project.delete({
       where: {
         project_id: projectId,
       },
     });
-
-    return true;
   }
 
   async updateUserProjectRole(
