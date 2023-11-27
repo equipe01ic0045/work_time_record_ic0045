@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
-import { Box, Button, Link, Text } from "@chakra-ui/react";
+import { Box, Button, Link, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
 import { useAuth } from "../auth/AuthContext";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 export default function SideMenu() {
   const { user, logout } = useAuth();
@@ -39,6 +40,11 @@ export default function SideMenu() {
     </svg>
   );
 
+  const personIcon = (
+    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+      <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z" />
+    </svg>)
+
   const pages = [
     {
       id: 1,
@@ -61,27 +67,79 @@ export default function SideMenu() {
     },
   ];
 
+  function cpfHandler(value?: string) {
+    if (value) {
+      return `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6, 9)}-${value.slice(9)}`
+    }
+    else {
+      return ''
+    }
+  }
+
   return (
     <Box
       display={"flex"}
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="start"
-      gap="0.5em"
-      bg="#A7A3FF"
-      padding="0.5em"
-      width={{ base: '100%', md: '15%' }}
-      
+      flexDirection={"column"}
+      alignItems={"center"}
+      justifyContent={"start"}
+      gap={"0.5em"}
+      bg={"#4D47C3"}
+      padding={"0.5em"}
+      minW={"fit-content"}
+      width={"15%"}
+      flexWrap={"wrap"}
     >
-      <Box>
-        <Text>
-          <Link fontWeight="bold" href={"/main/profile/" + user?.userId}>
-            {user?.full_name}
-          </Link>
+      <Box
+        display={'flex'}
+        flexDirection={'column'}
+        gap={'0.5em'}
+      >
+        <Menu>
+          <MenuButton
+            width={'fit-content'}
+            as={Button}
+            borderRadius={'full'}
+          >
+            {personIcon}
+          </MenuButton>
+          <MenuList>
+            <MenuItem minH='24px'>
+              <Link 
+              fontWeight="bold" 
+              href={"/main/profile/" + user?.userId}
+              width={'100%'}
+              >
+                Perfil
+              </Link>
+            </MenuItem>
+            <MenuItem minH='24px'>
+              <Link 
+              fontWeight="bold"
+               href={"/main/projects"}
+               width={'100%'}
+               >
+                Meus Projetos
+              </Link>
+            </MenuItem>
+          </MenuList>
+        </Menu>
+        <Text
+          fontWeight={'bold'}
+          fontSize={'sm'}
+          color={'white'}
+        >
+          NOME : {user?.full_name}
         </Text>
-
-        <Text>email: {user?.email}</Text>
-        <Text>cpf: {user?.cpf}</Text>
+        <Text
+          fontWeight={'bold'}
+          fontSize={'sm'}
+          color={'white'}
+        >EMAIL : {user?.email}</Text>
+        <Text
+          fontWeight={'bold'}
+          fontSize={'sm'}
+          color={'white'}
+        >CPF : {cpfHandler(user?.cpf)}</Text>
       </Box>
 
       <Box
@@ -98,7 +156,7 @@ export default function SideMenu() {
           <Link
             key={item.id}
             href={`${item.link}`}
-            onClick={item.onClick ?? (() => {})}
+            onClick={item.onClick ?? (() => { })}
           >
             <Button
               bg={"white"}
