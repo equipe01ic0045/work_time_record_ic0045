@@ -191,14 +191,19 @@ export default function JustificationInfoManagerPage() {
 
         {justification?.status == "PENDING" ? (
           <Box w="100%">
-            <Card backgroundColor="#e3a300">
+            <Card backgroundColor="#4D47C3">
               <CardHeader>
-                <Text fontWeight="bold" marginBottom={4} fontSize={20}>
+                <Text 
+                fontWeight="bold" 
+                marginBottom={4} 
+                fontSize={20}
+                textColor={"white"}
+                >
                   Revisar Justificativa
                 </Text>
                 <HStack>
                   <Box>
-                    <Text fontWeight="bold">Status</Text>
+                    <Text textColor={"white"} fontWeight="bold">Status</Text>
                     <Select
                       width={200}
                       placeholder="Aprovar/Rejeitar"
@@ -233,7 +238,7 @@ export default function JustificationInfoManagerPage() {
                 </HStack>
               </CardHeader>
               <CardBody>
-                <Text fontWeight="bold" marginBottom={4}>
+                <Text textColor={"white"} fontWeight="bold" marginBottom={4}>
                   Mensagem
                 </Text>
                 <Textarea
@@ -248,8 +253,7 @@ export default function JustificationInfoManagerPage() {
               </CardBody>
               <CardFooter>
                 <Button
-                  colorScheme="black"
-                  backgroundColor={"black"}
+                  colorScheme="gray"
                   onClick={submitReview}
                 >
                   Enviar
