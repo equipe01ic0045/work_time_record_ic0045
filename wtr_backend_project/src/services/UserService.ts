@@ -55,7 +55,7 @@ export default class UserService {
     }
   }
 
-  _signJWT(foundUser : Omit<user, "password">) : string{
+  _signJWT(foundUser: Omit<user, "password">): string {
     return jwt.sign(
       {
         userId: foundUser.user_id,
@@ -81,6 +81,15 @@ export default class UserService {
     }
 
     return foundUser;
+  }
+
+  async getUserList(): Promise<Array<Omit<user, "password">>> {
+    const userList = await this.userRepository.findManyUsers()
+    if (!userList) {
+      throw new NotFoundError("user")
+    }
+
+    return userList
   }
 
   async getUser(userId: number): Promise<Omit<user, "password">> {
@@ -124,9 +133,9 @@ export default class UserService {
     if (!foundUser) {
       throw new NotFoundError("user");
     }
-    if(password !== undefined)
+    if (password !== undefined)
       password = await bcrypt.hash(password, JWT_DEFAULT_SALT_ROUNDS);
-    
+
     const updatedUser = await this.userRepository.updateUser(userId, fullName, email, cpf, password);
 
     return await this._signJWT(updatedUser);

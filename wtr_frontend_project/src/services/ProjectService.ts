@@ -51,7 +51,7 @@ export default class ProjectService {
     return result.data.data as ProjectInfo;
   }
 
-  public async getProjectUsers(projectId: number, month: string) {
+  public async getProjectUsers(projectId: number, month?: string) {
     const dateRange = monthRange(month);
     const result = await axios.get(
       `projects/${projectId}/users?from=${dateRange.from}&to=${dateRange.to}`

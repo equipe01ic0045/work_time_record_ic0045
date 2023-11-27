@@ -17,6 +17,8 @@ import {
 import { useAuth } from "../auth/AuthContext";
 import { useEffect, useState } from "react";
 import { secondsToHoursMinutes } from "@/utils/date_utils";
+import { useRouter } from "next/navigation";
+import { EditIcon } from "@chakra-ui/icons";
 
 export default function CollaboratorsTable({
   collaboratorList,
@@ -30,9 +32,10 @@ export default function CollaboratorsTable({
   const { user } = useAuth();
   const [userIsManager, setUserIsManager] = useState<boolean>(false);
   const toast = useToast();
+  const router = useRouter()
   const projectService = new ProjectService();
 
-  const tableHeaderRow = [...tableRows, "EXCLUIR"]
+  const tableHeaderRow = [...tableRows, "EXCLUIR", "ATUALIZAR"]
 
   const deleteUserInProject = async (userId: number) => {
     try {
@@ -56,6 +59,17 @@ export default function CollaboratorsTable({
       });
     }
   };
+
+  const updateUserInProject = async (userId : number) =>{
+    console.log(userId)
+    router.push(`/main/projects/info/${projectId}/collaborators/profile/${userId}`)
+    try{
+      
+    }
+    catch{
+
+    }
+  }
 
   function checkIfuserIsManager() {
     if (collaboratorList) {
@@ -124,6 +138,19 @@ export default function CollaboratorsTable({
                           deleteUserInProject(collaborator.user.user_id ?? 0);
                         }}
                         icon={<DeleteIcon />}
+                      ></IconButton>
+                    </Td>
+                  ) : null}
+                  {userIsManager && collaborator.user_id !== user?.userId ? (
+                    <Td>
+                      <IconButton
+                        aria-label="Remove user from project"
+                        colorScheme="orange"
+                        size={"lg"}
+                        onClick={() => {
+                          updateUserInProject(collaborator.user.user_id ?? 0);
+                        }}
+                        icon={<EditIcon />}
                       ></IconButton>
                     </Td>
                   ) : null}

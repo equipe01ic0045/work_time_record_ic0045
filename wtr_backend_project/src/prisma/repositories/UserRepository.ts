@@ -35,6 +35,10 @@ export default class UserRepository extends BaseRepository {
     });
   }
 
+  async findManyUsers() :Promise<Omit<user, "password">[] | null> {
+    return this.client.user.findMany()
+  }
+
   async findUserByUserId(
     user_id: number
   ): Promise<Omit<user, "password"> | null> {
