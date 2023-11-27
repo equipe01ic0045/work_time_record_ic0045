@@ -147,9 +147,6 @@ export default function SideMenu() {
         backgroundColor={"black"}
         width="100%"
         margin="10px 0 20px 0"
-        display="flex"
-        flexWrap="wrap"
-        justifyContent="space-between"
       ></Box>
       {pages.map((item) => {
         return (
@@ -167,11 +164,8 @@ export default function SideMenu() {
               alignItems={"center"}
               justifyContent={"start"}
               gap={"0.5em"}
-              width="115px"
-              minWidth="100px"
-              maxWidth="100%" 
-              fontSize={{ base: 'sm', md: 'md' }}
-              marginBottom="8px"
+              width={"auto"}
+              minWidth={"175px"}
             >
               {item.icon}
               {item.name}
