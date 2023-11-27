@@ -110,8 +110,8 @@ export default class UserService {
     return foundUser;
   }
 
-  async getUsersByName(full_name?: string): Promise<Omit<user, "password">[]> {
-    const foundUsers = await this.userRepository.findUsersByName(full_name);
+  async getUsersByName(project_id : number, full_name?: string): Promise<Omit<user, "password">[]> {
+    const foundUsers = await this.userRepository.findUsersByName(project_id, full_name);
     if (!foundUsers) {
       throw new NotFoundError("user");
     }

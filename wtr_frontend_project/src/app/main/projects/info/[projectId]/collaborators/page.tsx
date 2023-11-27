@@ -204,6 +204,7 @@ export default function CollaboratosPage({ params }: any) {
             <CollaboratorsTable
               projectId={projectId}
               collaboratorList={collaboratorList}
+              setCollaboratorList={setCollaboratorList}
               tableRows={tableHeaderRow}
             />
           </Box>

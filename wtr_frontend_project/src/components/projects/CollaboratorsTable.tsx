@@ -22,10 +22,12 @@ import { EditIcon } from "@chakra-ui/icons";
 
 export default function CollaboratorsTable({
   collaboratorList,
+  setCollaboratorList,
   projectId,
   tableRows
 }: {
   collaboratorList: ProjectUsers[];
+  setCollaboratorList: (v : ProjectUsers[]) => void;
   projectId: number;
   tableRows: string[]
 }) {
@@ -48,6 +50,7 @@ export default function CollaboratorsTable({
         isClosable: true,
         position: "top-right",
       });
+      setCollaboratorList(collaboratorList.filter(user => user.user_id != userId))
     } catch (error) {
       toast({
         title: "Falha ao Deletar Usuario",

@@ -1,6 +1,6 @@
 export type SimpleTimeRecordData = {
   project_id: number;
-  timestamp: Date;
+  timestamp?: Date;
   location?: string;
 };
 
@@ -11,3 +11,6 @@ export type JustificationData = {
 
 export type DetailedTimeRecordData = SimpleTimeRecordData & JustificationData;
 
+export type CreatedJustificationData = DetailedTimeRecordData & {
+  justification_id: number;
+};

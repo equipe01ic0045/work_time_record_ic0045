@@ -47,6 +47,7 @@ export default function JustifyCardBody({
         <Input
           ref={fileInputRef}
           type="file"
+          accept="application/pdf"
           hidden
           onChange={e => setRecord({ ...record, justification_file: e.target.files?.[0] })}
         />

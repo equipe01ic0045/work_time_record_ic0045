@@ -41,15 +41,33 @@ export default function RegistrationComponent() {
     setShowConfirmPassword(!showConfirmPassword)
   }
 
+  function formatCPfMask(cpf: string) {
+    const validInputMask =  /^\d+$/g;
+    
+    if (!validInputMask.test(cpf)) {
+      return cpf.slice(0, cpf.length - 1);
+    }
+
+    if (cpf.length > 11) {
+      return cpf.slice(0, 11); 
+    }
+    
+    return cpf;
+  }
+
   function inputHandler(event: any) {
     const { name, value } = event.target;
+    if (name === "cpf") {
+      const cpfMask = formatCPfMask(value);
+      setNewUser({ ...newUser, [name]: cpfMask });
+      return;
+    }
     setNewUser({ ...newUser, [name]: value });
   }
 
   async function registerHandler() {
 
     try {
-
       if (newUser.email === newUser.confirmEmail && newUser.password === newUser.confirmPassword) {
         await userService.registerUser(newUser)
         toast({
@@ -77,8 +95,9 @@ export default function RegistrationComponent() {
       }
 
       if (error.response.status === 400) {
+        const [errorMessage] = error.response.data.data.errors;
         toast({
-          title: "Senha com 8 caracteres mínimos",
+          title: errorMessage.msg,
           status: "warning",
           duration: 3000,
           isClosable: true,
@@ -139,7 +158,7 @@ export default function RegistrationComponent() {
           <FormLabel>CPF</FormLabel>
           <Input
             placeholder="999.999.999-99"
-            type="number"
+            type="text"
             name="cpf"
             value={newUser.cpf}
             onChange={inputHandler}

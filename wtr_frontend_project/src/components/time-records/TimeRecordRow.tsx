@@ -10,12 +10,12 @@ import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/pt-br";
-import TimeRecord from "@/types/TimeRecord";
 import { FaRegFileLines } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import { EditIcon } from "@chakra-ui/icons";
 import JustificationStatusIcon from "./JustificationStatusIcon";
 import { formatDate } from "@/utils/date_utils";
+import { TimeRecordInfo } from "@/types/TimeRecordInfoData";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -23,15 +23,15 @@ dayjs.extend(relativeTime);
 const EditButton = ({
   router,
   timeRecordId,
-  type,
-  datetime,
+  justificationId,
   isDisabled,
+  type,
 }: {
   timeRecordId: number;
   router: any;
-  type: string;
-  datetime: string;
   isDisabled?: boolean;
+  justificationId?: number;
+  type: string;
 }) => {
   return (
     <IconButton
@@ -43,8 +43,12 @@ const EditButton = ({
       color="white"
       isDisabled={isDisabled}
       onClick={(e) => {
+        const justificationIdQueryString = justificationId ?
+          `&justificationId=${justificationId}`
+          : '';
+
         router.push(
-          `info/${timeRecordId}/justify?type=${type}&datetime=${datetime}`
+          `info/${timeRecordId}/justify?type=${type}${justificationIdQueryString}`
         );
       }}
     />
@@ -54,7 +58,7 @@ export default function TimeRecordRow({
   record,
 }: {
   projectId: string;
-  record: TimeRecord;
+  record: TimeRecordInfo;
 }) {
   const router = useRouter();
 
@@ -67,11 +71,11 @@ export default function TimeRecordRow({
     .duration(dayjs(checkOutDate || dayjs()).diff(checkInDate))
     .format("HH[h] mm[min]");
 
-  const checkInJustification = record.justifications?.find(
-    (justification) => justification.type === "check-in"
+  const checkInJustification = record.time_record_justification?.find(
+    (justification) => justification.justification_type === "CHECKIN"
   );
-  const checkOutJustification = record.justifications?.find(
-    (justification) => justification.type === "check-out"
+  const checkOutJustification = record.time_record_justification?.find(
+    (justification) => justification.justification_type === "CHECKOUT"
   );
 
   return (
@@ -81,14 +85,14 @@ export default function TimeRecordRow({
         <HStack gap={3}>
           <Text>{formatDate(checkInDate)}</Text>
           <EditButton
-            datetime={record.check_in_timestamp}
-            type="check-in"
             router={router}
             timeRecordId={record.time_record_id}
-            isDisabled={checkInJustification?.status === "pending"}
+            isDisabled={checkInJustification && checkInJustification.status !== "DENIED"}
+            justificationId={checkInJustification?.justification_id}
+            type="CHECKIN"
           />
           {checkInJustification && (
-            <JustificationStatusIcon justification={checkInJustification} />
+            <JustificationStatusIcon status={checkInJustification.status} />
           )}
         </HStack>
       </Td>
@@ -97,14 +101,13 @@ export default function TimeRecordRow({
           <HStack gap={3}>
             <Text>{formatDate(checkOutDate)}</Text>
             <EditButton
-              datetime={record.check_out_timestamp!}
-              type="check-out"
               router={router}
               timeRecordId={record.time_record_id}
-              isDisabled={checkOutJustification?.status === "pending"}
+              isDisabled={checkOutJustification && checkOutJustification.status !== "DENIED"}
+              type="CHECKOUT"
             />
             {checkOutJustification && (
-              <JustificationStatusIcon justification={checkOutJustification} />
+              <JustificationStatusIcon status={checkOutJustification.status} />
             )}
           </HStack>
         )}

@@ -18,9 +18,9 @@ export default class JustificationController extends BaseController {
 
     const { time_record_id, user_message, justification_type } = req.body;
 
-    const fileType = req.file!.mimetype;
-    const fileBuffer = req.file!.buffer;
-    const fileName = req.file!.originalname;
+    const fileType = req.file?.mimetype;
+    const fileBuffer = req.file?.buffer;
+    const fileName = req.file?.originalname;
 
     try {
       const data = await justificationService.createJustification(
@@ -28,10 +28,10 @@ export default class JustificationController extends BaseController {
         +time_record_id,
         req.user!.userId,
         user_message,
+        justification_type,
         fileName,
         fileType,
         fileBuffer,
-        justification_type
       );
 
       new ResourceCreatedResponse().send(res, data);

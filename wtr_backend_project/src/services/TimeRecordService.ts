@@ -121,6 +121,8 @@ export default class TimeRecordService {
     fileContent?: Buffer,
     location?: string
   ) {
+    if (fileType) this.validFileType(fileType);
+    
     const newRecord = await this.simpleCheckIn(
       userId,
       projectId,
@@ -128,19 +130,17 @@ export default class TimeRecordService {
       location
     );
 
-    if (!fileType || this.validFileType(fileType)) {
-      await this.justificationRepository.createJustification(
-        newRecord.time_record_id,
-        projectId,
-        userId,
-        userMessage,
-        JustificationType.CHECKIN,
-        fileName,
-        fileContent
-      );
+    await this.justificationRepository.createJustification(
+      newRecord.time_record_id,
+      projectId,
+      userId,
+      userMessage,
+      JustificationType.CHECKIN,
+      fileName,
+      fileContent
+    );
 
-      return newRecord;
-    }
+    return newRecord;
   }
 
   async detailedCheckOut(
@@ -152,23 +152,23 @@ export default class TimeRecordService {
     fileType?: string,
     fileContent?: Buffer
   ) {
+    if (fileType) this.validFileType(fileType);
+
     const updatedRecord = await this.simpleCheckout(
       userId,
       projectId,
       checkoutTimeStamp
     );
 
-    if (!fileType || this.validFileType(fileType)) {
-      await this.justificationRepository.createJustification(
-        updatedRecord.time_record_id,
-        projectId,
-        userId,
-        userMessage,
-        JustificationType.CHECKOUT,
-        fileName,
-        fileContent
-      );
-    }
+    await this.justificationRepository.createJustification(
+      updatedRecord.time_record_id,
+      projectId,
+      userId,
+      userMessage,
+      JustificationType.CHECKOUT,
+      fileName,
+      fileContent
+    );
 
     return updatedRecord;
   }
@@ -241,6 +241,16 @@ export default class TimeRecordService {
           file_content
         );
       }
+    } else if (user_message) {
+      await this.justificationRepository.createJustification(
+        time_record_id,
+        timeRecord.project_id,
+        timeRecord.user_id,
+        user_message,
+        justification_type,
+        file_name,
+        file_content
+      )
     } else if (
       !existing_justification &&
       (user_message ||

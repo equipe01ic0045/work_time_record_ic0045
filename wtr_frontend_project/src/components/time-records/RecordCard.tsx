@@ -17,13 +17,14 @@ import {
 } from "@chakra-ui/react";
 import Clock from "./Clock";
 import JustifyCardBody from "./JustifyCardBody";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DetailedTimeRecordData } from "@/types/TimeRecordData";
 
 type RecordCardProps<T> = {
   record: T;
   setRecord: (record: T) => void;
   requireUserMessage?: boolean;
+  isExpanded?: boolean;
 };
 
 export default function RecordCard(
@@ -33,7 +34,10 @@ export default function RecordCard(
     props.requireUserMessage || false
   );
 
-  const onDateChange = () => setRequireUserMessage(true);
+  const onDateChange = (date: Date) => {
+    setRequireUserMessage(true);
+    props.setRecord({ ...props.record, timestamp: date });
+  };
 
   return (
     <Card variant={"filled"} size="lg" w="500px">
@@ -56,7 +60,12 @@ export default function RecordCard(
           </Alert>
         </Collapse>
 
-        <Accordion w={"100%"} allowToggle variant={"outline"}>
+        <Accordion
+          w={"100%"}
+          allowToggle
+          variant={"outline"}
+          index={requireUserMessage ? 0 : undefined}
+        >
           <AccordionItem>
             <h2>
               <AccordionButton>
