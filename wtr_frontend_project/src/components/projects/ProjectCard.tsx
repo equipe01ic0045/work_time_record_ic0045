@@ -28,6 +28,7 @@ type ProjectCardProps<T> = {
   requireName?: boolean;
   errors: ProjectError;
   setErrors: (e: ProjectError) => void;
+  readOnly?: boolean;
 };
 
 export default function ProjectCard(props: ProjectCardProps<Project>) {
@@ -99,6 +100,7 @@ export default function ProjectCard(props: ProjectCardProps<Project>) {
             placeholder="Selecione um Fuso Horário"
             value={props.project.timezone}
             onChange={inputHandler}
+            disabled={props.readOnly}
           >
             {timezones.map((timezone) => (
               <option key={timezone.value} value={timezone.value}>
@@ -122,6 +124,7 @@ export default function ProjectCard(props: ProjectCardProps<Project>) {
             value={props.project.location}
             placeholder="Selecione uma Cidade"
             onChange={inputHandler}
+            disabled={props.readOnly}
           >
             {locations.map((location) => (
               <option key={location} value={location}>
@@ -149,6 +152,7 @@ export default function ProjectCard(props: ProjectCardProps<Project>) {
               props.project.commercial_time_start
             )}
             onChange={timeHandler}
+            isReadOnly={props.readOnly}
           />
           <FormErrorMessage>
             {props.errors.commercial_time_start}
@@ -169,6 +173,7 @@ export default function ProjectCard(props: ProjectCardProps<Project>) {
               props.project.commercial_time_end
             )}
             onChange={timeHandler}
+            isReadOnly={props.readOnly}
           />
           <FormErrorMessage>
             {props.errors.commercial_time_end}
@@ -183,6 +188,7 @@ export default function ProjectCard(props: ProjectCardProps<Project>) {
           onChange={textAreaHandler}
           placeholder="Coloque alguma descrição do projeto"
           size="sm"
+          isReadOnly={props.readOnly}
         />
 
         <FormErrorMessage>{props.errors.project_description}</FormErrorMessage>

@@ -19,25 +19,33 @@ import { useEffect, useState } from "react";
 import { secondsToHoursMinutes } from "@/utils/date_utils";
 import { useRouter } from "next/navigation";
 import { EditIcon } from "@chakra-ui/icons";
+import { formatCpf } from "@/utils/formatting_utils";
 
 export default function CollaboratorsTable({
   collaboratorList,
   setCollaboratorList,
   projectId,
-  tableRows
+  tableRows,
 }: {
   collaboratorList: ProjectUsers[];
-  setCollaboratorList: (v : ProjectUsers[]) => void;
+  setCollaboratorList: (v: ProjectUsers[]) => void;
   projectId: number;
-  tableRows: string[]
+  tableRows: string[];
 }) {
   const { user } = useAuth();
   const [userIsManager, setUserIsManager] = useState<boolean>(false);
   const toast = useToast();
-  const router = useRouter()
+  const router = useRouter();
   const projectService = new ProjectService();
 
-  const tableHeaderRow = [...tableRows, "EXCLUIR", "ATUALIZAR"]
+  const tableHeaderRow = [...tableRows, "ATUALIZAR", "EXCLUIR"];
+
+  let managerColumns: string[] = [
+    "EXCLUIR",
+    "ATUALIZAR",
+    "HORAS PENDENTES",
+    "HORAS REGISTRADAS",
+  ];
 
   const deleteUserInProject = async (userId: number) => {
     try {
@@ -50,7 +58,9 @@ export default function CollaboratorsTable({
         isClosable: true,
         position: "top-right",
       });
-      setCollaboratorList(collaboratorList.filter(user => user.user_id != userId))
+      setCollaboratorList(
+        collaboratorList.filter((user) => user.user_id != userId)
+      );
     } catch (error) {
       toast({
         title: "Falha ao Deletar Usuario",
@@ -63,16 +73,13 @@ export default function CollaboratorsTable({
     }
   };
 
-  const updateUserInProject = async (userId : number) =>{
-    console.log(userId)
-    router.push(`/main/projects/info/${projectId}/collaborators/profile/${userId}`)
-    try{
-      
-    }
-    catch{
-
-    }
-  }
+  const updateUserInProject = async (userId: number) => {
+    router.push(
+      `/main/projects/info/${projectId}/collaborators/profile/${userId}`
+    );
+    try {
+    } catch {}
+  };
 
   function checkIfuserIsManager() {
     if (collaboratorList) {
@@ -98,7 +105,10 @@ export default function CollaboratorsTable({
         <Thead>
           <Tr>
             {tableHeaderRow.map((header) => {
-              if (header !== "EXCLUIR" || userIsManager) {
+              if (
+                userIsManager ||
+                managerColumns.every((column) => header !== column)
+              ) {
                 return (
                   <Th key={header} bg="#4D47C3" color="white">
                     {header}
@@ -118,44 +128,55 @@ export default function CollaboratorsTable({
                       {collaborator.user.full_name}
                     </Link>
                   </Td>
-                  <Td>{collaborator.user.cpf}</Td>
+                  <Td>{formatCpf(collaborator.user.cpf)}</Td>
                   <Td>{collaborator.user.email}</Td>
                   <Td>{collaborator.role}</Td>
                   <Td>{collaborator.hours_per_week}</Td>
-                  <Td>
-                    {secondsToHoursMinutes(collaborator.elapsed_time_sum)}
-                  </Td>
-                  <Td>
-                    {secondsToHoursMinutes(
-                      4 * collaborator.hours_per_week * 60 * 60 -
-                        collaborator.elapsed_time_sum
-                    )}
-                  </Td>
-                  {userIsManager && collaborator.user_id !== user?.userId ? (
-                    <Td>
-                      <IconButton
-                        aria-label="Remove user from project"
-                        colorScheme="red"
-                        size={"lg"}
-                        onClick={() => {
-                          deleteUserInProject(collaborator.user.user_id ?? 0);
-                        }}
-                        icon={<DeleteIcon />}
-                      ></IconButton>
-                    </Td>
-                  ) : null}
-                  {userIsManager && collaborator.user_id !== user?.userId ? (
-                    <Td>
-                      <IconButton
-                        aria-label="Remove user from project"
-                        colorScheme="orange"
-                        size={"lg"}
-                        onClick={() => {
-                          updateUserInProject(collaborator.user.user_id ?? 0);
-                        }}
-                        icon={<EditIcon />}
-                      ></IconButton>
-                    </Td>
+
+                  {userIsManager ? (
+                    <>
+                      <Td>
+                        {secondsToHoursMinutes(collaborator.elapsed_time_sum)}
+                      </Td>
+                      <Td>
+                        {secondsToHoursMinutes(
+                          4 * collaborator.hours_per_week * 60 * 60 -
+                            collaborator.elapsed_time_sum
+                        )}
+                      </Td>
+
+                      {collaborator.user_id !== user?.userId ? (
+                        <>
+                          <Td>
+                            <IconButton
+                              aria-label="Remove user from project"
+                              colorScheme="orange"
+                              size={"lg"}
+                              onClick={() => {
+                                updateUserInProject(
+                                  collaborator.user.user_id ?? 0
+                                );
+                              }}
+                              icon={<EditIcon />}
+                            ></IconButton>
+                          </Td>
+
+                          <Td>
+                            <IconButton
+                              aria-label="Remove user from project"
+                              colorScheme="red"
+                              size={"lg"}
+                              onClick={() => {
+                                deleteUserInProject(
+                                  collaborator.user.user_id ?? 0
+                                );
+                              }}
+                              icon={<DeleteIcon />}
+                            ></IconButton>
+                          </Td>
+                        </>
+                      ) : null}
+                    </>
                   ) : null}
                 </Tr>
               );

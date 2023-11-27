@@ -12,6 +12,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { currentMonthYear, secondsToHoursMinutes } from "@/utils/date_utils";
 import { useAuth } from "@/components/auth/AuthContext";
+import { formatCpf } from "@/utils/formatting_utils";
 
 declare module "jspdf" {
   interface jsPDF {
@@ -73,7 +74,7 @@ export default function CollaboratosPage({ params }: any) {
     "FUNÇÃO",
     "HORAS/SEMANA",
     "HORAS REGISTRADAS",
-    "HORAS PENDENTES ",
+    "HORAS PENDENTES",
   ];
 
   function PDFReport() {
@@ -90,7 +91,11 @@ export default function CollaboratosPage({ params }: any) {
     doc.setFontSize(10);
     doc.text(`Projeto: ${projectInfo?.project_name}`, 5, 20);
     doc.text(`Mês de execício: ${reportMonth}`, 5, 25);
-    doc.text(`emitido por: ${user?.full_name} ( cpf: ${user?.cpf} )`, 5, 30);
+    doc.text(
+      `emitido por: ${user?.full_name} ( cpf: ${formatCpf(user?.cpf)} )`,
+      5,
+      30
+    );
     doc.text(`data de emissão: ${new Date().toLocaleDateString()}`, 5, 35);
 
     doc.autoTable({
@@ -99,7 +104,7 @@ export default function CollaboratosPage({ params }: any) {
       head: [tableHeaderRow],
       body: collaboratorList.map((row) => [
         row.user.full_name,
-        row.user.cpf,
+        formatCpf(row.user.cpf),
         row.user.email,
         row.role,
         row.hours_per_week,
@@ -159,46 +164,48 @@ export default function CollaboratosPage({ params }: any) {
           zIndex={0}
           width="85%"
         >
-          <HStack justifyContent={"space-between"}>
-            <Link
-              my={8}
-              style={{ justifyContent: "flex-start" }}
-              href={`/main/projects/add-collaborator/project/${projectId}`}
-            >
-              <Button
-                gap={"10px"}
-                fontSize={"2em"}
-                textColor={"#FFFFFF"}
-                colorScheme="purple"
-                bgColor="#4D47C3"
+          {user && user.userId == projectInfo?.owner_id ? (
+            <HStack justifyContent={"space-between"}>
+              <Link
+                my={8}
+                style={{ justifyContent: "flex-start" }}
+                href={`/main/projects/add-collaborator/project/${projectId}`}
               >
-                {plusIcon}
-                NOVO COLABORADOR
-              </Button>
-            </Link>
+                <Button
+                  gap={"10px"}
+                  fontSize={"2em"}
+                  textColor={"#FFFFFF"}
+                  colorScheme="purple"
+                  bgColor="#4D47C3"
+                >
+                  {plusIcon}
+                  NOVO COLABORADOR
+                </Button>
+              </Link>
 
-            <HStack>
-              <Text fontWeight={"bold"}>Mês de exercício:</Text>
+              <HStack>
+                <Text fontWeight={"bold"}>Mês de exercício:</Text>
 
-              <Box bg="#F0EFFF" rounded="md" padding={2} marginRight={2}>
-                <Input
-                  bg="white"
-                  type="month"
-                  value={reportMonth}
-                  onChange={(e) => setReportMonth(e.target.value)}
-                />
-              </Box>
+                <Box bg="#F0EFFF" rounded="md" padding={2} marginRight={2}>
+                  <Input
+                    bg="white"
+                    type="month"
+                    value={reportMonth}
+                    onChange={(e) => setReportMonth(e.target.value)}
+                  />
+                </Box>
 
-              <Button
-                textColor={"#FFFFFF"}
-                colorScheme="purple"
-                bgColor="#4D47C3"
-                onClick={PDFReport}
-              >
-                Gerar relatório
-              </Button>
+                <Button
+                  textColor={"#FFFFFF"}
+                  colorScheme="purple"
+                  bgColor="#4D47C3"
+                  onClick={PDFReport}
+                >
+                  Gerar relatório
+                </Button>
+              </HStack>
             </HStack>
-          </HStack>
+          ) : null}
 
           <Box width="100%" borderWidth="1px" bg="#F0EFFF">
             <CollaboratorsTable
