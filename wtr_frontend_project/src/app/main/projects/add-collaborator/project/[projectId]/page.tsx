@@ -11,6 +11,8 @@ import {
   InputGroup,
   Link,
   Checkbox,
+  FormControl,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ProjectService from "@/services/ProjectService";
@@ -29,13 +31,17 @@ export default function ProjectInfo() {
   const toast = useToast();
   const router = useRouter();
   const [filter, setFilter] = useState('');
-  const [filterList, setFilterList] = useState([]);
-  const [usersFullList, setUsersFullList] = useState([])
+  const [usersFullList, setUsersFullList] = useState([]);
+  const [erros, setErros] = useState({
+    user_email : '',
+    user_hours_per_week: '',
+    user_role: '',
+  })
   const [addUser, setAddUser] = useState({
     userId: 0,
     userRole: 'USER',
     userEmail: '',
-    userHoursPerWeek: 0
+    userHoursPerWeek: 1
   })
   const null_user = {
     email: '',
@@ -64,7 +70,19 @@ export default function ProjectInfo() {
       });
       router.push(`/main/projects/info/${projectIdString}/collaborators`)
     }
-    catch (error) {
+    catch (error : any) {
+      const _erros = {
+        user_email : '',
+        user_hours_per_week: '',
+        user_role: '',
+      };
+      const data = error?.response?.data;
+      const fieldErrors = data?.data?.errors;
+      if (fieldErrors)
+        fieldErrors.forEach(
+          (error: any) => (_erros[error.path as keyof typeof _erros] = error.msg)
+        );
+        
       toast({
         title: "Erro ao Adicionar Usuario",
         description: "",
@@ -73,6 +91,7 @@ export default function ProjectInfo() {
         isClosable: true,
         position: "top-right",
       });
+      setErros(_erros);
     }
   }
 
@@ -85,8 +104,8 @@ export default function ProjectInfo() {
 
   async function searchHandler() {
     try {
-      const userList = await userService.getUsersByName(filter)
-      setFilterList(userList)
+      const userList = await userService.getUsersByName(parseInt(projectIdString), filter)
+      setUsersFullList(userList)
     }
     catch (error: any) {
       toast({
@@ -102,7 +121,7 @@ export default function ProjectInfo() {
 
   const fetchData = async () => {
     try {
-      const usersList = await userService.getUsersAll()
+      const usersList =await userService.getUsersByName(parseInt(projectIdString), "")
       setUsersFullList(usersList)
     }
     catch (error: any) {
@@ -156,11 +175,6 @@ export default function ProjectInfo() {
         </InputGroup>
         <Box>
           {
-            filter.length >= 1 ?
-              <CollaboratorFullList
-                collaboratorFullList={filterList}
-                setSelectedUser={setSelectedUser}
-              /> :
               <CollaboratorFullList
                 collaboratorFullList={usersFullList}
                 setSelectedUser={setSelectedUser}
@@ -199,23 +213,28 @@ export default function ProjectInfo() {
             </Button>
           </Box>
         </InputGroup>
-        <Checkbox>ADMIN</Checkbox>
-        <Checkbox isChecked>USER</Checkbox>
+        <Checkbox isChecked={addUser.userRole == 'ADMIN'} onChange={(ev) => setAddUser({...addUser, userRole: addUser.userRole == 'ADMIN' ? 'USER' : 'ADMIN'})}>ADMIN</Checkbox>
         <InputGroup
           display='flex'
           flexDirection='column'
           gap='0.5em'
         >
-          <FormLabel>HORAS / SEMANA</FormLabel>
-          <Input
-            placeholder="17"
-            type="number"
-            name="userHoursPerWeek"
-            bgColor="Lavender"
-            color="blueviolet"
-            value={addUser.userHoursPerWeek}
-            onChange={inputHandler}
-          />
+              <FormControl isInvalid={erros['user_hours_per_week'] ? true : false}>
+                <InputGroup display="flex" flexDirection="column" gap="0.5em">
+                  <FormLabel key="0">HORAS / SEMANA</FormLabel>
+                  <Input
+                    placeholder="17"
+                    type="number"
+                    name="userHoursPerWeek"
+                    bgColor="Lavender"
+                    color="blueviolet"
+                    value={addUser.userHoursPerWeek}
+                    onChange={inputHandler}
+                  />
+                </InputGroup>
+                <FormErrorMessage>{erros['user_hours_per_week']}</FormErrorMessage>
+              </FormControl>
+          
         </InputGroup>
 
         <Button

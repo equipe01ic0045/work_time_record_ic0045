@@ -25,19 +25,15 @@ export function currentMonthYear() {
   return `${currentYear}-${currentMonth}`;
 }
 
-export function monthRange(month?:string) {
-  let date:Date
-  if(month){
-    date = new Date(`${month}-1`)
-  }else{
-    date = new Date()
+export function monthRange(month?: string) {
+  let date: Date;
+  if (month) {
+    date = new Date(`${month}-1`);
+  } else {
+    date = new Date();
   }
 
-  const firstDayOfMonth = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    1
-  );
+  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
   const lastDayOfMonth = new Date(
     date.getFullYear(),
     date.getMonth() + 1,
@@ -52,4 +48,25 @@ export function monthRange(month?:string) {
     from: firstDayOfMonth,
     to: lastDayOfMonth,
   };
+}
+
+export function formatToTwoDigits(num: number): string {
+  let integerStr = num.toString();
+  while (integerStr.length < 2) {
+    integerStr = "0" + integerStr;
+  }
+  return integerStr;
+}
+
+export function getFormattedCommercialTime(commercialTime: number): string {
+  const hour = Math.floor(commercialTime / 60); // result without floor is float
+  const minute = commercialTime % 60;
+  return `${formatToTwoDigits(hour)}:${formatToTwoDigits(minute)}`;
+}
+
+export function getFormatedNumberTime(commercialTime: string) {
+  return commercialTime
+    .split(":")
+    .map((n: string) => parseInt(n))
+    .reduce((p: number, c: number) => c + p * 60);
 }

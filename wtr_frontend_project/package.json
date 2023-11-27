@@ -30,6 +30,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.7.1",
     "jwt-decode": "^4.0.0",
+    "moment-timezone": "^0.5.43",
     "next": "13.4.19",
     "postcss": "8.4.28",
     "react": "18.2.0",

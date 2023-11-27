@@ -146,11 +146,6 @@ export default class UserRoutes extends BaseRoutes {
      */
     this._router.post(
       "/byName",
-      body("full_name")
-        .isString()
-        .withMessage("Nome completo inválido")
-        .isLength({ min: 1 })
-        .withMessage("Insira o nome completo"),
       this.validate,
       this.controller.getUsersByName
     );
