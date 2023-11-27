@@ -220,16 +220,6 @@ export default function ProjectInfo({ params }: any) {
               {" "}
               Editar Projeto
             </Button>
-            <Button
-              leftIcon={deleteIcon}
-              colorScheme="red"
-              onClick={() => {
-                setOpenDlete(true);
-              }}
-            >
-              {" "}
-              Deletar Projeto
-            </Button>
 
             {projectInfo && projectInfo?.owner_id == user?.userId ? (
               <Button
