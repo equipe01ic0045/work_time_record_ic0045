@@ -42,7 +42,6 @@ export default class JustificationService {
     userId: number,
     userMessage: string,
     justificationType: JustificationType,
-    timestamp: Date,
     fileName?: string,
     fileType?: string,
     documentFile?: Buffer,
@@ -76,7 +75,6 @@ export default class JustificationService {
           userId,
           userMessage,
           justificationType,
-          timestamp,
           fileName,
           documentFile
         );

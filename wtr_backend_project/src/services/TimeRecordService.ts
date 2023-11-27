@@ -135,7 +135,6 @@ export default class TimeRecordService {
         userId,
         userMessage,
         JustificationType.CHECKIN,
-        checkInTimestamp,
         fileName,
         fileContent
       );
@@ -166,7 +165,6 @@ export default class TimeRecordService {
         userId,
         userMessage,
         JustificationType.CHECKOUT,
-        checkoutTimeStamp ?? new Date(),
         fileName,
         fileContent
       );

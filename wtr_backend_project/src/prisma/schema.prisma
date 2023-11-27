@@ -99,7 +99,6 @@ model time_record_justification {
   status                 JustificationReviewStatus
   user_message           String?
   reviewer_message       String?
-  timestamp              DateTime                  @default(now())
   justification_type     JustificationType
   justification_document justification_document?
   created_at             DateTime                  @default(now())

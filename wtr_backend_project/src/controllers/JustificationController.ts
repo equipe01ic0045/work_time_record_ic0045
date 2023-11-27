@@ -16,7 +16,7 @@ export default class JustificationController extends BaseController {
   ) {
     const { project_id } = req.params;
 
-    const { time_record_id, user_message, justification_type, timestamp } = req.body;
+    const { time_record_id, user_message, justification_type } = req.body;
 
     const fileType = req.file?.mimetype;
     const fileBuffer = req.file?.buffer;
@@ -29,7 +29,6 @@ export default class JustificationController extends BaseController {
         req.user!.userId,
         user_message,
         justification_type,
-        timestamp,
         fileName,
         fileType,
         fileBuffer,
