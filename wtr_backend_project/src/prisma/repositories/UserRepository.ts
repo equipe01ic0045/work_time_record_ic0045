@@ -1,5 +1,6 @@
 import { user } from ".prisma/client";
 import BaseRepository from "./abstract/BaseRepository";
+import { Prisma } from "@prisma/client";
 
 export default class UserRepository extends BaseRepository {
   private readonly findUserFields = {
@@ -57,9 +58,13 @@ export default class UserRepository extends BaseRepository {
     });
   }
   async findUsersByName(
+    project_id : number,
     full_name?: string
   ): Promise<Omit<user, "password">[]> {
-    return (full_name !== undefined) ? this.client.user.findMany({ where: { full_name: {contains: full_name, mode: 'insensitive'} } }) : this.client.user.findMany();
+    const where : Prisma.userWhereInput = {user_project_roles:{none:{project_id: project_id}}};
+    if(full_name !== undefined)
+      where.full_name = {contains: full_name, mode: 'insensitive'};
+    return  this.client.user.findMany({ where });
   }
 
   async findUserByEmail(email: string): Promise<user | null> {
