@@ -13,7 +13,12 @@ export default function Clock(props: {
   let interval = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (props.defaultValue) return;
+    if (props.defaultValue) {
+      setDate((prev) => (
+        prev.getTime() !== props.defaultValue!.getTime()! ? props.defaultValue! : prev
+      ));
+      return;
+    };
 
     interval.current = setInterval(() => {
       const newDate = new Date();

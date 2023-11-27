@@ -1,6 +1,6 @@
 export type SimpleTimeRecordData = {
   project_id: number;
-  timestamp: Date;
+  timestamp?: Date;
   location?: string;
 };
 

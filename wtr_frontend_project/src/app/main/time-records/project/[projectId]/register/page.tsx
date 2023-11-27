@@ -20,7 +20,6 @@ export default function DetailedTimeRecordRegisterPage({
 
   const [newRecord, setRecord] = useState<DetailedTimeRecordData>({
     project_id: params.projectId,
-    timestamp: new Date(),
     location: undefined,
     user_message: "",
     justification_file: undefined,
@@ -32,9 +31,9 @@ export default function DetailedTimeRecordRegisterPage({
 
     try {
       if (searchParams.hasOpenCheckIn) {
-        await timeRecordService.detailedCheckOut(newRecord);
+        await timeRecordService.detailedCheckOut({ ...newRecord, timestamp: new Date() });
       } else {
-        await timeRecordService.detailedCheckIn(newRecord);
+        await timeRecordService.detailedCheckIn({ ...newRecord, timestamp: new Date() });
       }
 
       toast({
