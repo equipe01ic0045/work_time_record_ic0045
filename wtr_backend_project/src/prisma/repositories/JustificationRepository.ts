@@ -8,6 +8,7 @@ export default class JustificationRepository extends BaseRepository {
     user_id: number,
     user_message: string,
     justification_type: JustificationType,
+    timestamp: Date,
     file_name?: string,
     document_file?: Buffer
   ) {
@@ -15,6 +16,7 @@ export default class JustificationRepository extends BaseRepository {
       user_message,
       justification_type,
       status: JustificationReviewStatus.PENDING,
+      timestamp,
       time_record: {
         connect: {
           time_record_id,

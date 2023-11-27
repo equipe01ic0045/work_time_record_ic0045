@@ -37,6 +37,8 @@
  *               justification_file:
  *                 type: string
  *                 format: binary
+ *               timestamp:
+ *                  type: string
  *             example:
  *                user_message: "fiz o check-in de 1 hora atrás, mal 🫡"
  *                time_record_id: 1
@@ -210,6 +212,9 @@ export default class JustificationRoutes extends ProjectRelatedRoutes {
         body("justification_type")
           .isString()
           .withMessage("Tipo de justificativa inválida"),
+        body("timestamp")
+          .isISO8601()
+          .withMessage("Formato de timestamp inválido"),
       ],
       this.validate,
       this.controller.createJustification

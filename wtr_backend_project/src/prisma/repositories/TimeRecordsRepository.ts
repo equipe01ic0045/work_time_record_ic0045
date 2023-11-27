@@ -116,6 +116,17 @@ export default class TimeRecordsRepository extends BaseRepository {
       orderBy: {
         check_in_timestamp: "desc",
       },
+      include: {
+        time_record_justification: {
+           orderBy: { created_at: "desc" },
+           distinct: "justification_type",
+           select: { 
+            justification_id: true,
+            status: true,
+            justification_type: true,
+          }
+        },
+      },
       take: 100,
     });
   }
