@@ -37,18 +37,19 @@ const JustificationItem = ({
 }: {
   justification: Justification;
 }) => {
-  const [documentBlob, setdocumentBlob] = useState<Blob>();
+  const [documentBlob, setDocumentBlob] = useState<Blob>();
 
   useEffect(() => {
     const fetchDocument = async () => {
       try {
-        setdocumentBlob(
+        setDocumentBlob(
           await JustificationService.getDocument(
             justification.project_id,
             justification.justification_id
           )
         );
-      } catch (error) {
+      } catch (error: any) {
+        if (error?.response?.status === 404) return;
         console.error("Error fetching document:", error);
       }
     };

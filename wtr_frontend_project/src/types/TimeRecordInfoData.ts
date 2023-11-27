@@ -15,6 +15,7 @@ export type JustificationData = {
   user_message: string;
   reviewer_message: string;
   justification_type: "CHECKIN" | "CHECKOUT";
+  timestamp?: string;
   status: status;
   created_at: string;
 };

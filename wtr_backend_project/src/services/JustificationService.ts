@@ -41,12 +41,12 @@ export default class JustificationService {
     timeRecordId: number,
     userId: number,
     userMessage: string,
-    fileName: string,
-    fileType: string,
-    documentFile: Buffer,
-    justificationType: JustificationType
+    justificationType: JustificationType,
+    fileName?: string,
+    fileType?: string,
+    documentFile?: Buffer,
   ) {
-    if (!this.allowedMimeTypes.includes(fileType)) {
+    if (fileType && !this.allowedMimeTypes.includes(fileType)) {
       throw new ValidationError(
         `Formato de arquivo inválido os unicos formatos aceitos são: ${this.allowedMimeTypes.join(
           ","

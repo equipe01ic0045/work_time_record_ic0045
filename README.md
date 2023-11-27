@@ -13,7 +13,7 @@
 - Nilvan Santana
 - Pedro Henrique D'OLiveira
 - Thiago Coutinho
-- Valdinei
+- Valdinei Ferreira
 
 ## Artefatos :
 
